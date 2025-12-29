@@ -1,0 +1,513 @@
+[
+    {
+        "id": "lab-1",
+        "number": 1,
+        "title": "Network Security Fundamentals Review",
+        "description": "Review network security concepts, set up the lab environment, and configure basic devices. Learn CLI navigation, IP configuration, and connectivity testing.",
+        "objectives": [
+            "Navigate the lab interface and CLI terminal",
+            "Configure IP addresses on network devices",
+            "Understand basic routing concepts",
+            "Test network connectivity using ping and traceroute"
+        ],
+        "difficulty": "BEGINNER",
+        "durationMinutes": 30,
+        "maxScore": 100,
+        "topology": {
+            "devices": [
+                {
+                    "id": "pc1",
+                    "type": "pc",
+                    "name": "PC1",
+                    "hostname": "PC1",
+                    "x": 100,
+                    "y": 200,
+                    "initialConfig": {
+                        "ip": "10.1.1.2",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.1.1.1"
+                    }
+                },
+                {
+                    "id": "router1",
+                    "type": "router",
+                    "name": "Router1",
+                    "hostname": "R1",
+                    "x": 400,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.1.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "10.2.1.1",
+                                "mask": "255.255.255.0"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "pc2",
+                    "type": "pc",
+                    "name": "PC2",
+                    "hostname": "PC2",
+                    "x": 700,
+                    "y": 200,
+                    "initialConfig": {
+                        "ip": "10.2.1.2",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.2.1.1"
+                    }
+                }
+            ],
+            "links": [
+                {
+                    "source": {
+                        "device": "pc1",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "router1",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "router1",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "pc2",
+                        "interface": "Ethernet0"
+                    }
+                }
+            ]
+        },
+        "tasks": [
+            {
+                "id": "t1-1",
+                "title": "Access Router CLI",
+                "description": "Open the terminal for Router1 and enter privileged mode using the 'enable' command",
+                "points": 10,
+                "order": 1,
+                "validation": {
+                    "type": "command-executed",
+                    "device": "router1",
+                    "command": "enable"
+                }
+            },
+            {
+                "id": "t1-2",
+                "title": "View Interface Status",
+                "description": "Use the 'show ip interface brief' command to view all interfaces",
+                "points": 15,
+                "order": 2,
+                "validation": {
+                    "type": "command-executed",
+                    "device": "router1",
+                    "command": "show ip interface brief"
+                }
+            },
+            {
+                "id": "t1-3",
+                "title": "Configure PC1 IP Address",
+                "description": "Set PC1's IP address to 10.1.1.2 with mask 255.255.255.0 and gateway 10.1.1.1",
+                "points": 20,
+                "order": 3,
+                "validation": {
+                    "type": "config-check",
+                    "device": "pc1",
+                    "expected": {
+                        "ip": "10.1.1.2",
+                        "gateway": "10.1.1.1"
+                    }
+                }
+            },
+            {
+                "id": "t1-4",
+                "title": "Test Local Connectivity",
+                "description": "Ping from PC1 to the router's GigabitEthernet0/0 interface (10.1.1.1)",
+                "points": 15,
+                "order": 4,
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "pc1",
+                    "to": "10.1.1.1"
+                }
+            },
+            {
+                "id": "t1-5",
+                "title": "View Routing Table",
+                "description": "Display the routing table on Router1 using 'show ip route'",
+                "points": 15,
+                "order": 5,
+                "validation": {
+                    "type": "command-executed",
+                    "device": "router1",
+                    "command": "show ip route"
+                }
+            },
+            {
+                "id": "t1-6",
+                "title": "Test End-to-End Connectivity",
+                "description": "Ping from PC1 to PC2 (10.2.1.2) through the router",
+                "points": 25,
+                "order": 6,
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "pc1",
+                    "to": "10.2.1.2"
+                }
+            }
+        ],
+        "hints": [
+            {
+                "id": "h1-1",
+                "taskId": "t1-1",
+                "content": "Double-click on Router1 to open the terminal, then type 'enable' and press Enter",
+                "pointCost": 2,
+                "order": 1
+            },
+            {
+                "id": "h1-2",
+                "taskId": "t1-3",
+                "content": "Use the command: set ip 10.1.1.2 255.255.255.0 10.1.1.1",
+                "pointCost": 3,
+                "order": 1
+            },
+            {
+                "id": "h1-3",
+                "taskId": "t1-4",
+                "content": "Use the command: ping 10.1.1.1",
+                "pointCost": 2,
+                "order": 1
+            }
+        ]
+    },
+    {
+        "id": "lab-3",
+        "number": 3,
+        "title": "VPN Technologies - IPSec & SSL VPN",
+        "description": "Configure a site-to-site IPSec VPN between two routers with IKE Phase 1 and Phase 2 negotiation, crypto maps, and ESP encryption.",
+        "objectives": [
+            "Understand IKE Phase 1 and Phase 2 negotiation process",
+            "Configure ISAKMP policies with encryption and hash algorithms",
+            "Set up pre-shared keys for authentication",
+            "Create and apply crypto maps to interfaces",
+            "Verify IPSec tunnel establishment and encrypted traffic"
+        ],
+        "difficulty": "INTERMEDIATE",
+        "durationMinutes": 60,
+        "maxScore": 100,
+        "topology": {
+            "devices": [
+                {
+                    "id": "pc1",
+                    "type": "pc",
+                    "name": "PC1",
+                    "hostname": "PC1",
+                    "x": 80,
+                    "y": 200,
+                    "initialConfig": {
+                        "ip": "10.1.1.2",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.1.1.1"
+                    }
+                },
+                {
+                    "id": "r1",
+                    "type": "router",
+                    "name": "Router1",
+                    "hostname": "R1",
+                    "x": 250,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.1.1.1",
+                                "mask": "255.255.255.0",
+                                "status": "up"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "192.168.1.1",
+                                "mask": "255.255.255.0",
+                                "status": "up"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "isp",
+                    "type": "router",
+                    "name": "ISP Router",
+                    "hostname": "ISP",
+                    "x": 450,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "192.168.1.2",
+                                "mask": "255.255.255.0",
+                                "status": "up"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "192.168.2.2",
+                                "mask": "255.255.255.0",
+                                "status": "up"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "r2",
+                    "type": "router",
+                    "name": "Router2",
+                    "hostname": "R2",
+                    "x": 650,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.2.1.1",
+                                "mask": "255.255.255.0",
+                                "status": "up"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "192.168.2.1",
+                                "mask": "255.255.255.0",
+                                "status": "up"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "pc2",
+                    "type": "pc",
+                    "name": "PC2",
+                    "hostname": "PC2",
+                    "x": 820,
+                    "y": 200,
+                    "initialConfig": {
+                        "ip": "10.2.1.2",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.2.1.1"
+                    }
+                }
+            ],
+            "links": [
+                {
+                    "source": {
+                        "device": "pc1",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "r1",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "r1",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "isp",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "isp",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "r2",
+                        "interface": "GigabitEthernet0/1"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "r2",
+                        "interface": "GigabitEthernet0/0"
+                    },
+                    "destination": {
+                        "device": "pc2",
+                        "interface": "Ethernet0"
+                    }
+                }
+            ]
+        },
+        "tasks": [
+            {
+                "id": "t3-1",
+                "title": "Configure IKE Phase 1 Policy",
+                "description": "Create an ISAKMP policy with AES-256 encryption, SHA-256 hash, and DH Group 14",
+                "points": 10,
+                "order": 1,
+                "validation": {
+                    "type": "config-check",
+                    "device": "r1",
+                    "section": "crypto",
+                    "expected": {
+                        "isakmp-policy": {
+                            "encryption": "aes 256",
+                            "hash": "sha256",
+                            "group": 14
+                        }
+                    }
+                }
+            },
+            {
+                "id": "t3-2",
+                "title": "Set Pre-Shared Key",
+                "description": "Configure the PSK 'SecretKey123' for peer 192.168.2.1",
+                "points": 10,
+                "order": 2,
+                "validation": {
+                    "type": "config-check",
+                    "device": "r1",
+                    "section": "crypto",
+                    "expected": {
+                        "isakmp-key": "SecretKey123",
+                        "peer": "192.168.2.1"
+                    }
+                }
+            },
+            {
+                "id": "t3-3",
+                "title": "Create Transform Set",
+                "description": "Define IPSec transform set 'MYSET' with ESP-AES-256 and ESP-SHA256-HMAC",
+                "points": 15,
+                "order": 3,
+                "validation": {
+                    "type": "config-check",
+                    "device": "r1",
+                    "section": "crypto",
+                    "expected": {
+                        "transform-set": "MYSET"
+                    }
+                }
+            },
+            {
+                "id": "t3-4",
+                "title": "Create Crypto Map",
+                "description": "Build crypto map 'MYMAP' with peer and transform set configuration",
+                "points": 15,
+                "order": 4,
+                "validation": {
+                    "type": "config-check",
+                    "device": "r1",
+                    "section": "crypto",
+                    "expected": {
+                        "crypto-map": "MYMAP"
+                    }
+                }
+            },
+            {
+                "id": "t3-5",
+                "title": "Apply Crypto Map",
+                "description": "Apply the crypto map to the WAN interface (GigabitEthernet0/1)",
+                "points": 10,
+                "order": 5,
+                "validation": {
+                    "type": "config-check",
+                    "device": "r1",
+                    "section": "interface",
+                    "expected": {
+                        "interface": "GigabitEthernet0/1",
+                        "crypto-map": "MYMAP"
+                    }
+                }
+            },
+            {
+                "id": "t3-6",
+                "title": "Configure Peer Router",
+                "description": "Set up matching IPSec configuration on Router2",
+                "points": 15,
+                "order": 6,
+                "validation": {
+                    "type": "config-check",
+                    "device": "r2",
+                    "section": "crypto",
+                    "expected": {
+                        "crypto-map": "MYMAP"
+                    }
+                }
+            },
+            {
+                "id": "t3-7",
+                "title": "Verify Tunnel Status",
+                "description": "Check IKE and IPSec SA status using show commands",
+                "points": 10,
+                "order": 7,
+                "validation": {
+                    "type": "tunnel-status",
+                    "status": "up"
+                }
+            },
+            {
+                "id": "t3-8",
+                "title": "Test Connectivity",
+                "description": "Ping from PC1 to PC2 through the VPN tunnel",
+                "points": 5,
+                "order": 8,
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "pc1",
+                    "to": "10.2.1.2"
+                }
+            },
+            {
+                "id": "t3-9",
+                "title": "Analyze Encrypted Traffic",
+                "description": "Capture packets and verify ESP encapsulation",
+                "points": 10,
+                "order": 9,
+                "validation": {
+                    "type": "packet-capture",
+                    "protocol": "ESP"
+                }
+            }
+        ],
+        "hints": [
+            {
+                "id": "h3-1",
+                "taskId": "t3-1",
+                "content": "Enter config mode and use: crypto isakmp policy 10, then encryption aes 256, hash sha256, group 14",
+                "pointCost": 3,
+                "order": 1
+            },
+            {
+                "id": "h3-2",
+                "taskId": "t3-2",
+                "content": "Use: crypto isakmp key SecretKey123 address 192.168.2.1",
+                "pointCost": 2,
+                "order": 1
+            },
+            {
+                "id": "h3-3",
+                "taskId": "t3-3",
+                "content": "Use: crypto ipsec transform-set MYSET esp-aes 256 esp-sha256-hmac",
+                "pointCost": 3,
+                "order": 1
+            },
+            {
+                "id": "h3-4",
+                "taskId": "t3-4",
+                "content": "Use: crypto map MYMAP 10 ipsec-isakmp, then set peer 192.168.2.1, set transform-set MYSET, match address VPN-ACL",
+                "pointCost": 3,
+                "order": 1
+            }
+        ]
+    }
+]

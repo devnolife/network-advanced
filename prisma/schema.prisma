@@ -1,0 +1,205 @@
+// Prisma Schema for Network Security Virtual Lab
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String
+  role          UserRole  @default(STUDENT)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  sessions      Session[]
+  labProgress   LabProgress[]
+  submissions   Submission[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+}
+
+// Session for authentication
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// Lab definition
+model Lab {
+  id          String   @id @default(cuid())
+  number      Int      @unique
+  title       String
+  description String   @db.Text
+  objectives  String[] 
+  difficulty  Difficulty
+  durationMinutes Int
+  maxScore    Int
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  tasks       LabTask[]
+  hints       LabHint[]
+  topology    Topology?
+  progress    LabProgress[]
+  submissions Submission[]
+
+  @@map("labs")
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+// Lab tasks (steps within a lab)
+model LabTask {
+  id          String   @id @default(cuid())
+  labId       String
+  title       String
+  description String   @db.Text
+  points      Int
+  order       Int
+  validation  Json     // Validation criteria
+  
+  // Relations
+  lab         Lab      @relation(fields: [labId], references: [id], onDelete: Cascade)
+  hints       LabHint[]
+  completions TaskCompletion[]
+
+  @@map("lab_tasks")
+}
+
+// Hints for lab tasks
+model LabHint {
+  id        String   @id @default(cuid())
+  labId     String
+  taskId    String?
+  content   String   @db.Text
+  pointCost Int      @default(0)
+  order     Int
+  
+  // Relations
+  lab       Lab      @relation(fields: [labId], references: [id], onDelete: Cascade)
+  task      LabTask? @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  usages    HintUsage[]
+
+  @@map("lab_hints")
+}
+
+// Network topology for a lab
+model Topology {
+  id        String   @id @default(cuid())
+  labId     String   @unique
+  devices   Json     // Array of device configurations
+  links     Json     // Array of link configurations
+  
+  // Relations
+  lab       Lab      @relation(fields: [labId], references: [id], onDelete: Cascade)
+
+  @@map("topologies")
+}
+
+// User progress in a lab
+model LabProgress {
+  id             String    @id @default(cuid())
+  userId         String
+  labId          String
+  startedAt      DateTime  @default(now())
+  completedAt    DateTime?
+  currentScore   Int       @default(0)
+  maxScoreEarned Int       @default(0)
+  savedState     Json?     // Saved simulation state
+  lastActivityAt DateTime  @default(now())
+
+  // Relations
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lab            Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
+  taskCompletions TaskCompletion[]
+  hintUsages     HintUsage[]
+
+  @@unique([userId, labId])
+  @@map("lab_progress")
+}
+
+// Task completion tracking
+model TaskCompletion {
+  id          String      @id @default(cuid())
+  progressId  String
+  taskId      String
+  completedAt DateTime    @default(now())
+  pointsEarned Int
+
+  // Relations
+  progress    LabProgress @relation(fields: [progressId], references: [id], onDelete: Cascade)
+  task        LabTask     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([progressId, taskId])
+  @@map("task_completions")
+}
+
+// Hint usage tracking
+model HintUsage {
+  id         String      @id @default(cuid())
+  progressId String
+  hintId     String
+  usedAt     DateTime    @default(now())
+  pointsCost Int
+
+  // Relations
+  progress   LabProgress @relation(fields: [progressId], references: [id], onDelete: Cascade)
+  hint       LabHint     @relation(fields: [hintId], references: [id], onDelete: Cascade)
+
+  @@unique([progressId, hintId])
+  @@map("hint_usages")
+}
+
+// Final lab submissions
+model Submission {
+  id           String   @id @default(cuid())
+  userId       String
+  labId        String
+  submittedAt  DateTime @default(now())
+  score        Int
+  maxScore     Int
+  configuration Json    // Final configuration snapshot
+  feedback     String?  @db.Text
+  grade        String?
+
+  // Relations
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lab          Lab      @relation(fields: [labId], references: [id], onDelete: Cascade)
+
+  @@map("submissions")
+}
+
+// System configuration
+model SystemConfig {
+  key   String @id
+  value String @db.Text
+
+  @@map("system_configs")
+}
