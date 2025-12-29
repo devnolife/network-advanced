@@ -39,7 +39,7 @@ export async function POST(
     // Check for existing progress
     let progress = await prisma.labProgress.findFirst({
       where: {
-        userId: user.id,
+        userId: user.userId,
         labId: labId,
       },
       include: {
@@ -86,7 +86,7 @@ export async function POST(
     // Create new progress record
     progress = await prisma.labProgress.create({
       data: {
-        userId: user.id,
+        userId: user.userId,
         labId: labId,
         currentScore: 0,
         maxScoreEarned: 0,
@@ -151,7 +151,7 @@ export async function GET(
 
     const progress = await prisma.labProgress.findFirst({
       where: {
-        userId: user.id,
+        userId: user.userId,
         labId: labId,
       },
       include: {

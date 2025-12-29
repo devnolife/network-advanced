@@ -42,7 +42,7 @@ export async function GET(
     // Get user's progress for this lab
     const progress = await prisma.labProgress.findFirst({
       where: {
-        userId: user.id,
+        userId: user.userId,
         labId: labId,
       },
       include: {

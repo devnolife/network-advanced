@@ -31,7 +31,7 @@ export async function POST(
     // Find user's progress
     const progress = await prisma.labProgress.findFirst({
       where: {
-        userId: user.id,
+        userId: user.userId,
         labId: labId,
       },
     })

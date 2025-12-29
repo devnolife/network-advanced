@@ -21,7 +21,7 @@ export async function POST(
     // Find user's progress
     const progress = await prisma.labProgress.findFirst({
       where: {
-        userId: user.id,
+        userId: user.userId,
         labId: labId,
       },
       include: {
@@ -45,7 +45,7 @@ export async function POST(
     // Check if already submitted
     const existingSubmission = await prisma.submission.findFirst({
       where: {
-        userId: user.id,
+        userId: user.userId,
         labId: labId,
       },
     })
@@ -105,7 +105,7 @@ export async function POST(
     // Create submission
     const submission = await prisma.submission.create({
       data: {
-        userId: user.id,
+        userId: user.userId,
         labId: labId,
         score: finalScore,
         maxPossibleScore: totalPoints,
@@ -167,7 +167,7 @@ export async function GET(
 
     const submission = await prisma.submission.findFirst({
       where: {
-        userId: user.id,
+        userId: user.userId,
         labId: labId,
       },
     })

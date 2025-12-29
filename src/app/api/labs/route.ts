@@ -30,7 +30,7 @@ export async function GET() {
 
     if (user) {
       const progresses = await prisma.labProgress.findMany({
-        where: { userId: user.id },
+        where: { userId: user.userId },
         include: {
           taskCompletions: true,
         },
