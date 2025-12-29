@@ -459,7 +459,7 @@ export default function LabPage() {
                 <div className="flex-1 flex flex-col min-w-0">
                     {/* Network Topology */}
                     <div className="flex-1 p-4">
-                        <div className="topology-canvas h-full relative">
+                        <div className="topology-canvas cyber-grid h-full relative">
                             {/* Grid Background is in CSS */}
 
                             {/* SVG for connections */}
@@ -476,7 +476,7 @@ export default function LabPage() {
                                             y1={fromDevice.y + 40}
                                             x2={toDevice.x + 40}
                                             y2={toDevice.y + 40}
-                                            className={`connection-line ${link.status === 'up' ? 'active' : 'down'}`}
+                                            className={`connection-line data-flow-line ${link.status === 'up' ? 'active' : 'down'}`}
                                             strokeWidth="2"
                                         />
                                     );
@@ -611,8 +611,8 @@ export default function LabPage() {
                             <button
                                 key={tab}
                                 className={`flex-1 px-4 py-3 text-sm font-medium capitalize ${activeTab === tab
-                                        ? 'bg-[var(--bg-tertiary)] text-white border-b-2 border-[var(--primary)]'
-                                        : 'text-[var(--text-secondary)] hover:text-white'
+                                    ? 'bg-[var(--bg-tertiary)] text-white border-b-2 border-[var(--primary)]'
+                                    : 'text-[var(--text-secondary)] hover:text-white'
                                     }`}
                                 onClick={() => setActiveTab(tab)}
                             >

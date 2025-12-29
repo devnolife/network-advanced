@@ -124,7 +124,7 @@ export default function LabsPage() {
     );
 
     return (
-        <div className="min-h-screen bg-[var(--bg-primary)]">
+        <div className="min-h-screen bg-[var(--bg-primary)] animated-gradient-bg">
             {/* Header */}
             <header className="sticky top-0 z-50 backdrop-blur-lg bg-[var(--bg-primary)]/80 border-b border-[var(--border-default)]">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -166,7 +166,7 @@ export default function LabsPage() {
                         <BookOpen className="w-5 h-5 text-[var(--primary)]" />
                         Learning Path
                     </h2>
-                    <div className="glass-card p-4">
+                    <div className="glass-card-enhanced p-4 hover-lift">
                         <div className="flex items-center gap-4">
                             <div className="flex-1">
                                 <div className="flex items-center justify-between mb-2">
@@ -191,8 +191,8 @@ export default function LabsPage() {
                         <a
                             key={lab.id}
                             href={lab.status !== 'locked' ? `/labs/${lab.id}` : '#'}
-                            className={`card flex gap-6 relative overflow-hidden group ${lab.status === 'locked' ? 'opacity-60 cursor-not-allowed' : ''
-                                }`}
+                            className={`card hover-lift flex gap-6 relative overflow-hidden group stagger-item ${lab.status === 'locked' ? 'opacity-60 cursor-not-allowed' : ''}`}
+                            style={{ animationDelay: `${0.1 + index * 0.08}s` }}
                         >
                             {/* Progress Indicator */}
                             <div
@@ -216,8 +216,8 @@ export default function LabsPage() {
                                 <div className="flex items-center gap-3 mb-2">
                                     <span className="text-xs text-[var(--text-muted)]">Lab {lab.id}</span>
                                     <span className={`badge ${lab.difficulty === 'Beginner' ? 'badge-success' :
-                                            lab.difficulty === 'Intermediate' ? 'badge-warning' :
-                                                'badge-danger'
+                                        lab.difficulty === 'Intermediate' ? 'badge-warning' :
+                                            'badge-danger'
                                         } text-[10px]`}>
                                         {lab.difficulty}
                                     </span>
@@ -274,8 +274,8 @@ export default function LabsPage() {
                                 </div>
 
                                 <ChevronRight className={`w-6 h-6 ${lab.status === 'locked'
-                                        ? 'text-[var(--text-muted)]'
-                                        : 'text-[var(--text-muted)] group-hover:text-[var(--primary)] group-hover:translate-x-1 transition-all'
+                                    ? 'text-[var(--text-muted)]'
+                                    : 'text-[var(--text-muted)] group-hover:text-[var(--primary)] group-hover:translate-x-1 transition-all'
                                     }`} />
                             </div>
                         </a>
