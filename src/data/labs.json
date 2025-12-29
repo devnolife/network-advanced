@@ -13,6 +13,8 @@
         "difficulty": "BEGINNER",
         "durationMinutes": 30,
         "maxScore": 100,
+        "isLocked": false,
+        "prerequisite": null,
         "topology": {
             "devices": [
                 {
@@ -66,24 +68,12 @@
             ],
             "links": [
                 {
-                    "source": {
-                        "device": "pc1",
-                        "interface": "Ethernet0"
-                    },
-                    "destination": {
-                        "device": "router1",
-                        "interface": "GigabitEthernet0/0"
-                    }
+                    "source": { "device": "pc1", "interface": "Ethernet0" },
+                    "destination": { "device": "router1", "interface": "GigabitEthernet0/0" }
                 },
                 {
-                    "source": {
-                        "device": "router1",
-                        "interface": "GigabitEthernet0/1"
-                    },
-                    "destination": {
-                        "device": "pc2",
-                        "interface": "Ethernet0"
-                    }
+                    "source": { "device": "router1", "interface": "GigabitEthernet0/1" },
+                    "destination": { "device": "pc2", "interface": "Ethernet0" }
                 }
             ]
         },
@@ -94,11 +84,7 @@
                 "description": "Open the terminal for Router1 and enter privileged mode using the 'enable' command",
                 "points": 10,
                 "order": 1,
-                "validation": {
-                    "type": "command-executed",
-                    "device": "router1",
-                    "command": "enable"
-                }
+                "validation": { "type": "command-executed", "device": "router1", "command": "enable" }
             },
             {
                 "id": "t1-2",
@@ -106,11 +92,7 @@
                 "description": "Use the 'show ip interface brief' command to view all interfaces",
                 "points": 15,
                 "order": 2,
-                "validation": {
-                    "type": "command-executed",
-                    "device": "router1",
-                    "command": "show ip interface brief"
-                }
+                "validation": { "type": "command-executed", "device": "router1", "command": "show ip interface brief" }
             },
             {
                 "id": "t1-3",
@@ -118,14 +100,7 @@
                 "description": "Set PC1's IP address to 10.1.1.2 with mask 255.255.255.0 and gateway 10.1.1.1",
                 "points": 20,
                 "order": 3,
-                "validation": {
-                    "type": "config-check",
-                    "device": "pc1",
-                    "expected": {
-                        "ip": "10.1.1.2",
-                        "gateway": "10.1.1.1"
-                    }
-                }
+                "validation": { "type": "config-check", "device": "pc1", "expected": { "ip": "10.1.1.2", "gateway": "10.1.1.1" } }
             },
             {
                 "id": "t1-4",
@@ -133,11 +108,7 @@
                 "description": "Ping from PC1 to the router's GigabitEthernet0/0 interface (10.1.1.1)",
                 "points": 15,
                 "order": 4,
-                "validation": {
-                    "type": "connectivity-test",
-                    "from": "pc1",
-                    "to": "10.1.1.1"
-                }
+                "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.1.1.1" }
             },
             {
                 "id": "t1-5",
@@ -145,11 +116,7 @@
                 "description": "Display the routing table on Router1 using 'show ip route'",
                 "points": 15,
                 "order": 5,
-                "validation": {
-                    "type": "command-executed",
-                    "device": "router1",
-                    "command": "show ip route"
-                }
+                "validation": { "type": "command-executed", "device": "router1", "command": "show ip route" }
             },
             {
                 "id": "t1-6",
@@ -157,357 +124,309 @@
                 "description": "Ping from PC1 to PC2 (10.2.1.2) through the router",
                 "points": 25,
                 "order": 6,
-                "validation": {
-                    "type": "connectivity-test",
-                    "from": "pc1",
-                    "to": "10.2.1.2"
-                }
+                "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.2.1.2" }
             }
         ],
         "hints": [
-            {
-                "id": "h1-1",
-                "taskId": "t1-1",
-                "content": "Double-click on Router1 to open the terminal, then type 'enable' and press Enter",
-                "pointCost": 2,
-                "order": 1
-            },
-            {
-                "id": "h1-2",
-                "taskId": "t1-3",
-                "content": "Use the command: set ip 10.1.1.2 255.255.255.0 10.1.1.1",
-                "pointCost": 3,
-                "order": 1
-            },
-            {
-                "id": "h1-3",
-                "taskId": "t1-4",
-                "content": "Use the command: ping 10.1.1.1",
-                "pointCost": 2,
-                "order": 1
-            }
+            { "id": "h1-1", "taskId": "t1-1", "content": "Double-click on Router1 to open the terminal, then type 'enable' and press Enter", "pointCost": 2, "order": 1 },
+            { "id": "h1-2", "taskId": "t1-3", "content": "Use the command: set ip 10.1.1.2 255.255.255.0 10.1.1.1", "pointCost": 3, "order": 1 },
+            { "id": "h1-3", "taskId": "t1-4", "content": "Use the command: ping 10.1.1.1", "pointCost": 2, "order": 1 }
+        ]
+    },
+    {
+        "id": "lab-2",
+        "number": 2,
+        "title": "TCP/IP Protocol Analysis",
+        "description": "Deep dive into TCP/IP protocols using packet capture and analysis. Learn to understand headers, three-way handshake, and common protocols.",
+        "objectives": [
+            "Capture network packets using built-in tools",
+            "Analyze TCP three-way handshake",
+            "Understand IP header fields",
+            "Identify common protocols (HTTP, DNS, ICMP)"
+        ],
+        "difficulty": "BEGINNER",
+        "durationMinutes": 45,
+        "maxScore": 100,
+        "isLocked": false,
+        "prerequisite": "lab-1",
+        "topology": {
+            "devices": [
+                { "id": "pc1", "type": "pc", "name": "Client", "hostname": "Client", "x": 100, "y": 200, "initialConfig": { "ip": "192.168.1.10", "mask": "255.255.255.0", "gateway": "192.168.1.1" } },
+                { "id": "router1", "type": "router", "name": "Gateway", "hostname": "GW", "x": 400, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "192.168.1.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "10.0.0.1", "mask": "255.255.255.0" }] } },
+                { "id": "server", "type": "pc", "name": "Server", "hostname": "Server", "x": 700, "y": 200, "initialConfig": { "ip": "10.0.0.100", "mask": "255.255.255.0", "gateway": "10.0.0.1" } }
+            ],
+            "links": [
+                { "source": { "device": "pc1", "interface": "Ethernet0" }, "destination": { "device": "router1", "interface": "GigabitEthernet0/0" } },
+                { "source": { "device": "router1", "interface": "GigabitEthernet0/1" }, "destination": { "device": "server", "interface": "Ethernet0" } }
+            ]
+        },
+        "tasks": [
+            { "id": "t2-1", "title": "Start Packet Capture", "description": "Enable packet capture on the Client PC", "points": 10, "order": 1, "validation": { "type": "command-executed", "device": "pc1", "command": "capture start" } },
+            { "id": "t2-2", "title": "Generate ICMP Traffic", "description": "Ping the server to generate ICMP packets", "points": 15, "order": 2, "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.0.0.100" } },
+            { "id": "t2-3", "title": "Analyze ICMP Packets", "description": "View captured ICMP packets and identify echo request/reply", "points": 20, "order": 3, "validation": { "type": "packet-capture", "protocol": "ICMP" } },
+            { "id": "t2-4", "title": "Generate TCP Traffic", "description": "Initiate a TCP connection to the server on port 80", "points": 20, "order": 4, "validation": { "type": "command-executed", "device": "pc1", "command": "telnet 10.0.0.100 80" } },
+            { "id": "t2-5", "title": "Identify TCP Handshake", "description": "Find SYN, SYN-ACK, and ACK packets in the capture", "points": 25, "order": 5, "validation": { "type": "packet-analysis", "expected": ["SYN", "SYN-ACK", "ACK"] } },
+            { "id": "t2-6", "title": "Export Analysis Report", "description": "Save the packet capture analysis report", "points": 10, "order": 6, "validation": { "type": "command-executed", "device": "pc1", "command": "capture export" } }
+        ],
+        "hints": [
+            { "id": "h2-1", "taskId": "t2-1", "content": "Use 'capture start' command to begin packet capture", "pointCost": 2, "order": 1 },
+            { "id": "h2-2", "taskId": "t2-5", "content": "Look for TCP flags: SYN=0x02, SYN-ACK=0x12, ACK=0x10", "pointCost": 4, "order": 1 }
         ]
     },
     {
         "id": "lab-3",
         "number": 3,
-        "title": "VPN Technologies - IPSec & SSL VPN",
+        "title": "VPN Technologies - IPSec Configuration",
         "description": "Configure a site-to-site IPSec VPN between two routers with IKE Phase 1 and Phase 2 negotiation, crypto maps, and ESP encryption.",
         "objectives": [
-            "Understand IKE Phase 1 and Phase 2 negotiation process",
-            "Configure ISAKMP policies with encryption and hash algorithms",
-            "Set up pre-shared keys for authentication",
-            "Create and apply crypto maps to interfaces",
-            "Verify IPSec tunnel establishment and encrypted traffic"
+            "Understand IKE Phase 1 and Phase 2 negotiation",
+            "Configure ISAKMP policies",
+            "Set up pre-shared keys",
+            "Create and apply crypto maps",
+            "Verify IPSec tunnel establishment"
         ],
         "difficulty": "INTERMEDIATE",
         "durationMinutes": 60,
         "maxScore": 100,
+        "isLocked": true,
+        "prerequisite": "lab-2",
         "topology": {
             "devices": [
-                {
-                    "id": "pc1",
-                    "type": "pc",
-                    "name": "PC1",
-                    "hostname": "PC1",
-                    "x": 80,
-                    "y": 200,
-                    "initialConfig": {
-                        "ip": "10.1.1.2",
-                        "mask": "255.255.255.0",
-                        "gateway": "10.1.1.1"
-                    }
-                },
-                {
-                    "id": "r1",
-                    "type": "router",
-                    "name": "Router1",
-                    "hostname": "R1",
-                    "x": 250,
-                    "y": 200,
-                    "initialConfig": {
-                        "interfaces": [
-                            {
-                                "name": "GigabitEthernet0/0",
-                                "ip": "10.1.1.1",
-                                "mask": "255.255.255.0",
-                                "status": "up"
-                            },
-                            {
-                                "name": "GigabitEthernet0/1",
-                                "ip": "192.168.1.1",
-                                "mask": "255.255.255.0",
-                                "status": "up"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "id": "isp",
-                    "type": "router",
-                    "name": "ISP Router",
-                    "hostname": "ISP",
-                    "x": 450,
-                    "y": 200,
-                    "initialConfig": {
-                        "interfaces": [
-                            {
-                                "name": "GigabitEthernet0/0",
-                                "ip": "192.168.1.2",
-                                "mask": "255.255.255.0",
-                                "status": "up"
-                            },
-                            {
-                                "name": "GigabitEthernet0/1",
-                                "ip": "192.168.2.2",
-                                "mask": "255.255.255.0",
-                                "status": "up"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "id": "r2",
-                    "type": "router",
-                    "name": "Router2",
-                    "hostname": "R2",
-                    "x": 650,
-                    "y": 200,
-                    "initialConfig": {
-                        "interfaces": [
-                            {
-                                "name": "GigabitEthernet0/0",
-                                "ip": "10.2.1.1",
-                                "mask": "255.255.255.0",
-                                "status": "up"
-                            },
-                            {
-                                "name": "GigabitEthernet0/1",
-                                "ip": "192.168.2.1",
-                                "mask": "255.255.255.0",
-                                "status": "up"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "id": "pc2",
-                    "type": "pc",
-                    "name": "PC2",
-                    "hostname": "PC2",
-                    "x": 820,
-                    "y": 200,
-                    "initialConfig": {
-                        "ip": "10.2.1.2",
-                        "mask": "255.255.255.0",
-                        "gateway": "10.2.1.1"
-                    }
-                }
+                { "id": "pc1", "type": "pc", "name": "PC1", "hostname": "PC1", "x": 80, "y": 200, "initialConfig": { "ip": "10.1.1.2", "mask": "255.255.255.0", "gateway": "10.1.1.1" } },
+                { "id": "r1", "type": "router", "name": "Router1", "hostname": "R1", "x": 250, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "10.1.1.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "192.168.1.1", "mask": "255.255.255.0" }] } },
+                { "id": "r2", "type": "router", "name": "Router2", "hostname": "R2", "x": 550, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "10.2.1.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "192.168.1.2", "mask": "255.255.255.0" }] } },
+                { "id": "pc2", "type": "pc", "name": "PC2", "hostname": "PC2", "x": 720, "y": 200, "initialConfig": { "ip": "10.2.1.2", "mask": "255.255.255.0", "gateway": "10.2.1.1" } }
             ],
             "links": [
-                {
-                    "source": {
-                        "device": "pc1",
-                        "interface": "Ethernet0"
-                    },
-                    "destination": {
-                        "device": "r1",
-                        "interface": "GigabitEthernet0/0"
-                    }
-                },
-                {
-                    "source": {
-                        "device": "r1",
-                        "interface": "GigabitEthernet0/1"
-                    },
-                    "destination": {
-                        "device": "isp",
-                        "interface": "GigabitEthernet0/0"
-                    }
-                },
-                {
-                    "source": {
-                        "device": "isp",
-                        "interface": "GigabitEthernet0/1"
-                    },
-                    "destination": {
-                        "device": "r2",
-                        "interface": "GigabitEthernet0/1"
-                    }
-                },
-                {
-                    "source": {
-                        "device": "r2",
-                        "interface": "GigabitEthernet0/0"
-                    },
-                    "destination": {
-                        "device": "pc2",
-                        "interface": "Ethernet0"
-                    }
-                }
+                { "source": { "device": "pc1", "interface": "Ethernet0" }, "destination": { "device": "r1", "interface": "GigabitEthernet0/0" } },
+                { "source": { "device": "r1", "interface": "GigabitEthernet0/1" }, "destination": { "device": "r2", "interface": "GigabitEthernet0/1" } },
+                { "source": { "device": "r2", "interface": "GigabitEthernet0/0" }, "destination": { "device": "pc2", "interface": "Ethernet0" } }
             ]
         },
         "tasks": [
-            {
-                "id": "t3-1",
-                "title": "Configure IKE Phase 1 Policy",
-                "description": "Create an ISAKMP policy with AES-256 encryption, SHA-256 hash, and DH Group 14",
-                "points": 10,
-                "order": 1,
-                "validation": {
-                    "type": "config-check",
-                    "device": "r1",
-                    "section": "crypto",
-                    "expected": {
-                        "isakmp-policy": {
-                            "encryption": "aes 256",
-                            "hash": "sha256",
-                            "group": 14
-                        }
-                    }
-                }
-            },
-            {
-                "id": "t3-2",
-                "title": "Set Pre-Shared Key",
-                "description": "Configure the PSK 'SecretKey123' for peer 192.168.2.1",
-                "points": 10,
-                "order": 2,
-                "validation": {
-                    "type": "config-check",
-                    "device": "r1",
-                    "section": "crypto",
-                    "expected": {
-                        "isakmp-key": "SecretKey123",
-                        "peer": "192.168.2.1"
-                    }
-                }
-            },
-            {
-                "id": "t3-3",
-                "title": "Create Transform Set",
-                "description": "Define IPSec transform set 'MYSET' with ESP-AES-256 and ESP-SHA256-HMAC",
-                "points": 15,
-                "order": 3,
-                "validation": {
-                    "type": "config-check",
-                    "device": "r1",
-                    "section": "crypto",
-                    "expected": {
-                        "transform-set": "MYSET"
-                    }
-                }
-            },
-            {
-                "id": "t3-4",
-                "title": "Create Crypto Map",
-                "description": "Build crypto map 'MYMAP' with peer and transform set configuration",
-                "points": 15,
-                "order": 4,
-                "validation": {
-                    "type": "config-check",
-                    "device": "r1",
-                    "section": "crypto",
-                    "expected": {
-                        "crypto-map": "MYMAP"
-                    }
-                }
-            },
-            {
-                "id": "t3-5",
-                "title": "Apply Crypto Map",
-                "description": "Apply the crypto map to the WAN interface (GigabitEthernet0/1)",
-                "points": 10,
-                "order": 5,
-                "validation": {
-                    "type": "config-check",
-                    "device": "r1",
-                    "section": "interface",
-                    "expected": {
-                        "interface": "GigabitEthernet0/1",
-                        "crypto-map": "MYMAP"
-                    }
-                }
-            },
-            {
-                "id": "t3-6",
-                "title": "Configure Peer Router",
-                "description": "Set up matching IPSec configuration on Router2",
-                "points": 15,
-                "order": 6,
-                "validation": {
-                    "type": "config-check",
-                    "device": "r2",
-                    "section": "crypto",
-                    "expected": {
-                        "crypto-map": "MYMAP"
-                    }
-                }
-            },
-            {
-                "id": "t3-7",
-                "title": "Verify Tunnel Status",
-                "description": "Check IKE and IPSec SA status using show commands",
-                "points": 10,
-                "order": 7,
-                "validation": {
-                    "type": "tunnel-status",
-                    "status": "up"
-                }
-            },
-            {
-                "id": "t3-8",
-                "title": "Test Connectivity",
-                "description": "Ping from PC1 to PC2 through the VPN tunnel",
-                "points": 5,
-                "order": 8,
-                "validation": {
-                    "type": "connectivity-test",
-                    "from": "pc1",
-                    "to": "10.2.1.2"
-                }
-            },
-            {
-                "id": "t3-9",
-                "title": "Analyze Encrypted Traffic",
-                "description": "Capture packets and verify ESP encapsulation",
-                "points": 10,
-                "order": 9,
-                "validation": {
-                    "type": "packet-capture",
-                    "protocol": "ESP"
-                }
-            }
+            { "id": "t3-1", "title": "Configure ISAKMP Policy", "description": "Create ISAKMP policy with AES-256 encryption and SHA-256 hash", "points": 15, "order": 1, "validation": { "type": "config-check", "device": "r1", "expected": { "crypto-policy": "10" } } },
+            { "id": "t3-2", "title": "Set Pre-Shared Key", "description": "Configure pre-shared key for peer authentication", "points": 10, "order": 2, "validation": { "type": "config-check", "device": "r1", "expected": { "psk": "configured" } } },
+            { "id": "t3-3", "title": "Create Transform Set", "description": "Define IPSec transform set with ESP encryption", "points": 15, "order": 3, "validation": { "type": "config-check", "device": "r1", "expected": { "transform-set": "MYSET" } } },
+            { "id": "t3-4", "title": "Configure Crypto Map", "description": "Create and configure crypto map with peer and transform set", "points": 20, "order": 4, "validation": { "type": "config-check", "device": "r1", "expected": { "crypto-map": "MYMAP" } } },
+            { "id": "t3-5", "title": "Apply Crypto Map", "description": "Apply crypto map to the WAN interface", "points": 10, "order": 5, "validation": { "type": "interface-check", "device": "r1", "interface": "GigabitEthernet0/1", "expected": { "crypto-map": "applied" } } },
+            { "id": "t3-6", "title": "Verify IPSec Tunnel", "description": "Check IKE and IPSec SA status", "points": 20, "order": 6, "validation": { "type": "tunnel-status", "status": "up" } },
+            { "id": "t3-7", "title": "Test VPN Connectivity", "description": "Ping from PC1 to PC2 through the VPN tunnel", "points": 10, "order": 7, "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.2.1.2" } }
         ],
         "hints": [
-            {
-                "id": "h3-1",
-                "taskId": "t3-1",
-                "content": "Enter config mode and use: crypto isakmp policy 10, then encryption aes 256, hash sha256, group 14",
-                "pointCost": 3,
-                "order": 1
-            },
-            {
-                "id": "h3-2",
-                "taskId": "t3-2",
-                "content": "Use: crypto isakmp key SecretKey123 address 192.168.2.1",
-                "pointCost": 2,
-                "order": 1
-            },
-            {
-                "id": "h3-3",
-                "taskId": "t3-3",
-                "content": "Use: crypto ipsec transform-set MYSET esp-aes 256 esp-sha256-hmac",
-                "pointCost": 3,
-                "order": 1
-            },
-            {
-                "id": "h3-4",
-                "taskId": "t3-4",
-                "content": "Use: crypto map MYMAP 10 ipsec-isakmp, then set peer 192.168.2.1, set transform-set MYSET, match address VPN-ACL",
-                "pointCost": 3,
-                "order": 1
-            }
+            { "id": "h3-1", "taskId": "t3-1", "content": "Use: crypto isakmp policy 10, then encryption aes 256, hash sha256", "pointCost": 3, "order": 1 },
+            { "id": "h3-2", "taskId": "t3-4", "content": "Use: crypto map MYMAP 10 ipsec-isakmp, then set peer and transform-set", "pointCost": 4, "order": 1 }
+        ]
+    },
+    {
+        "id": "lab-4",
+        "number": 4,
+        "title": "Firewall Configuration & ACLs",
+        "description": "Configure access control lists and firewall rules to control network traffic. Learn to permit and deny traffic based on source, destination, and protocol.",
+        "objectives": [
+            "Understand ACL syntax and numbering",
+            "Configure standard and extended ACLs",
+            "Apply ACLs to interfaces",
+            "Test and verify firewall rules",
+            "Implement zone-based firewall concepts"
+        ],
+        "difficulty": "INTERMEDIATE",
+        "durationMinutes": 50,
+        "maxScore": 100,
+        "isLocked": true,
+        "prerequisite": "lab-3",
+        "topology": {
+            "devices": [
+                { "id": "inside-pc", "type": "pc", "name": "Inside PC", "hostname": "InsidePC", "x": 80, "y": 150, "initialConfig": { "ip": "10.1.1.10", "mask": "255.255.255.0", "gateway": "10.1.1.1" } },
+                { "id": "firewall", "type": "router", "name": "Firewall", "hostname": "FW", "x": 400, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "10.1.1.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "203.0.113.1", "mask": "255.255.255.0" }] } },
+                { "id": "outside-server", "type": "pc", "name": "Web Server", "hostname": "WebSrv", "x": 720, "y": 200, "initialConfig": { "ip": "203.0.113.100", "mask": "255.255.255.0", "gateway": "203.0.113.1" } }
+            ],
+            "links": [
+                { "source": { "device": "inside-pc", "interface": "Ethernet0" }, "destination": { "device": "firewall", "interface": "GigabitEthernet0/0" } },
+                { "source": { "device": "firewall", "interface": "GigabitEthernet0/1" }, "destination": { "device": "outside-server", "interface": "Ethernet0" } }
+            ]
+        },
+        "tasks": [
+            { "id": "t4-1", "title": "Create Standard ACL", "description": "Create a standard ACL to permit inside network", "points": 15, "order": 1, "validation": { "type": "config-check", "device": "firewall", "expected": { "acl": "10" } } },
+            { "id": "t4-2", "title": "Create Extended ACL", "description": "Create extended ACL to permit HTTP and HTTPS only", "points": 20, "order": 2, "validation": { "type": "config-check", "device": "firewall", "expected": { "acl": "100" } } },
+            { "id": "t4-3", "title": "Apply Inbound ACL", "description": "Apply ACL to inside interface for inbound filtering", "points": 15, "order": 3, "validation": { "type": "interface-check", "device": "firewall", "interface": "GigabitEthernet0/0", "expected": { "acl-in": "applied" } } },
+            { "id": "t4-4", "title": "Apply Outbound ACL", "description": "Apply ACL to outside interface for outbound filtering", "points": 15, "order": 4, "validation": { "type": "interface-check", "device": "firewall", "interface": "GigabitEthernet0/1", "expected": { "acl-out": "applied" } } },
+            { "id": "t4-5", "title": "Test Permitted Traffic", "description": "Verify HTTP traffic is allowed through the firewall", "points": 15, "order": 5, "validation": { "type": "connectivity-test", "from": "inside-pc", "to": "203.0.113.100", "port": 80 } },
+            { "id": "t4-6", "title": "Test Denied Traffic", "description": "Verify SSH traffic is blocked by the firewall", "points": 20, "order": 6, "validation": { "type": "connectivity-blocked", "from": "inside-pc", "to": "203.0.113.100", "port": 22 } }
+        ],
+        "hints": [
+            { "id": "h4-1", "taskId": "t4-1", "content": "Use: access-list 10 permit 10.1.1.0 0.0.0.255", "pointCost": 2, "order": 1 },
+            { "id": "h4-2", "taskId": "t4-2", "content": "Use: access-list 100 permit tcp any host 203.0.113.100 eq 80", "pointCost": 3, "order": 1 }
+        ]
+    },
+    {
+        "id": "lab-5",
+        "number": 5,
+        "title": "Intrusion Detection System (IDS)",
+        "description": "Configure and monitor an Intrusion Detection System to identify suspicious network activity and potential security threats.",
+        "objectives": [
+            "Understand IDS vs IPS concepts",
+            "Configure signature-based detection",
+            "Set up anomaly-based detection rules",
+            "Monitor and analyze security alerts",
+            "Respond to detected intrusions"
+        ],
+        "difficulty": "INTERMEDIATE",
+        "durationMinutes": 55,
+        "maxScore": 100,
+        "isLocked": true,
+        "prerequisite": "lab-4",
+        "topology": {
+            "devices": [
+                { "id": "attacker", "type": "pc", "name": "Attacker", "hostname": "Attacker", "x": 80, "y": 100, "initialConfig": { "ip": "192.168.100.50", "mask": "255.255.255.0", "gateway": "192.168.100.1" } },
+                { "id": "ids-sensor", "type": "router", "name": "IDS Sensor", "hostname": "IDS", "x": 400, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "192.168.100.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "10.0.0.1", "mask": "255.255.255.0" }] } },
+                { "id": "target", "type": "pc", "name": "Target Server", "hostname": "Target", "x": 720, "y": 200, "initialConfig": { "ip": "10.0.0.100", "mask": "255.255.255.0", "gateway": "10.0.0.1" } }
+            ],
+            "links": [
+                { "source": { "device": "attacker", "interface": "Ethernet0" }, "destination": { "device": "ids-sensor", "interface": "GigabitEthernet0/0" } },
+                { "source": { "device": "ids-sensor", "interface": "GigabitEthernet0/1" }, "destination": { "device": "target", "interface": "Ethernet0" } }
+            ]
+        },
+        "tasks": [
+            { "id": "t5-1", "title": "Enable IDS Mode", "description": "Enable intrusion detection on the IDS sensor", "points": 10, "order": 1, "validation": { "type": "config-check", "device": "ids-sensor", "expected": { "ids-mode": "enabled" } } },
+            { "id": "t5-2", "title": "Load Signature Database", "description": "Load the threat signature database", "points": 15, "order": 2, "validation": { "type": "config-check", "device": "ids-sensor", "expected": { "signatures": "loaded" } } },
+            { "id": "t5-3", "title": "Configure Alert Threshold", "description": "Set alert severity threshold to medium", "points": 10, "order": 3, "validation": { "type": "config-check", "device": "ids-sensor", "expected": { "threshold": "medium" } } },
+            { "id": "t5-4", "title": "Simulate Port Scan", "description": "Run a port scan from attacker to target", "points": 20, "order": 4, "validation": { "type": "command-executed", "device": "attacker", "command": "nmap -sS 10.0.0.100" } },
+            { "id": "t5-5", "title": "View IDS Alerts", "description": "Check IDS alerts for detected port scan", "points": 20, "order": 5, "validation": { "type": "alert-check", "device": "ids-sensor", "expected": { "alert-type": "port-scan" } } },
+            { "id": "t5-6", "title": "Generate Report", "description": "Export security incident report", "points": 25, "order": 6, "validation": { "type": "command-executed", "device": "ids-sensor", "command": "export report" } }
+        ],
+        "hints": [
+            { "id": "h5-1", "taskId": "t5-1", "content": "Use: ids enable on the sensor device", "pointCost": 2, "order": 1 },
+            { "id": "h5-4", "taskId": "t5-4", "content": "nmap -sS performs a SYN stealth scan", "pointCost": 3, "order": 1 }
+        ]
+    },
+    {
+        "id": "lab-6",
+        "number": 6,
+        "title": "Network Address Translation (NAT)",
+        "description": "Configure various types of NAT including static NAT, dynamic NAT, and PAT (Port Address Translation) for network address translation.",
+        "objectives": [
+            "Understand NAT types and use cases",
+            "Configure static NAT for servers",
+            "Set up dynamic NAT with address pools",
+            "Implement PAT for multiple hosts",
+            "Verify NAT translations"
+        ],
+        "difficulty": "INTERMEDIATE",
+        "durationMinutes": 45,
+        "maxScore": 100,
+        "isLocked": true,
+        "prerequisite": "lab-5",
+        "topology": {
+            "devices": [
+                { "id": "internal-pc", "type": "pc", "name": "Internal PC", "hostname": "IntPC", "x": 80, "y": 150, "initialConfig": { "ip": "192.168.1.10", "mask": "255.255.255.0", "gateway": "192.168.1.1" } },
+                { "id": "internal-server", "type": "pc", "name": "Web Server", "hostname": "WebSrv", "x": 80, "y": 280, "initialConfig": { "ip": "192.168.1.100", "mask": "255.255.255.0", "gateway": "192.168.1.1" } },
+                { "id": "nat-router", "type": "router", "name": "NAT Router", "hostname": "NAT", "x": 400, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "192.168.1.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "203.0.113.1", "mask": "255.255.255.0" }] } },
+                { "id": "external-pc", "type": "pc", "name": "External Client", "hostname": "ExtClient", "x": 720, "y": 200, "initialConfig": { "ip": "203.0.113.50", "mask": "255.255.255.0", "gateway": "203.0.113.1" } }
+            ],
+            "links": [
+                { "source": { "device": "internal-pc", "interface": "Ethernet0" }, "destination": { "device": "nat-router", "interface": "GigabitEthernet0/0" } },
+                { "source": { "device": "internal-server", "interface": "Ethernet0" }, "destination": { "device": "nat-router", "interface": "GigabitEthernet0/0" } },
+                { "source": { "device": "nat-router", "interface": "GigabitEthernet0/1" }, "destination": { "device": "external-pc", "interface": "Ethernet0" } }
+            ]
+        },
+        "tasks": [
+            { "id": "t6-1", "title": "Define Inside/Outside Interfaces", "description": "Mark inside and outside NAT interfaces", "points": 10, "order": 1, "validation": { "type": "interface-check", "device": "nat-router", "expected": { "nat-inside": "Gi0/0", "nat-outside": "Gi0/1" } } },
+            { "id": "t6-2", "title": "Configure Static NAT", "description": "Create static NAT for the web server", "points": 20, "order": 2, "validation": { "type": "config-check", "device": "nat-router", "expected": { "static-nat": "192.168.1.100 to 203.0.113.100" } } },
+            { "id": "t6-3", "title": "Configure PAT", "description": "Set up PAT for internal network using overload", "points": 25, "order": 3, "validation": { "type": "config-check", "device": "nat-router", "expected": { "pat": "configured" } } },
+            { "id": "t6-4", "title": "Test Outbound NAT", "description": "Ping external host from internal PC", "points": 15, "order": 4, "validation": { "type": "connectivity-test", "from": "internal-pc", "to": "203.0.113.50" } },
+            { "id": "t6-5", "title": "Test Static NAT", "description": "Access web server from external client", "points": 15, "order": 5, "validation": { "type": "connectivity-test", "from": "external-pc", "to": "203.0.113.100" } },
+            { "id": "t6-6", "title": "View NAT Translations", "description": "Display active NAT translation table", "points": 15, "order": 6, "validation": { "type": "command-executed", "device": "nat-router", "command": "show ip nat translations" } }
+        ],
+        "hints": [
+            { "id": "h6-1", "taskId": "t6-1", "content": "Use: ip nat inside on Gi0/0, ip nat outside on Gi0/1", "pointCost": 2, "order": 1 },
+            { "id": "h6-3", "taskId": "t6-3", "content": "Use: ip nat inside source list 1 interface Gi0/1 overload", "pointCost": 3, "order": 1 }
+        ]
+    },
+    {
+        "id": "lab-7",
+        "number": 7,
+        "title": "Wireless Security - WPA2/WPA3",
+        "description": "Configure secure wireless networks with WPA2-Enterprise and WPA3. Understand authentication methods and encryption protocols.",
+        "objectives": [
+            "Understand wireless security protocols",
+            "Configure WPA2-Enterprise with RADIUS",
+            "Set up WPA3-Personal with SAE",
+            "Implement 802.1X authentication",
+            "Analyze wireless security vulnerabilities"
+        ],
+        "difficulty": "ADVANCED",
+        "durationMinutes": 70,
+        "maxScore": 100,
+        "isLocked": true,
+        "prerequisite": "lab-6",
+        "topology": {
+            "devices": [
+                { "id": "wireless-client", "type": "pc", "name": "Wireless Client", "hostname": "WClient", "x": 80, "y": 200, "initialConfig": { "ip": "dhcp", "mask": "", "gateway": "" } },
+                { "id": "access-point", "type": "router", "name": "Access Point", "hostname": "AP", "x": 300, "y": 200, "initialConfig": { "interfaces": [{ "name": "Wireless0", "ip": "192.168.10.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/0", "ip": "10.0.0.2", "mask": "255.255.255.0" }] } },
+                { "id": "radius-server", "type": "pc", "name": "RADIUS Server", "hostname": "RADIUS", "x": 550, "y": 100, "initialConfig": { "ip": "10.0.0.10", "mask": "255.255.255.0", "gateway": "10.0.0.1" } },
+                { "id": "core-router", "type": "router", "name": "Core Router", "hostname": "Core", "x": 550, "y": 280, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "10.0.0.1", "mask": "255.255.255.0" }] } }
+            ],
+            "links": [
+                { "source": { "device": "wireless-client", "interface": "Wireless0" }, "destination": { "device": "access-point", "interface": "Wireless0" } },
+                { "source": { "device": "access-point", "interface": "GigabitEthernet0/0" }, "destination": { "device": "core-router", "interface": "GigabitEthernet0/0" } },
+                { "source": { "device": "radius-server", "interface": "Ethernet0" }, "destination": { "device": "core-router", "interface": "GigabitEthernet0/0" } }
+            ]
+        },
+        "tasks": [
+            { "id": "t7-1", "title": "Configure SSID", "description": "Set up wireless SSID on access point", "points": 10, "order": 1, "validation": { "type": "config-check", "device": "access-point", "expected": { "ssid": "SecureWiFi" } } },
+            { "id": "t7-2", "title": "Enable WPA2-Enterprise", "description": "Configure WPA2-Enterprise security mode", "points": 15, "order": 2, "validation": { "type": "config-check", "device": "access-point", "expected": { "security": "WPA2-Enterprise" } } },
+            { "id": "t7-3", "title": "Configure RADIUS Server", "description": "Set up RADIUS server authentication", "points": 20, "order": 3, "validation": { "type": "config-check", "device": "access-point", "expected": { "radius": "10.0.0.10" } } },
+            { "id": "t7-4", "title": "Create User Account", "description": "Add user account on RADIUS server", "points": 15, "order": 4, "validation": { "type": "config-check", "device": "radius-server", "expected": { "user": "testuser" } } },
+            { "id": "t7-5", "title": "Connect Client", "description": "Connect wireless client using EAP-TLS", "points": 20, "order": 5, "validation": { "type": "wireless-connect", "device": "wireless-client", "expected": { "connected": true, "auth": "EAP-TLS" } } },
+            { "id": "t7-6", "title": "Verify Encryption", "description": "Confirm AES encryption is active", "points": 20, "order": 6, "validation": { "type": "wireless-check", "expected": { "encryption": "AES" } } }
+        ],
+        "hints": [
+            { "id": "h7-1", "taskId": "t7-2", "content": "Use: security wpa2 enterprise mode", "pointCost": 3, "order": 1 },
+            { "id": "h7-3", "taskId": "t7-3", "content": "Use: radius-server host 10.0.0.10 key SharedSecret", "pointCost": 4, "order": 1 }
+        ]
+    },
+    {
+        "id": "lab-8",
+        "number": 8,
+        "title": "Advanced Threat Analysis & Response",
+        "description": "Analyze advanced persistent threats, perform forensic analysis, and implement incident response procedures for sophisticated attacks.",
+        "objectives": [
+            "Identify advanced persistent threat patterns",
+            "Perform network forensic analysis",
+            "Implement incident response procedures",
+            "Analyze malware communication patterns",
+            "Document and report security incidents"
+        ],
+        "difficulty": "ADVANCED",
+        "durationMinutes": 90,
+        "maxScore": 100,
+        "isLocked": true,
+        "prerequisite": "lab-7",
+        "topology": {
+            "devices": [
+                { "id": "compromised-host", "type": "pc", "name": "Compromised Host", "hostname": "Victim", "x": 80, "y": 200, "initialConfig": { "ip": "10.1.1.50", "mask": "255.255.255.0", "gateway": "10.1.1.1" } },
+                { "id": "edge-firewall", "type": "router", "name": "Edge Firewall", "hostname": "EdgeFW", "x": 300, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "10.1.1.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "203.0.113.1", "mask": "255.255.255.0" }] } },
+                { "id": "siem-server", "type": "pc", "name": "SIEM Server", "hostname": "SIEM", "x": 300, "y": 80, "initialConfig": { "ip": "10.1.1.200", "mask": "255.255.255.0", "gateway": "10.1.1.1" } },
+                { "id": "c2-server", "type": "pc", "name": "C2 Server", "hostname": "C2", "x": 550, "y": 200, "initialConfig": { "ip": "203.0.113.66", "mask": "255.255.255.0", "gateway": "203.0.113.1" } }
+            ],
+            "links": [
+                { "source": { "device": "compromised-host", "interface": "Ethernet0" }, "destination": { "device": "edge-firewall", "interface": "GigabitEthernet0/0" } },
+                { "source": { "device": "siem-server", "interface": "Ethernet0" }, "destination": { "device": "edge-firewall", "interface": "GigabitEthernet0/0" } },
+                { "source": { "device": "edge-firewall", "interface": "GigabitEthernet0/1" }, "destination": { "device": "c2-server", "interface": "Ethernet0" } }
+            ]
+        },
+        "tasks": [
+            { "id": "t8-1", "title": "Analyze SIEM Alerts", "description": "Review SIEM alerts for suspicious activity", "points": 10, "order": 1, "validation": { "type": "command-executed", "device": "siem-server", "command": "show alerts" } },
+            { "id": "t8-2", "title": "Identify C2 Communication", "description": "Find command and control traffic patterns", "points": 20, "order": 2, "validation": { "type": "analysis-check", "expected": { "c2-detected": true } } },
+            { "id": "t8-3", "title": "Capture Malware Traffic", "description": "Capture network traffic from compromised host", "points": 15, "order": 3, "validation": { "type": "packet-capture", "device": "edge-firewall", "protocol": "any" } },
+            { "id": "t8-4", "title": "Block C2 Domain", "description": "Add firewall rule to block C2 server", "points": 15, "order": 4, "validation": { "type": "config-check", "device": "edge-firewall", "expected": { "blocked": "203.0.113.66" } } },
+            { "id": "t8-5", "title": "Isolate Compromised Host", "description": "Quarantine the infected system", "points": 15, "order": 5, "validation": { "type": "network-isolation", "device": "compromised-host", "expected": { "isolated": true } } },
+            { "id": "t8-6", "title": "Document IOCs", "description": "Record indicators of compromise", "points": 10, "order": 6, "validation": { "type": "command-executed", "device": "siem-server", "command": "export ioc" } },
+            { "id": "t8-7", "title": "Generate Incident Report", "description": "Create comprehensive incident report", "points": 15, "order": 7, "validation": { "type": "command-executed", "device": "siem-server", "command": "generate report" } }
+        ],
+        "hints": [
+            { "id": "h8-1", "taskId": "t8-2", "content": "Look for beaconing patterns - regular interval connections to external IPs", "pointCost": 4, "order": 1 },
+            { "id": "h8-4", "taskId": "t8-4", "content": "Use: access-list 100 deny ip any host 203.0.113.66", "pointCost": 3, "order": 1 }
         ]
     }
 ]

@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
-  title: "Network Security Virtual Lab",
-  description: "Advanced Network Security and Protocols Interactive Learning Platform - Learn VPN, Firewall, IDS, and more through hands-on simulations",
-  keywords: ["network security", "VPN", "IPSec", "firewall", "IDS", "cybersecurity", "learning", "simulation"],
-  authors: [{ name: "Network Security Lab Team" }],
+  title: "CyberNexus - Virtual Security Lab",
+  description: "Advanced Cybersecurity Interactive Learning Platform - Master VPN, Firewall, IDS, and more through immersive hands-on simulations",
+  keywords: ["cybersecurity", "network security", "VPN", "IPSec", "firewall", "IDS", "hacking", "learning", "simulation", "virtual lab"],
+  authors: [{ name: "CyberNexus Team" }],
   openGraph: {
-    title: "Network Security Virtual Lab",
-    description: "Interactive platform for learning network security through hands-on simulations",
+    title: "CyberNexus - Virtual Security Lab",
+    description: "Immersive platform for mastering cybersecurity through hands-on virtual simulations",
     type: "website",
   },
 };
@@ -19,15 +20,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body>
-        {children}
+      <body className="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

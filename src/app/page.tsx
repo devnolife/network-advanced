@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { cn } from '@/lib/utils';
 import {
   Shield,
   Lock,
@@ -19,9 +19,16 @@ import {
   Sparkles,
   Code2,
   Globe,
-  Layers
+  Layers,
+  Menu,
+  X,
+  Sun,
+  Moon,
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 
+// Lab data with unique colors
 const labs = [
   {
     id: 1,
@@ -30,8 +37,9 @@ const labs = [
     icon: Network,
     difficulty: 'Beginner',
     duration: '30 min',
-    topics: ['IP Configuration', 'Routing Basics', 'Connectivity Testing'],
-    color: 'from-cyan-500 to-blue-500'
+    gradient: 'from-cyan-500 to-blue-600',
+    shadowColor: 'shadow-cyan-500/30',
+    iconBg: 'bg-linear-to-br from-cyan-500 to-blue-600',
   },
   {
     id: 2,
@@ -40,8 +48,9 @@ const labs = [
     icon: Activity,
     difficulty: 'Beginner',
     duration: '45 min',
-    topics: ['Packet Capture', 'Protocol Analysis', 'PCAP Export'],
-    color: 'from-green-500 to-emerald-500'
+    gradient: 'from-emerald-500 to-teal-600',
+    shadowColor: 'shadow-emerald-500/30',
+    iconBg: 'bg-linear-to-br from-emerald-500 to-teal-600',
   },
   {
     id: 3,
@@ -50,8 +59,9 @@ const labs = [
     icon: Lock,
     difficulty: 'Intermediate',
     duration: '60 min',
-    topics: ['IKE Phase 1 & 2', 'Crypto Maps', 'Tunnel Verification'],
-    color: 'from-purple-500 to-violet-500'
+    gradient: 'from-violet-500 to-purple-600',
+    shadowColor: 'shadow-violet-500/30',
+    iconBg: 'bg-linear-to-br from-violet-500 to-purple-600',
   },
   {
     id: 4,
@@ -60,8 +70,9 @@ const labs = [
     icon: Shield,
     difficulty: 'Intermediate',
     duration: '60 min',
-    topics: ['Security Zones', 'Firewall Rules', 'NAT Configuration'],
-    color: 'from-orange-500 to-red-500'
+    gradient: 'from-orange-500 to-red-600',
+    shadowColor: 'shadow-orange-500/30',
+    iconBg: 'bg-linear-to-br from-orange-500 to-red-600',
   },
   {
     id: 5,
@@ -70,8 +81,9 @@ const labs = [
     icon: FileCode,
     difficulty: 'Intermediate',
     duration: '45 min',
-    topics: ['Standard ACL', 'Extended ACL', 'Time-based ACL'],
-    color: 'from-pink-500 to-rose-500'
+    gradient: 'from-pink-500 to-rose-600',
+    shadowColor: 'shadow-pink-500/30',
+    iconBg: 'bg-linear-to-br from-pink-500 to-rose-600',
   },
   {
     id: 6,
@@ -80,8 +92,9 @@ const labs = [
     icon: Wifi,
     difficulty: 'Intermediate',
     duration: '45 min',
-    topics: ['Static NAT', 'Dynamic NAT', 'PAT/Overload'],
-    color: 'from-amber-500 to-yellow-500'
+    gradient: 'from-amber-500 to-orange-600',
+    shadowColor: 'shadow-amber-500/30',
+    iconBg: 'bg-linear-to-br from-amber-500 to-orange-600',
   },
   {
     id: 7,
@@ -90,8 +103,9 @@ const labs = [
     icon: Eye,
     difficulty: 'Advanced',
     duration: '60 min',
-    topics: ['Signature Creation', 'Alert Analysis', 'False Positive Tuning'],
-    color: 'from-teal-500 to-cyan-500'
+    gradient: 'from-sky-500 to-indigo-600',
+    shadowColor: 'shadow-sky-500/30',
+    iconBg: 'bg-linear-to-br from-sky-500 to-indigo-600',
   },
   {
     id: 8,
@@ -100,8 +114,9 @@ const labs = [
     icon: Award,
     difficulty: 'Advanced',
     duration: '120 min',
-    topics: ['Network Design', 'Multi-layer Security', 'Documentation'],
-    color: 'from-indigo-500 to-purple-500'
+    gradient: 'from-fuchsia-500 to-purple-600',
+    shadowColor: 'shadow-fuchsia-500/30',
+    iconBg: 'bg-linear-to-br from-fuchsia-500 to-purple-600',
   }
 ];
 
@@ -109,518 +124,485 @@ const features = [
   {
     icon: Terminal,
     title: 'Real CLI Terminal',
-    description: 'Authentic Cisco-like command line interface with auto-completion and syntax highlighting',
-    gradient: 'from-cyan-500 to-blue-600'
+    description: 'Authentic Cisco-like command line interface with auto-completion',
+    color: 'text-cyan-400',
+    bgColor: 'from-cyan-500/20 to-blue-500/20',
+    ringColor: 'ring-cyan-500/30',
   },
   {
     icon: Network,
     title: 'Interactive Topology',
-    description: 'Drag-and-drop network canvas with real-time packet animation and device management',
-    gradient: 'from-purple-500 to-pink-600'
+    description: 'Drag-and-drop network canvas with real-time packet animation',
+    color: 'text-violet-400',
+    bgColor: 'from-violet-500/20 to-purple-500/20',
+    ringColor: 'ring-violet-500/30',
   },
   {
     icon: Activity,
     title: 'Live Packet Capture',
-    description: 'Monitor and analyze network traffic in real-time with protocol decoding and filtering',
-    gradient: 'from-emerald-500 to-teal-600'
+    description: 'Monitor and analyze network traffic in real-time',
+    color: 'text-emerald-400',
+    bgColor: 'from-emerald-500/20 to-teal-500/20',
+    ringColor: 'ring-emerald-500/30',
   },
   {
     icon: Zap,
     title: 'Instant Feedback',
-    description: 'Auto-validation of configurations with immediate feedback and scoring system',
-    gradient: 'from-amber-500 to-orange-600'
+    description: 'Auto-validation of configurations with scoring system',
+    color: 'text-amber-400',
+    bgColor: 'from-amber-500/20 to-orange-500/20',
+    ringColor: 'ring-amber-500/30',
   }
 ];
 
+const stats = [
+  { value: '8+', label: 'Lab Modules', icon: Layers, color: 'text-cyan-400', glowColor: 'group-hover:shadow-cyan-500/20' },
+  { value: '50+', label: 'CLI Commands', icon: Code2, color: 'text-violet-400', glowColor: 'group-hover:shadow-violet-500/20' },
+  { value: '100%', label: 'Browser Based', icon: Globe, color: 'text-emerald-400', glowColor: 'group-hover:shadow-emerald-500/20' },
+  { value: 'Free', label: 'Open Source', icon: Sparkles, color: 'text-amber-400', glowColor: 'group-hover:shadow-amber-500/20' }
+];
+
+// Badge component - modern soft style
+function Badge({
+  children,
+  variant = 'default',
+  className,
+}: {
+  children: React.ReactNode;
+  variant?: 'default' | 'beginner' | 'intermediate' | 'advanced';
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm transition-all duration-200',
+        {
+          'bg-zinc-200/80 dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-300': variant === 'default',
+          'bg-emerald-100/80 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400': variant === 'beginner',
+          'bg-amber-100/80 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400': variant === 'intermediate',
+          'bg-red-100/80 dark:bg-red-500/15 text-red-700 dark:text-red-400': variant === 'advanced',
+        },
+        className
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+// Card component with theme support - modern glassmorphism style
+function Card({
+  children,
+  className,
+  hover = false,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  hover?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        'rounded-2xl border border-zinc-200/60 dark:border-zinc-700/60 bg-white/70 dark:bg-zinc-800/70 backdrop-blur-xl shadow-sm dark:shadow-lg dark:shadow-black/20 transition-all duration-300',
+        hover && 'hover:border-cyan-500/40 dark:hover:border-cyan-400/40 hover:bg-white/90 dark:hover:bg-zinc-800/90 hover:shadow-xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/20',
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default function HomePage() {
-  const [particles, setParticles] = useState<Array<{ left: string, top: string, delay: string, size: number }>>([]);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme, resolvedTheme } = useTheme();
 
   useEffect(() => {
-    const newParticles = [...Array(30)].map(() => ({
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-      delay: `${Math.random() * 8}s`,
-      size: Math.random() * 4 + 2,
-    }));
-    setParticles(newParticles);
-  }, []);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    setMounted(true);
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white overflow-x-hidden">
-      {/* Animated Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        {/* Gradient Mesh */}
-        <div
-          className="absolute w-[800px] h-[800px] rounded-full opacity-30 blur-[120px]"
-          style={{
-            background: 'radial-gradient(circle, rgba(6, 182, 212, 0.4) 0%, transparent 70%)',
-            left: mousePosition.x / 10 - 400,
-            top: mousePosition.y / 10 - 400,
-            transition: 'left 0.3s ease-out, top 0.3s ease-out',
-          }}
-        />
-        <div
-          className="absolute w-[600px] h-[600px] rounded-full opacity-25 blur-[100px]"
-          style={{
-            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%)',
-            right: mousePosition.x / 15 - 300,
-            bottom: mousePosition.y / 15 - 300,
-            transition: 'right 0.3s ease-out, bottom 0.3s ease-out',
-          }}
-        />
+    <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased transition-colors duration-300">
+      {/* Background gradients - theme aware */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        {/* Light mode backgrounds - smooth gradients */}
+        <div className="dark:hidden absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(6,182,212,0.15),transparent)]" />
+        <div className="dark:hidden absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_100%_100%,rgba(139,92,246,0.1),transparent)]" />
+        <div className="dark:hidden absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_0%_50%,rgba(16,185,129,0.08),transparent)]" />
+        <div className="dark:hidden absolute inset-0 bg-linear-to-b from-zinc-50/80 to-white" />
 
-        {/* Grid Pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
-            `,
-            backgroundSize: '100px 100px',
-          }}
-        />
+        {/* Dark mode backgrounds - enhanced visibility */}
+        <div className="hidden dark:block absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(6,182,212,0.25),transparent)]" />
+        <div className="hidden dark:block absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_100%_100%,rgba(139,92,246,0.2),transparent)]" />
+        <div className="hidden dark:block absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_0%_100%,rgba(16,185,129,0.15),transparent)]" />
+        <div className="hidden dark:block absolute inset-0 bg-[radial-gradient(ellipse_30%_30%_at_90%_10%,rgba(236,72,153,0.12),transparent)]" />
 
-        {/* Floating Particles */}
-        {particles.map((particle, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full bg-cyan-400"
-            style={{
-              left: particle.left,
-              top: particle.top,
-              width: particle.size,
-              height: particle.size,
-              opacity: 0.4,
-              boxShadow: `0 0 ${particle.size * 3}px rgba(6, 182, 212, 0.5)`,
-              animation: `float ${10 + i % 5}s ease-in-out infinite`,
-              animationDelay: particle.delay,
-            }}
-          />
-        ))}
+        {/* Subtle noise texture for depth - very light */}
+        <div className="absolute inset-0 opacity-[0.015] dark:opacity-[0.02] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNhKSIvPjwvc3ZnPg==')]" />
       </div>
 
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#030712]/70 border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 blur-lg opacity-50" />
-              <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/25">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
+      {/* Header - glassmorphism style */}
+      <header className="sticky top-0 z-50 border-b border-zinc-200/40 dark:border-zinc-700/50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl transition-all duration-300">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          {/* Logo */}
+          <a href="/" className="flex items-center gap-3 animate-fade-in">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/25">
+              <Shield className="h-5 w-5 text-white" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">NetSecLab</h1>
-              <p className="text-[11px] text-slate-500 font-medium tracking-wide">VIRTUAL SECURITY LAB</p>
-            </div>
-          </div>
+            <span className="text-lg font-bold text-zinc-900 dark:text-white">
+              Cyber<span className="text-cyan-500 dark:text-cyan-400">Nexus</span>
+            </span>
+          </a>
 
-          <nav className="hidden md:flex items-center gap-8">
-            <a href="#labs" className="text-sm text-slate-400 hover:text-white transition-colors font-medium">Labs</a>
-            <a href="#features" className="text-sm text-slate-400 hover:text-white transition-colors font-medium">Features</a>
-            <a href="#docs" className="text-sm text-slate-400 hover:text-white transition-colors font-medium">Documentation</a>
+          {/* Desktop Nav */}
+          <nav className="hidden items-center gap-1 md:flex">
+            {['Features', 'Labs', 'Docs'].map((item, i) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className={cn(
+                  "rounded-md px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 animate-fade-in",
+                  i === 0 && "animation-delay-100",
+                  i === 1 && "animation-delay-200",
+                  i === 2 && "animation-delay-300"
+                )}
+              >
+                {item}
+              </a>
+            ))}
           </nav>
 
+          {/* CTA & Theme Toggle */}
           <div className="flex items-center gap-3">
-            <button className="px-4 py-2 text-sm text-slate-400 hover:text-white transition-colors font-medium">Sign In</button>
-            <button className="group relative px-5 py-2.5 rounded-xl font-semibold text-sm overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 transition-all duration-300 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <span className="relative flex items-center gap-2 text-white">
-                Get Started
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </span>
+            {/* Theme Toggle */}
+            {mounted && (
+              <button
+                onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all duration-300"
+                aria-label="Toggle theme"
+              >
+                {resolvedTheme === 'dark' ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
+              </button>
+            )}
+            <a
+              href="/login"
+              className="hidden rounded-lg border border-zinc-200 dark:border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all sm:inline-flex animate-fade-in"
+            >
+              Login
+            </a>
+            <a
+              href="/register"
+              className="hidden rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/25 transition-all hover:shadow-cyan-500/40 hover:-translate-y-0.5 sm:inline-flex animate-fade-in"
+            >
+              Get Started
+            </a>
+            <button
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 md:hidden transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-4 md:hidden animate-fade-in">
+            <nav className="flex flex-col gap-2">
+              {['Features', 'Labs', 'Docs'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  className="rounded-md px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item}
+                </a>
+              ))}
+              <a
+                href="/labs"
+                className="mt-2 rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 px-4 py-2 text-center text-sm font-semibold text-white"
+              >
+                Get Started
+              </a>
+            </nav>
+          </div>
+        )}
       </header>
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20">
-        <div className="max-w-6xl mx-auto px-6 text-center relative z-10">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 border border-cyan-500/20 mb-10 backdrop-blur-sm">
-            <div className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+      <main>
+        {/* Hero Section */}
+        <section className="relative overflow-hidden px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+          <div className="mx-auto max-w-4xl text-center">
+            {/* Badge */}
+            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 px-4 py-1.5 text-sm animate-fade-in-up">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+              </span>
+              <span className="text-zinc-600 dark:text-zinc-400">Interactive Learning Platform</span>
             </div>
-            <span className="text-sm font-medium text-slate-300">
-              <Sparkles className="w-4 h-4 inline mr-1.5 text-amber-400" />
-              Version 1.0 — Now Available
-            </span>
-          </div>
 
-          {/* Main Heading */}
-          <h1 className="relative">
-            <span className="block text-7xl md:text-8xl lg:text-[10rem] font-black tracking-tight leading-none">
-              <span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-cyan-300 bg-clip-text text-transparent drop-shadow-[0_0_50px_rgba(6,182,212,0.3)]">
+            {/* Title */}
+            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl animate-fade-in-up animation-delay-100">
+              <span className="text-zinc-900 dark:text-white">Master </span>
+              <span className="bg-linear-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent animate-gradient">
                 Network
               </span>
-            </span>
-            <span className="block text-7xl md:text-8xl lg:text-[10rem] font-black tracking-tight leading-none mt-2">
-              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_50px_rgba(168,85,247,0.3)]">
+              <br />
+              <span className="bg-linear-to-r from-violet-500 to-purple-600 bg-clip-text text-transparent animate-gradient">
                 Security
               </span>
-            </span>
-            <span className="block text-3xl md:text-4xl lg:text-5xl font-bold text-slate-400 mt-6 tracking-wide">
-              Virtual Lab
-            </span>
-          </h1>
+              <span className="text-zinc-900 dark:text-white"> Hands-on</span>
+            </h1>
 
-          {/* Description */}
-          <p className="mt-10 text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Master network security through{' '}
-            <span className="text-cyan-400 font-semibold">hands-on practice</span>.
-            Configure VPNs, firewalls, and IDS systems in a realistic virtual environment.
-          </p>
+            {/* Description */}
+            <p className="mx-auto mb-10 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400 sm:text-xl animate-fade-in-up animation-delay-200">
+              The most advanced platform to learn VPNs, Firewalls, and IDS through
+              real-time browser-based simulations.
+            </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
-            <a
-              href="/labs"
-              className="group relative px-8 py-4 rounded-2xl font-bold text-lg overflow-hidden shadow-2xl shadow-cyan-500/20"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-500 bg-[length:200%_100%] animate-shimmer" />
-              <span className="relative flex items-center gap-3 text-white">
-                <Play className="w-5 h-5" />
+            {/* CTA Buttons */}
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row animate-fade-in-up animation-delay-300">
+              <a
+                href="/labs"
+                className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-cyan-500 to-blue-600 px-8 py-4 text-lg font-bold text-white shadow-xl shadow-cyan-500/25 transition-all hover:-translate-y-1 hover:shadow-cyan-500/40 hover-lift"
+              >
+                <Play className="h-5 w-5" />
                 Start Learning
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </a>
-            <a
-              href="#labs"
-              className="group px-8 py-4 rounded-2xl font-bold text-lg border-2 border-slate-700 hover:border-slate-500 transition-all bg-slate-900/50 backdrop-blur-sm hover:bg-slate-800/50"
-            >
-              <span className="flex items-center gap-3 text-slate-300 group-hover:text-white transition-colors">
-                <BookOpen className="w-5 h-5" />
-                Browse Labs
-              </span>
-            </a>
+              </a>
+              <a
+                href="#labs"
+                className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-8 py-4 text-lg font-semibold text-zinc-900 dark:text-white transition-all hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover-lift"
+              >
+                <BookOpen className="h-5 w-5" />
+                View Modules
+              </a>
+            </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-20 max-w-4xl mx-auto">
-            {[
-              { value: '8', label: 'Guided Labs', icon: Layers },
-              { value: '50+', label: 'CLI Commands', icon: Code2 },
-              { value: '100%', label: 'Browser Based', icon: Globe },
-              { value: 'Free', label: 'Open Source', icon: Sparkles }
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className="group relative p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-cyan-500/30 transition-all duration-500 hover:shadow-lg hover:shadow-cyan-500/5 backdrop-blur-sm"
-              >
-                <stat.icon className="w-6 h-6 text-cyan-500 mb-3 group-hover:scale-110 transition-transform" />
-                <div className="text-3xl md:text-4xl font-black bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-slate-500 font-medium mt-1">{stat.label}</div>
-              </div>
+          <div className="mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
+            {stats.map((stat, i) => (
+              <Card key={i} className={cn(
+                "group p-6 text-center transition-all hover:shadow-lg hover-lift card-glow animate-fade-in-up",
+                stat.glowColor,
+                i === 0 && "animation-delay-400",
+                i === 1 && "animation-delay-500",
+                i === 2 && "animation-delay-600",
+                i === 3 && "animation-delay-700"
+              )}>
+                <stat.icon className={cn("mx-auto mb-3 h-8 w-8 transition-transform group-hover:scale-110", stat.color)} />
+                <div className="text-2xl font-bold text-zinc-900 dark:text-white sm:text-3xl">{stat.value}</div>
+                <div className="text-sm text-zinc-600 dark:text-zinc-300">{stat.label}</div>
+              </Card>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500">
-          <span className="text-xs font-medium tracking-wider uppercase">Scroll</span>
-          <div className="w-6 h-10 rounded-full border-2 border-slate-700 flex items-start justify-center p-2">
-            <div className="w-1.5 h-3 rounded-full bg-slate-500 animate-bounce" />
-          </div>
-        </div>
-      </section>
-
-      {/* Terminal Preview Section */}
-      <section className="py-32 px-6 relative">
-        <div className="max-w-5xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-16">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm font-medium mb-6">
-              <Terminal className="w-4 h-4" />
-              Interactive Terminal
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Real-World{' '}
-              <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                CLI Experience
-              </span>
-            </h2>
-            <p className="text-slate-400 text-lg max-w-xl mx-auto">
-              Practice with authentic Cisco-like commands in our fully interactive terminal
-            </p>
-          </div>
-
-          {/* Terminal Window */}
-          <div className="relative">
-            {/* Glow Effect */}
-            <div className="absolute -inset-4 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 rounded-3xl blur-2xl opacity-60" />
-
-            <div className="relative rounded-2xl overflow-hidden border border-slate-700/50 shadow-2xl shadow-black/50">
+        {/* Terminal Preview - modern style */}
+        <section className="px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl animate-fade-in-up">
+            <Card className="overflow-hidden shadow-2xl shadow-cyan-500/10 dark:shadow-cyan-500/20">
               {/* Terminal Header */}
-              <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-slate-800 to-slate-900 border-b border-slate-700/50">
-                <div className="flex items-center gap-4">
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500 shadow-lg shadow-red-500/50" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500 shadow-lg shadow-yellow-500/50" />
-                    <div className="w-3 h-3 rounded-full bg-green-500 shadow-lg shadow-green-500/50" />
-                  </div>
-                  <div className="h-4 w-px bg-slate-700" />
-                  <span className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                    <Terminal className="w-4 h-4 text-cyan-400" />
-                    Router1 — Terminal
-                  </span>
+              <div className="flex items-center gap-4 border-b border-zinc-200/40 dark:border-zinc-700/50 bg-zinc-100/90 dark:bg-zinc-800/90 backdrop-blur-sm px-5 py-4">
+                <div className="flex gap-2">
+                  <div className="h-3 w-3 rounded-full bg-red-400 dark:bg-red-500 shadow-sm" />
+                  <div className="h-3 w-3 rounded-full bg-yellow-400 dark:bg-yellow-500 shadow-sm" />
+                  <div className="h-3 w-3 rounded-full bg-green-400 dark:bg-green-500 shadow-sm" />
                 </div>
-                <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold tracking-wide">
-                  ● CONNECTED
+                <span className="flex items-center gap-2 font-mono text-sm text-zinc-500 dark:text-zinc-400">
+                  <Terminal className="h-4 w-4" />
+                  router-01.ssh
                 </span>
               </div>
-
-              {/* Terminal Content */}
-              <div className="bg-[#0a0a0f] p-6 font-mono text-sm space-y-1.5 min-h-[320px]">
-                <div className="flex">
-                  <span className="text-cyan-400 font-semibold">Router1&gt;</span>
-                  <span className="text-slate-200 ml-2">enable</span>
-                </div>
-                <div className="flex">
-                  <span className="text-cyan-400 font-semibold">Router1#</span>
-                  <span className="text-slate-200 ml-2">configure terminal</span>
-                </div>
-                <div className="text-slate-500 italic pl-4">Enter configuration commands, one per line. End with CNTL/Z.</div>
-                <div className="flex">
-                  <span className="text-amber-400 font-semibold">Router1(config)#</span>
-                  <span className="text-slate-200 ml-2">crypto isakmp policy 10</span>
-                </div>
-                <div className="flex">
-                  <span className="text-amber-400 font-semibold">Router1(config-isakmp)#</span>
-                  <span className="text-slate-200 ml-2">encryption aes 256</span>
-                </div>
-                <div className="flex">
-                  <span className="text-amber-400 font-semibold">Router1(config-isakmp)#</span>
-                  <span className="text-slate-200 ml-2">hash sha256</span>
-                </div>
-                <div className="flex">
-                  <span className="text-amber-400 font-semibold">Router1(config-isakmp)#</span>
-                  <span className="text-slate-200 ml-2">authentication pre-share</span>
-                </div>
-                <div className="flex">
-                  <span className="text-amber-400 font-semibold">Router1(config-isakmp)#</span>
-                  <span className="text-slate-200 ml-2">group 14</span>
-                </div>
-                <div className="mt-3 py-2.5 px-4 bg-emerald-500/10 border-l-4 border-emerald-500 text-emerald-400 rounded-r-lg font-medium">
-                  ✓ IKE Phase 1 policy configured successfully
-                </div>
-                <div className="flex mt-3">
-                  <span className="text-amber-400 font-semibold">Router1(config-isakmp)#</span>
-                  <span className="ml-2 w-2.5 h-5 bg-cyan-400 animate-pulse rounded-sm" />
+              {/* Terminal Body */}
+              <div className="bg-zinc-950 p-6 font-mono text-sm leading-relaxed sm:text-base">
+                <div className="space-y-2">
+                  <div>
+                    <span className="text-cyan-400">admin@router-01:~$</span>{' '}
+                    <span className="text-zinc-300 typing-cursor">configure terminal</span>
+                  </div>
+                  <div className="text-zinc-600"># Entering configuration mode...</div>
+                  <div className="animate-fade-in animation-delay-200">
+                    <span className="text-violet-400">router(config)#</span>{' '}
+                    <span className="text-zinc-300">interface gigabitEthernet 0/1</span>
+                  </div>
+                  <div className="animate-fade-in animation-delay-400">
+                    <span className="text-violet-400">router(config-if)#</span>{' '}
+                    <span className="text-zinc-300">ip address 192.168.1.1 255.255.255.0</span>
+                  </div>
+                  <div className="animate-fade-in animation-delay-600">
+                    <span className="text-violet-400">router(config-if)#</span>{' '}
+                    <span className="text-zinc-300">no shutdown</span>
+                  </div>
+                  <div className="pt-2 text-emerald-400 animate-fade-in animation-delay-800">
+                    %LINK-5-CHANGED: Interface GigabitEthernet0/1, changed state to up
+                  </div>
                 </div>
               </div>
+            </Card>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section id="features" className="px-4 py-20 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-12 text-center">
+              <h2 className="mb-4 text-3xl font-bold text-zinc-900 dark:text-white sm:text-4xl">
+                Platform <span className="text-cyan-500 dark:text-cyan-400">Features</span>
+              </h2>
+              <p className="mx-auto max-w-2xl text-zinc-600 dark:text-zinc-400">
+                Everything you need to master network security in one platform.
+              </p>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {features.map((feature, i) => (
+                <Card key={i} hover className={cn("p-6 animate-fade-in-up hover-lift card-glow", `animation-delay-${(i + 1) * 100}`)}>
+                  <div className={cn("mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-linear-to-br ring-1", feature.bgColor, feature.ringColor)}>
+                    <feature.icon className={cn("h-6 w-6", feature.color)} />
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold text-zinc-900 dark:text-white">{feature.title}</h3>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-300">{feature.description}</p>
+                </Card>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-32 px-6 relative">
-        <div className="max-w-6xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-20">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-sm font-medium mb-6">
-              <Sparkles className="w-4 h-4" />
-              Features
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Powerful Learning{' '}
-              <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-                Tools
-              </span>
-            </h2>
-            <p className="text-slate-400 text-lg max-w-xl mx-auto">
-              Everything you need to master network security in one integrated platform
-            </p>
-          </div>
-
-          {/* Feature Cards */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, i) => (
-              <div
-                key={i}
-                className="group relative p-8 rounded-3xl bg-slate-900/50 border border-slate-800 hover:border-slate-700 transition-all duration-500 hover:-translate-y-2 backdrop-blur-sm"
-              >
-                {/* Icon with Gradient Background */}
-                <div className={`relative w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                  <feature.icon className="w-8 h-8 text-white" />
-                  <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${feature.gradient} opacity-50 blur-xl`} />
-                </div>
-
-                {/* Content */}
-                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-300 transition-colors">
-                  {feature.title}
-                </h3>
-                <p className="text-slate-400 text-sm leading-relaxed">
-                  {feature.description}
+        {/* Labs Section */}
+        <section id="labs" className="px-4 py-20 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            {/* Section Header */}
+            <div className="mb-12 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+              <div>
+                <h2 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-white sm:text-4xl">
+                  Available <span className="text-cyan-500 dark:text-cyan-400">Laboratories</span>
+                </h2>
+                <p className="text-zinc-600 dark:text-zinc-400">
+                  Progressive learning path from basics to advanced security.
                 </p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Labs Section */}
-      <section id="labs" className="py-32 px-6 relative">
-        <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-20">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium mb-6">
-              <BookOpen className="w-4 h-4" />
-              Lab Modules
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Comprehensive{' '}
-              <span className="bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent">
-                Lab Modules
-              </span>
-            </h2>
-            <p className="text-slate-400 text-lg max-w-xl mx-auto">
-              8 progressive labs covering essential network security topics from basics to advanced
-            </p>
-          </div>
-
-          {/* Lab Cards */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {labs.map((lab, index) => (
-              <a
-                key={lab.id}
-                href={`/labs/${lab.id}`}
-                className="group relative p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-slate-600 transition-all duration-500 hover:-translate-y-2 backdrop-blur-sm overflow-hidden"
-              >
-                {/* Gradient Accent */}
-                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${lab.color}`} />
-
-                {/* Icon */}
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${lab.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                  <lab.icon className="w-7 h-7 text-white" />
-                </div>
-
-                {/* Content */}
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-bold text-slate-500">LAB {lab.id}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-bold text-slate-400 uppercase tracking-wide">
-                    {lab.difficulty}
-                  </span>
-                </div>
-
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">
-                  {lab.title}
-                </h3>
-
-                <p className="text-sm text-slate-400 mb-4 line-clamp-2">
-                  {lab.description}
-                </p>
-
-                {/* Topics */}
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {lab.topics.slice(0, 2).map((topic, i) => (
-                    <span key={i} className="text-[10px] px-2 py-1 rounded-full bg-slate-800 text-slate-400 font-medium">
-                      {topic}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Footer */}
-                <div className="flex items-center justify-between pt-4 border-t border-slate-800">
-                  <span className="text-xs text-slate-500 font-medium">{lab.duration}</span>
-                  <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" />
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-32 px-6 relative">
-        <div className="max-w-4xl mx-auto">
-          <div className="relative p-12 md:p-16 rounded-3xl overflow-hidden">
-            {/* Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-blue-500/20 to-purple-500/20" />
-            <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-xl" />
-            <div className="absolute inset-0 border border-slate-700/50 rounded-3xl" />
-
-            {/* Glow */}
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/30 rounded-full blur-[100px]" />
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/30 rounded-full blur-[100px]" />
-
-            <div className="relative z-10 text-center">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                Ready to Start Learning?
-              </h2>
-              <p className="text-lg text-slate-300 mb-10 max-w-xl mx-auto">
-                Jump into your first lab and experience hands-on network security training.
-              </p>
               <a
                 href="/labs"
-                className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl font-bold text-lg bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-2xl shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-105 transition-all duration-300"
+                className="group inline-flex items-center gap-2 text-sm font-semibold text-cyan-500 dark:text-cyan-400 hover:text-cyan-400 dark:hover:text-cyan-300"
               >
-                <Play className="w-6 h-6" />
-                Launch Lab Environment
+                View All Labs
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
             </div>
+
+            {/* Labs Grid */}
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {labs.map((lab, i) => (
+                <a
+                  key={lab.id}
+                  href={`/labs/${lab.id}`}
+                  className={cn("group animate-fade-in-up", `animation-delay-${(i + 1) * 100}`)}
+                >
+                  <Card hover className="flex h-full flex-col p-5 hover-lift card-glow">
+                    {/* Icon */}
+                    <div className={cn("mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg shadow-lg", lab.iconBg, lab.shadowColor)}>
+                      <lab.icon className="h-5 w-5 text-white" />
+                    </div>
+
+                    {/* Meta */}
+                    <div className="mb-3 flex items-center gap-2">
+                      <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                        LAB-{String(lab.id).padStart(2, '0')}
+                      </span>
+                      <Badge
+                        variant={
+                          lab.difficulty === 'Beginner'
+                            ? 'beginner'
+                            : lab.difficulty === 'Intermediate'
+                              ? 'intermediate'
+                              : 'advanced'
+                        }
+                      >
+                        {lab.difficulty}
+                      </Badge>
+                    </div>
+
+                    {/* Content */}
+                    <h3 className="mb-2 font-semibold text-zinc-900 dark:text-white transition-colors group-hover:text-cyan-500 dark:group-hover:text-cyan-400">
+                      {lab.title}
+                    </h3>
+                    <p className="mb-4 flex-1 text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
+                      {lab.description}
+                    </p>
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between pt-4 mt-auto">
+                      <span className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-300">
+                        <Activity className="h-3.5 w-3.5" />
+                        {lab.duration}
+                      </span>
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 transition-all duration-300 group-hover:bg-cyan-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-cyan-500/30">
+                        <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </div>
+                    </div>
+                  </Card>
+                </a>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-800 py-12 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/25">
-                <Shield className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="font-bold text-white">Network Security Virtual Lab</h3>
-                <p className="text-xs text-slate-500">Built with ❤️ for Education</p>
-              </div>
+      {/* Footer - clean modern style */}
+      <footer className="border-t border-zinc-200/50 dark:border-zinc-700/50 bg-zinc-50/90 dark:bg-zinc-900/90 backdrop-blur-xl">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="grid gap-12 md:grid-cols-4">
+            {/* Brand */}
+            <div className="md:col-span-2">
+              <a href="/" className="mb-6 inline-flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/25">
+                  <Shield className="h-5 w-5 text-white" />
+                </div>
+                <span className="text-xl font-bold text-zinc-900 dark:text-white">CyberNexus</span>
+              </a>
+              <p className="max-w-sm text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+                Empowering the next generation of cybersecurity professionals
+                through immersive, hands-on virtual lab experiences.
+              </p>
             </div>
 
-            <div className="flex items-center gap-8 text-sm text-slate-500">
-              <a href="#" className="hover:text-white transition-colors">Documentation</a>
-              <a href="#" className="hover:text-white transition-colors">GitHub</a>
-              <a href="#" className="hover:text-white transition-colors">Discord</a>
-              <a href="#" className="hover:text-white transition-colors">License</a>
+            {/* Links */}
+            <div>
+              <h4 className="mb-5 text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-300">Platform</h4>
+              <ul className="space-y-3 text-sm">
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Lab Modules</a></li>
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Documentation</a></li>
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Learning Paths</a></li>
+              </ul>
             </div>
 
-            <p className="text-sm text-slate-500">
-              © 2024 NetSecLab. MIT License.
-            </p>
+            <div>
+              <h4 className="mb-5 text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-300">Community</h4>
+              <ul className="space-y-3 text-sm">
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">GitHub</a></li>
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Discord</a></li>
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Twitter</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-zinc-200/50 dark:border-zinc-700/50 pt-8 text-sm text-zinc-500 dark:text-zinc-400 sm:flex-row">
+            <p>© 2024 CyberNexus. Open Source Education.</p>
+            <div className="flex gap-8">
+              <a href="#" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Terms of Service</a>
+            </div>
           </div>
         </div>
       </footer>
-
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0) translateX(0); }
-          25% { transform: translateY(-20px) translateX(10px); }
-          50% { transform: translateY(-10px) translateX(-10px); }
-          75% { transform: translateY(-30px) translateX(5px); }
-        }
-        @keyframes shimmer {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-        .animate-shimmer {
-          animation: shimmer 3s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   );
 }
