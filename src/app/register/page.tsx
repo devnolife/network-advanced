@@ -22,19 +22,19 @@ export default function RegisterPage() {
 
     // Validate passwords match
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError('Kata sandi tidak cocok');
       return;
     }
 
     // Validate password strength
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError('Kata sandi minimal 6 karakter');
       return;
     }
 
     // Validate username
     if (username.length < 3) {
-      setError('Username must be at least 3 characters');
+      setError('Nama pengguna minimal 3 karakter');
       return;
     }
 
@@ -50,7 +50,7 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Registration failed');
+        setError(data.error || 'Pendaftaran gagal');
         setLoading(false);
         return;
       }
@@ -58,7 +58,7 @@ export default function RegisterPage() {
       // Redirect to student dashboard
       router.push('/dashboard/student');
     } catch {
-      setError('Something went wrong. Please try again.');
+      setError('Terjadi kesalahan. Silakan coba lagi.');
       setLoading(false);
     }
   };
@@ -83,10 +83,10 @@ export default function RegisterPage() {
           {/* Header */}
           <div className="text-center lg:text-left mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">
-              Create Account
+              Buat Akun
             </h1>
             <p className="text-zinc-400">
-              Join our community of cybersecurity learners
+              Bergabunglah dengan komunitas pelajar keamanan siber kami
             </p>
           </div>
 
@@ -108,7 +108,7 @@ export default function RegisterPage() {
                 {/* Name Field */}
                 <div className="space-y-2">
                   <label htmlFor="name" className="block text-sm font-medium text-zinc-300">
-                    Full Name
+                    Nama Lengkap
                   </label>
                   <div className="relative group">
                     <div className="absolute -inset-0.5 bg-linear-to-r from-cyan-500 to-violet-500 rounded-xl opacity-0 group-focus-within:opacity-100 blur transition-opacity" />
@@ -130,7 +130,7 @@ export default function RegisterPage() {
                 {/* Username Field */}
                 <div className="space-y-2">
                   <label htmlFor="username" className="block text-sm font-medium text-zinc-300">
-                    Username
+                    Nama Pengguna
                   </label>
                   <div className="relative group">
                     <div className="absolute -inset-0.5 bg-linear-to-r from-cyan-500 to-violet-500 rounded-xl opacity-0 group-focus-within:opacity-100 blur transition-opacity" />
@@ -147,13 +147,13 @@ export default function RegisterPage() {
                       />
                     </div>
                   </div>
-                  <p className="text-xs text-zinc-500">Only lowercase letters, numbers, and underscores</p>
+                  <p className="text-xs text-zinc-500">Hanya huruf kecil, angka, dan garis bawah</p>
                 </div>
 
                 {/* Password Field */}
                 <div className="space-y-2">
                   <label htmlFor="password" className="block text-sm font-medium text-zinc-300">
-                    Password
+                    Kata Sandi
                   </label>
                   <div className="relative group">
                     <div className="absolute -inset-0.5 bg-linear-to-r from-cyan-500 to-violet-500 rounded-xl opacity-0 group-focus-within:opacity-100 blur transition-opacity" />
@@ -182,7 +182,7 @@ export default function RegisterPage() {
                 {/* Confirm Password Field */}
                 <div className="space-y-2">
                   <label htmlFor="confirmPassword" className="block text-sm font-medium text-zinc-300">
-                    Confirm Password
+                    Konfirmasi Kata Sandi
                   </label>
                   <div className="relative group">
                     <div className="absolute -inset-0.5 bg-linear-to-r from-cyan-500 to-violet-500 rounded-xl opacity-0 group-focus-within:opacity-100 blur transition-opacity" />
@@ -215,10 +215,10 @@ export default function RegisterPage() {
                     </svg>
                   </div>
                   <span className="text-sm text-zinc-400 group-hover:text-zinc-300 transition-colors">
-                    I agree to the{' '}
-                    <Link href="/terms" className="text-cyan-400 hover:text-cyan-300">Terms of Service</Link>
-                    {' '}and{' '}
-                    <Link href="/privacy" className="text-cyan-400 hover:text-cyan-300">Privacy Policy</Link>
+                    Saya setuju dengan{' '}
+                    <Link href="/terms" className="text-cyan-400 hover:text-cyan-300">Syarat Layanan</Link>
+                    {' '}dan{' '}
+                    <Link href="/privacy" className="text-cyan-400 hover:text-cyan-300">Kebijakan Privasi</Link>
                   </span>
                 </label>
 
@@ -235,11 +235,11 @@ export default function RegisterPage() {
                     {loading ? (
                       <>
                         <Loader2 className="h-5 w-5 animate-spin" />
-                        Creating account...
+                        Membuat akun...
                       </>
                     ) : (
                       <>
-                        Create Account
+                        Buat Akun
                         <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                       </>
                     )}
@@ -252,9 +252,9 @@ export default function RegisterPage() {
           {/* Login Link */}
           <div className="mt-8 text-center">
             <p className="text-zinc-500">
-              Already have an account?{' '}
+              Sudah punya akun?{' '}
               <Link href="/login" className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors">
-                Sign in
+                Masuk
               </Link>
             </p>
           </div>
@@ -310,8 +310,8 @@ export default function RegisterPage() {
                 <BookOpen className="h-6 w-6 text-violet-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-white">50+ Interactive Labs</h3>
-                <p className="text-sm text-zinc-400">Learn by doing with real scenarios</p>
+                <h3 className="font-semibold text-white">50+ Lab Interaktif</h3>
+                <p className="text-sm text-zinc-400">Belajar dengan praktik skenario nyata</p>
               </div>
             </div>
             <div className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
@@ -319,8 +319,8 @@ export default function RegisterPage() {
                 <Award className="h-6 w-6 text-cyan-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-white">Earn Certifications</h3>
-                <p className="text-sm text-zinc-400">Get recognized for your skills</p>
+                <h3 className="font-semibold text-white">Dapatkan Sertifikasi</h3>
+                <p className="text-sm text-zinc-400">Diakui atas keterampilan Anda</p>
               </div>
             </div>
             <div className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
@@ -328,15 +328,15 @@ export default function RegisterPage() {
                 <Sparkles className="h-6 w-6 text-blue-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-white">AI-Powered Learning</h3>
-                <p className="text-sm text-zinc-400">Personalized guidance & feedback</p>
+                <h3 className="font-semibold text-white">Pembelajaran Berbasis AI</h3>
+                <p className="text-sm text-zinc-400">Panduan & umpan balik personal</p>
               </div>
             </div>
           </div>
         </div>
 
         <div className="relative z-10 text-sm text-zinc-500 text-right">
-          © 2025 CyberNexus. All rights reserved.
+          © 2025 CyberNexus. Hak cipta dilindungi.
         </div>
       </div>
     </div>

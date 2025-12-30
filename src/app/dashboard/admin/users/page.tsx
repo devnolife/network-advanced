@@ -178,6 +178,7 @@ export default function UsersPage() {
         <select
           value={filterRole}
           onChange={(e) => setFilterRole(e.target.value)}
+          title="Filter by Role"
           className="px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
         >
           <option value="all">All Roles</option>
@@ -247,10 +248,10 @@ export default function UsersPage() {
                   </td>
                   <td className="py-4 px-6">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="p-2 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors">
+                      <button title="Edit User" className="p-2 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors">
                         <Edit className="h-4 w-4" />
                       </button>
-                      <button className="p-2 rounded-lg hover:bg-red-500/10 text-zinc-400 hover:text-red-400 transition-colors">
+                      <button title="Delete User" className="p-2 rounded-lg hover:bg-red-500/10 text-zinc-400 hover:text-red-400 transition-colors">
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>

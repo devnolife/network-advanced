@@ -178,8 +178,8 @@ export default function StudentLabsPage() {
             <BookOpen className="w-5 h-5 text-cyan-400" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">My Labs</h1>
-            <p className="text-sm text-zinc-500">Browse and continue your learning journey</p>
+            <h1 className="text-xl font-bold text-white">Lab Saya</h1>
+            <p className="text-sm text-zinc-500">Jelajahi dan lanjutkan perjalanan belajarmu</p>
           </div>
         </div>
 
@@ -196,7 +196,7 @@ export default function StudentLabsPage() {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
           <input
             type="text"
-            placeholder="Search labs..."
+            placeholder="Cari lab..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-12 pr-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent transition-all"
@@ -211,11 +211,11 @@ export default function StudentLabsPage() {
             className="appearance-none pl-4 pr-10 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent transition-all cursor-pointer"
             aria-label="Filter by status"
           >
-            <option value="all">All Status</option>
-            <option value="available">Available</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
-            <option value="locked">Locked</option>
+            <option value="all">Semua Status</option>
+            <option value="available">Tersedia</option>
+            <option value="in-progress">Sedang Berjalan</option>
+            <option value="completed">Selesai</option>
+            <option value="locked">Terkunci</option>
           </select>
           <Filter className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 pointer-events-none" />
         </div>
@@ -225,12 +225,13 @@ export default function StudentLabsPage() {
           <select
             value={filterDifficulty}
             onChange={(e) => setFilterDifficulty(e.target.value)}
+            title="Filter by Difficulty Level"
             className="appearance-none pl-4 pr-10 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent transition-all cursor-pointer"
           >
-            <option value="all">All Levels</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
+            <option value="all">Semua Level</option>
+            <option value="Beginner">Pemula</option>
+            <option value="Intermediate">Menengah</option>
+            <option value="Advanced">Lanjutan</option>
           </select>
           <Filter className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 pointer-events-none" />
         </div>
@@ -245,7 +246,7 @@ export default function StudentLabsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{labs.length}</p>
-              <p className="text-xs text-zinc-500">Total Labs</p>
+              <p className="text-xs text-zinc-500">Total Lab</p>
             </div>
           </div>
         </div>
@@ -256,7 +257,7 @@ export default function StudentLabsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{labs.filter(l => getLabStatus(l) === 'completed').length}</p>
-              <p className="text-xs text-zinc-500">Completed</p>
+              <p className="text-xs text-zinc-500">Selesai</p>
             </div>
           </div>
         </div>
@@ -267,7 +268,7 @@ export default function StudentLabsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{labs.filter(l => getLabStatus(l) === 'in-progress').length}</p>
-              <p className="text-xs text-zinc-500">In Progress</p>
+              <p className="text-xs text-zinc-500">Sedang Berjalan</p>
             </div>
           </div>
         </div>
@@ -278,7 +279,7 @@ export default function StudentLabsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{labs.filter(l => getLabStatus(l) === 'locked').length}</p>
-              <p className="text-xs text-zinc-500">Locked</p>
+              <p className="text-xs text-zinc-500">Terkunci</p>
             </div>
           </div>
         </div>
@@ -308,7 +309,7 @@ export default function StudentLabsPage() {
                   <div className="text-center p-4">
                     <Lock className="h-10 w-10 text-zinc-500 mx-auto mb-3" />
                     <p className="text-sm text-zinc-400 font-medium">Lab Terkunci</p>
-                    <p className="text-xs text-zinc-500 mt-1">{lab.lockedReason || 'Selesaikan lab sebelumnya'}</p>
+                    <p className="text-xs text-zinc-500 mt-1">Selesaikan lab sebelumnya</p>
                   </div>
                 </div>
               )}
@@ -358,7 +359,7 @@ export default function StudentLabsPage() {
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Target className="h-4 w-4" />
-                    {tasksCompleted}/{lab.totalTasks} tasks
+                    {tasksCompleted}/{lab.totalTasks} tugas
                   </div>
                 </div>
               </div>
@@ -366,7 +367,7 @@ export default function StudentLabsPage() {
               {/* Progress Bar */}
               <div className="px-6 pb-4">
                 <div className="flex items-center justify-between text-sm mb-2">
-                  <span className={isLocked ? "text-zinc-600" : "text-zinc-500"}>Progress</span>
+                  <span className={isLocked ? "text-zinc-600" : "text-zinc-500"}>Progres</span>
                   <span className={cn(
                     "font-medium",
                     isLocked ? "text-zinc-600" : "text-cyan-400"
@@ -396,7 +397,7 @@ export default function StudentLabsPage() {
                     className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all"
                   >
                     <CheckCircle className="h-4 w-4" />
-                    Review Lab
+                    Tinjau Lab
                     <ChevronRight className="h-4 w-4" />
                   </Link>
                 ) : status === 'in-progress' ? (
@@ -405,7 +406,7 @@ export default function StudentLabsPage() {
                     className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-linear-to-r from-cyan-500 to-blue-600 text-white font-medium hover:shadow-lg hover:shadow-cyan-500/25 transition-all"
                   >
                     <Play className="h-4 w-4" />
-                    Continue Lab
+                    Lanjutkan Lab
                     <ChevronRight className="h-4 w-4" />
                   </Link>
                 ) : (
@@ -414,7 +415,7 @@ export default function StudentLabsPage() {
                     className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-zinc-800 text-zinc-100 border border-zinc-700 hover:bg-zinc-700 hover:border-cyan-500/50 transition-all"
                   >
                     <ArrowRight className="h-4 w-4" />
-                    Start Lab
+                    Mulai Lab
                   </Link>
                 )}
               </div>
@@ -429,8 +430,8 @@ export default function StudentLabsPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-zinc-900 border border-zinc-800 mb-4">
             <Search className="h-8 w-8 text-zinc-500" />
           </div>
-          <h3 className="text-lg font-semibold text-white mb-2">No labs found</h3>
-          <p className="text-zinc-400 mb-6">Try adjusting your search or filter criteria</p>
+          <h3 className="text-lg font-semibold text-white mb-2">Lab tidak ditemukan</h3>
+          <p className="text-zinc-400 mb-6">Coba sesuaikan pencarian atau kriteria filter</p>
           <button
             onClick={() => {
               setSearchQuery('');
@@ -439,7 +440,7 @@ export default function StudentLabsPage() {
             }}
             className="px-4 py-2 rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 transition-all"
           >
-            Clear Filters
+            Hapus Filter
           </button>
         </div>
       )}

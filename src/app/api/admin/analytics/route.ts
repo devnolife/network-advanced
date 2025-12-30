@@ -41,14 +41,14 @@ export async function GET(request: Request) {
           role: 'STUDENT',
           labProgress: {
             some: {
-              updatedAt: { gte: startDate },
+              lastActivityAt: { gte: startDate },
             },
           },
         },
       }),
       prisma.labProgress.findMany({
         where: {
-          updatedAt: { gte: startDate },
+          lastActivityAt: { gte: startDate },
         },
         include: {
           user: { select: { id: true, name: true, username: true } },
@@ -73,15 +73,15 @@ export async function GET(request: Request) {
 
     const avgScore = completedProgress.length > 0
       ? Math.round(
-        completedProgress.reduce((acc, p) => acc + (p.currentScore / p.lab.maxScore) * 100, 0) / completedProgress.length
+        completedProgress.reduce((acc, p) => acc + (p.currentScore / (p.lab?.maxScore || 100)) * 100, 0) / completedProgress.length
       )
       : 0
 
-    const totalTimeSpent = completedProgress.reduce((acc, p) => acc + p.lab.durationMinutes, 0)
+    const totalTimeSpent = completedProgress.reduce((acc, p) => acc + (p.lab?.durationMinutes || 0), 0)
 
     // Lab stats
     const labStats = labs.map(lab => {
-      const labProgress = allProgress.filter(p => p.lab.id === lab.id)
+      const labProgress = allProgress.filter(p => p.lab?.id === lab.id)
       const labCompleted = labProgress.filter(p => p.completedAt)
 
       return {
@@ -91,7 +91,7 @@ export async function GET(request: Request) {
         enrollments: labProgress.length,
         completions: labCompleted.length,
         avgScore: labCompleted.length > 0
-          ? Math.round(labCompleted.reduce((acc, p) => acc + (p.currentScore / p.lab.maxScore) * 100, 0) / labCompleted.length)
+          ? Math.round(labCompleted.reduce((acc, p) => acc + (p.currentScore / (p.lab?.maxScore || 100)) * 100, 0) / labCompleted.length)
           : 0,
         avgTimeMinutes: lab.durationMinutes,
       }
@@ -101,7 +101,7 @@ export async function GET(request: Request) {
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     const weeklyActivity = days.map((day, index) => {
       const dayProgress = allProgress.filter(p => {
-        const progressDay = p.updatedAt.getDay()
+        const progressDay = p.lastActivityAt.getDay()
         return progressDay === index
       })
 
@@ -113,9 +113,10 @@ export async function GET(request: Request) {
     })
 
     // Top performers
-    const studentScores = new Map<string, { id: string; name: string; username: string; completedLabs: number; totalScore: number; count: number }>()
+    const studentScores = new Map<string, { id: string; name: string | null; username: string; completedLabs: number; totalScore: number; count: number }>()
 
     completedProgress.forEach(p => {
+      if (!p.user) return
       const existing = studentScores.get(p.user.id) || {
         id: p.user.id,
         name: p.user.name,
@@ -126,7 +127,7 @@ export async function GET(request: Request) {
       }
 
       existing.completedLabs += 1
-      existing.totalScore += (p.currentScore / p.lab.maxScore) * 100
+      existing.totalScore += (p.currentScore / (p.lab?.maxScore || 100)) * 100
       existing.count += 1
 
       studentScores.set(p.user.id, existing)

@@ -181,7 +181,7 @@ export default function ProfilePage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-cyan-500 animate-spin mx-auto mb-4" />
-          <p className="text-zinc-400">Loading profile...</p>
+          <p className="text-zinc-400">Memuat profil...</p>
         </div>
       </div>
     );
@@ -192,9 +192,9 @@ export default function ProfilePage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <p className="text-red-400 mb-4">{error || 'Profile not found'}</p>
+          <p className="text-red-400 mb-4">{error || 'Profil tidak ditemukan'}</p>
           <Link href="/dashboard/student" className="btn btn-primary">
-            Back to Dashboard
+            Kembali ke Dasbor
           </Link>
         </div>
       </div>
@@ -210,8 +210,8 @@ export default function ProfilePage() {
             <User className="w-5 h-5 text-cyan-400" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">My Profile</h1>
-            <p className="text-sm text-zinc-500">View your information</p>
+            <h1 className="text-xl font-bold text-white">Profil Saya</h1>
+            <p className="text-sm text-zinc-500">Lihat informasimu</p>
           </div>
         </div>
         <Link
@@ -219,7 +219,7 @@ export default function ProfilePage() {
           className="flex items-center gap-2 px-3 py-2 bg-zinc-800 rounded-lg hover:bg-zinc-700 transition-colors text-sm"
         >
           <Edit3 className="w-4 h-4" />
-          Edit Profile
+          Edit Profil
         </Link>
       </div>
 
@@ -243,7 +243,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex items-center gap-2 text-zinc-400">
                   <Calendar className="w-4 h-4" />
-                  <span>Joined {formatDate(profile.createdAt)}</span>
+                  <span>Bergabung {formatDate(profile.createdAt)}</span>
                 </div>
               </div>
             </div>
@@ -256,7 +256,7 @@ export default function ProfilePage() {
                 >
                   {stats.grade}
                 </div>
-                <p className="text-xs text-zinc-500 mt-2">Overall Grade</p>
+                <p className="text-xs text-zinc-500 mt-2">Nilai Keseluruhan</p>
               </div>
             )}
           </div>
@@ -275,7 +275,7 @@ export default function ProfilePage() {
                 {stats.labsCompleted}
                 <span className="text-sm text-zinc-500 font-normal">/{stats.totalLabs}</span>
               </p>
-              <p className="text-xs text-zinc-500">Labs Completed</p>
+              <p className="text-xs text-zinc-500">Lab Selesai</p>
             </div>
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
@@ -288,7 +288,7 @@ export default function ProfilePage() {
                 {stats.tasksCompleted}
                 <span className="text-sm text-zinc-500 font-normal">/{stats.totalTasks}</span>
               </p>
-              <p className="text-xs text-zinc-500">Tasks Done</p>
+              <p className="text-xs text-zinc-500">Tugas Selesai</p>
             </div>
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
@@ -298,7 +298,7 @@ export default function ProfilePage() {
                 </div>
               </div>
               <p className="text-2xl font-bold">{stats.totalScore}</p>
-              <p className="text-xs text-zinc-500">Total Points</p>
+              <p className="text-xs text-zinc-500">Total Poin</p>
             </div>
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
@@ -308,7 +308,7 @@ export default function ProfilePage() {
                 </div>
               </div>
               <p className="text-2xl font-bold">{stats.avgPercentage}%</p>
-              <p className="text-xs text-zinc-500">Average Score</p>
+              <p className="text-xs text-zinc-500">Rata-rata Nilai</p>
             </div>
           </div>
         )}
@@ -318,12 +318,12 @@ export default function ProfilePage() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-8">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <Activity className="w-5 h-5 text-cyan-400" />
-              Progress Overview
+              Ringkasan Progres
             </h3>
             <div className="space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-zinc-400">Lab Completion</span>
+                  <span className="text-sm text-zinc-400">Penyelesaian Lab</span>
                   <span className="text-sm font-medium">
                     {Math.round((stats.labsCompleted / stats.totalLabs) * 100) || 0}%
                   </span>
@@ -339,7 +339,7 @@ export default function ProfilePage() {
               </div>
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-zinc-400">Task Completion</span>
+                  <span className="text-sm text-zinc-400">Penyelesaian Tugas</span>
                   <span className="text-sm font-medium">
                     {Math.round((stats.tasksCompleted / stats.totalTasks) * 100) || 0}%
                   </span>
@@ -362,13 +362,13 @@ export default function ProfilePage() {
           <div className="px-6 py-4 border-b border-zinc-800">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-cyan-400" />
-              Lab History
+              Riwayat Lab
             </h3>
           </div>
           <div className="divide-y divide-zinc-800">
             {labHistory.length === 0 ? (
               <div className="px-6 py-12 text-center text-zinc-500">
-                No labs started yet
+                Belum ada lab yang dimulai
               </div>
             ) : (
               labHistory.map((lab) => (
@@ -397,10 +397,10 @@ export default function ProfilePage() {
                       <p className="font-medium">{lab.title}</p>
                       <p className="text-sm text-zinc-500">
                         {lab.status === 'completed' && lab.completedAt
-                          ? `Completed on ${formatDate(lab.completedAt)}`
+                          ? `Selesai pada ${formatDate(lab.completedAt)}`
                           : lab.status === 'in-progress'
-                            ? 'In progress'
-                            : 'Not started'}
+                            ? 'Sedang berjalan'
+                            : 'Belum dimulai'}
                       </p>
                     </div>
                   </div>
@@ -409,7 +409,7 @@ export default function ProfilePage() {
                       <p className="font-medium">
                         {lab.score}/{lab.maxScore}
                       </p>
-                      <p className="text-xs text-zinc-500">Points</p>
+                      <p className="text-xs text-zinc-500">Poin</p>
                     </div>
                     {lab.grade && (
                       <div

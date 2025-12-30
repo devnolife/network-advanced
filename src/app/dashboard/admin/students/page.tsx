@@ -264,6 +264,7 @@ export default function AdminStudentsPage() {
                   setFilterGrade(e.target.value);
                   setCurrentPage(1);
                 }}
+                title="Filter by Grade"
                 className="px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
               >
                 <option value="all">All Grades</option>
@@ -279,6 +280,7 @@ export default function AdminStudentsPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              title="Sort Students"
               className="px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
             >
               <option value="name">Sort by Name</option>
@@ -399,6 +401,7 @@ export default function AdminStudentsPage() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
+                  title="Previous Page"
                   className="p-2 rounded-lg hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="w-5 h-5" />
@@ -408,8 +411,8 @@ export default function AdminStudentsPage() {
                     key={page}
                     onClick={() => setCurrentPage(page)}
                     className={`w-10 h-10 rounded-lg text-sm font-medium ${page === currentPage
-                        ? 'bg-cyan-500 text-white'
-                        : 'hover:bg-zinc-800'
+                      ? 'bg-cyan-500 text-white'
+                      : 'hover:bg-zinc-800'
                       }`}
                   >
                     {page}
@@ -418,6 +421,7 @@ export default function AdminStudentsPage() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
+                  title="Next Page"
                   className="p-2 rounded-lg hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronRight className="w-5 h-5" />

@@ -151,7 +151,7 @@ export default function SettingsPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-cyan-500 animate-spin mx-auto mb-4" />
-          <p className="text-zinc-400">Loading settings...</p>
+          <p className="text-zinc-400">Memuat pengaturan...</p>
         </div>
       </div>
     );
@@ -162,9 +162,9 @@ export default function SettingsPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <p className="text-red-400 mb-4">{error || 'Not authenticated'}</p>
+          <p className="text-red-400 mb-4">{error || 'Tidak terautentikasi'}</p>
           <Link href="/login" className="btn btn-primary">
-            Go to Login
+            Ke Halaman Masuk
           </Link>
         </div>
       </div>
@@ -179,8 +179,8 @@ export default function SettingsPage() {
           <Settings className="w-5 h-5 text-zinc-400" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-white">Settings</h1>
-          <p className="text-sm text-zinc-500">Manage your account</p>
+          <h1 className="text-xl font-bold text-white">Pengaturan</h1>
+          <p className="text-sm text-zinc-500">Kelola akunmu</p>
         </div>
       </div>
 
@@ -188,10 +188,10 @@ export default function SettingsPage() {
         {/* Horizontal Tabs */}
         <div className="flex items-center gap-1 p-1 bg-zinc-900 border border-zinc-800 rounded-xl mb-6 overflow-x-auto">
           {[
-            { id: 'profile', label: 'Profile', icon: User },
-            { id: 'password', label: 'Password', icon: Lock },
-            { id: 'notifications', label: 'Notifications', icon: Bell },
-            { id: 'appearance', label: 'Appearance', icon: Moon },
+            { id: 'profile', label: 'Profil', icon: User },
+            { id: 'password', label: 'Kata Sandi', icon: Lock },
+            { id: 'notifications', label: 'Notifikasi', icon: Bell },
+            { id: 'appearance', label: 'Tampilan', icon: Moon },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -201,8 +201,8 @@ export default function SettingsPage() {
                 setSuccessMessage(null);
               }}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab.id
-                  ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/25'
-                  : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/25'
+                : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
                 }`}
             >
               <tab.icon className="w-4 h-4" />
@@ -230,41 +230,42 @@ export default function SettingsPage() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
             <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
               <User className="w-5 h-5 text-cyan-400" />
-              Profile Information
+              Informasi Profil
             </h2>
             <form onSubmit={handleUpdateProfile} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  Full Name
+                  Nama Lengkap
                 </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
-                  placeholder="Your full name"
+                  placeholder="Nama lengkapmu"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  Username
+                  Nama Pengguna
                 </label>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
-                  placeholder="Your username"
+                  placeholder="Nama penggunamu"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  Role
+                  Peran
                 </label>
                 <input
                   type="text"
                   value={profile.role}
                   disabled
+                  placeholder="Peran"
                   className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-lg text-zinc-500 capitalize"
                 />
               </div>
@@ -278,7 +279,7 @@ export default function SettingsPage() {
                 ) : (
                   <Save className="w-5 h-5" />
                 )}
-                Save Changes
+                Simpan Perubahan
               </button>
             </form>
           </div>
@@ -289,12 +290,12 @@ export default function SettingsPage() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
             <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
               <Lock className="w-5 h-5 text-cyan-400" />
-              Change Password
+              Ubah Kata Sandi
             </h2>
             <form onSubmit={handleChangePassword} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  Current Password
+                  Kata Sandi Saat Ini
                 </label>
                 <div className="relative">
                   <input
@@ -302,7 +303,7 @@ export default function SettingsPage() {
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500/50 pr-12"
-                    placeholder="Enter current password"
+                    placeholder="Masukkan kata sandi saat ini"
                   />
                   <button
                     type="button"
@@ -316,7 +317,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  New Password
+                  Kata Sandi Baru
                 </label>
                 <div className="relative">
                   <input
@@ -324,7 +325,7 @@ export default function SettingsPage() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500/50 pr-12"
-                    placeholder="Enter new password"
+                    placeholder="Masukkan kata sandi baru"
                   />
                   <button
                     type="button"
@@ -338,14 +339,14 @@ export default function SettingsPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  Confirm New Password
+                  Konfirmasi Kata Sandi Baru
                 </label>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
-                  placeholder="Confirm new password"
+                  placeholder="Konfirmasi kata sandi baru"
                 />
               </div>
               <button
@@ -358,7 +359,7 @@ export default function SettingsPage() {
                 ) : (
                   <Lock className="w-5 h-5" />
                 )}
-                Change Password
+                Ubah Kata Sandi
               </button>
             </form>
           </div>
@@ -369,13 +370,13 @@ export default function SettingsPage() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
             <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
               <Bell className="w-5 h-5 text-cyan-400" />
-              Notification Preferences
+              Preferensi Notifikasi
             </h2>
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Email Notifications</p>
-                  <p className="text-sm text-zinc-500">Receive updates via email</p>
+                  <p className="font-medium">Notifikasi Email</p>
+                  <p className="text-sm text-zinc-500">Terima pembaruan via email</p>
                 </div>
                 <button
                   onClick={() => setEmailNotifications(!emailNotifications)}
@@ -391,8 +392,8 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Lab Reminders</p>
-                  <p className="text-sm text-zinc-500">Get reminded about incomplete labs</p>
+                  <p className="font-medium">Pengingat Lab</p>
+                  <p className="text-sm text-zinc-500">Diingatkan tentang lab yang belum selesai</p>
                 </div>
                 <button
                   onClick={() => setLabReminders(!labReminders)}
@@ -408,8 +409,8 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Achievement Alerts</p>
-                  <p className="text-sm text-zinc-500">Notify when you unlock achievements</p>
+                  <p className="font-medium">Peringatan Pencapaian</p>
+                  <p className="text-sm text-zinc-500">Diberitahu saat membuka pencapaian</p>
                 </div>
                 <button
                   onClick={() => setAchievementNotifications(!achievementNotifications)}
@@ -425,7 +426,7 @@ export default function SettingsPage() {
               </div>
             </div>
             <p className="text-xs text-zinc-500 mt-6">
-              Note: Notification preferences are saved locally for demo purposes.
+              Catatan: Preferensi notifikasi disimpan secara lokal untuk keperluan demo.
             </p>
           </div>
         )}
@@ -435,44 +436,44 @@ export default function SettingsPage() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
             <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
               <Moon className="w-5 h-5 text-cyan-400" />
-              Appearance
+              Tampilan
             </h2>
             <div>
-              <p className="text-sm text-zinc-400 mb-4">Choose your preferred theme</p>
+              <p className="text-sm text-zinc-400 mb-4">Pilih tema yang kamu sukai</p>
               <div className="grid grid-cols-3 gap-4">
                 <button
                   onClick={() => setTheme('dark')}
                   className={`p-4 rounded-lg border-2 transition-colors ${theme === 'dark'
-                      ? 'border-cyan-500 bg-cyan-500/10'
-                      : 'border-zinc-700 hover:border-zinc-600'
+                    ? 'border-cyan-500 bg-cyan-500/10'
+                    : 'border-zinc-700 hover:border-zinc-600'
                     }`}
                 >
                   <Moon className="w-8 h-8 mx-auto mb-2" />
-                  <p className="text-sm font-medium">Dark</p>
+                  <p className="text-sm font-medium">Gelap</p>
                 </button>
                 <button
                   onClick={() => setTheme('light')}
                   className={`p-4 rounded-lg border-2 transition-colors ${theme === 'light'
-                      ? 'border-cyan-500 bg-cyan-500/10'
-                      : 'border-zinc-700 hover:border-zinc-600'
+                    ? 'border-cyan-500 bg-cyan-500/10'
+                    : 'border-zinc-700 hover:border-zinc-600'
                     }`}
                 >
                   <Sun className="w-8 h-8 mx-auto mb-2" />
-                  <p className="text-sm font-medium">Light</p>
+                  <p className="text-sm font-medium">Terang</p>
                 </button>
                 <button
                   onClick={() => setTheme('system')}
                   className={`p-4 rounded-lg border-2 transition-colors ${theme === 'system'
-                      ? 'border-cyan-500 bg-cyan-500/10'
-                      : 'border-zinc-700 hover:border-zinc-600'
+                    ? 'border-cyan-500 bg-cyan-500/10'
+                    : 'border-zinc-700 hover:border-zinc-600'
                     }`}
                 >
                   <Settings className="w-8 h-8 mx-auto mb-2" />
-                  <p className="text-sm font-medium">System</p>
+                  <p className="text-sm font-medium">Sistem</p>
                 </button>
               </div>
               <p className="text-xs text-zinc-500 mt-4">
-                Note: Theme settings are saved locally. Currently only dark mode is fully styled.
+                Catatan: Pengaturan tema disimpan secara lokal. Saat ini hanya mode gelap yang sepenuhnya ditata.
               </p>
             </div>
           </div>

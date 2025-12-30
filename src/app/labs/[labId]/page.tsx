@@ -1,1022 +1,631 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React, { useState, use } from 'react';
 import {
+  ArrowLeft,
   Play,
-  Pause,
-  RotateCcw,
-  ChevronLeft,
-  ChevronRight,
-  Monitor,
-  Router,
-  Server,
-  Shield,
-  Activity,
   CheckCircle2,
   Circle,
-  Lock,
+  Clock,
+  Target,
+  Trophy,
+  Sparkles,
+  ChevronRight,
   Lightbulb,
+  Terminal,
+  BookOpen,
+  Eye,
+  AlertTriangle,
+  Zap,
+  HelpCircle,
+  Award,
+  RotateCcw,
+  Send,
+  Code2,
+  Network,
+  Server,
+  Monitor,
   ChevronDown,
   ChevronUp,
-  Settings,
-  Save,
-  Download,
-  HelpCircle,
-  X,
-  Maximize2,
-  Minimize2,
-  Loader2,
-  AlertCircle
+  Lock
 } from 'lucide-react';
-import Link from 'next/link';
 
-// Types for API data
-interface DeviceData {
-  id: string;
-  type: string;
-  name: string;
-  hostname: string;
-  x: number;
-  y: number;
-  initialConfig: Record<string, unknown>;
+// Sample lab data - in production this would come from API
+const labData = {
+  id: 1,
+  title: 'Review Dasar Keamanan Jaringan',
+  description: 'Pelajari konsep keamanan jaringan, siapkan lingkungan lab, dan konfigurasi perangkat dasar. Pelajari navigasi CLI, konfigurasi IP, dan pengujian konektivitas.',
+  difficulty: 'Pemula',
+  duration: '30 menit',
+  xp: 100,
+  objectives: [
+    'Navigasi antarmuka lab dan terminal CLI',
+    'Konfigurasi alamat IP pada perangkat jaringan',
+    'Memahami konsep dasar routing',
+    'Uji konektivitas jaringan menggunakan ping dan traceroute'
+  ],
+  tasks: [
+    {
+      id: 't1-1',
+      title: 'Akses CLI Router',
+      description: 'Buka terminal untuk Router1 dan masuk ke mode privileged menggunakan perintah "enable"',
+      points: 10,
+      completed: true,
+      hint: 'Klik pada Router1 di topologi, lalu ketik "enable" di terminal'
+    },
+    {
+      id: 't1-2',
+      title: 'Lihat Status Interface',
+      description: 'Gunakan perintah "show ip interface brief" untuk melihat semua interface',
+      points: 15,
+      completed: true,
+      hint: 'Setelah masuk mode privileged, ketik "show ip interface brief"'
+    },
+    {
+      id: 't1-3',
+      title: 'Konfigurasi Alamat IP PC1',
+      description: 'Atur alamat IP PC1 ke 10.1.1.2 dengan mask 255.255.255.0 dan gateway 10.1.1.1',
+      points: 20,
+      completed: false,
+      hint: 'Gunakan perintah "ip address" diikuti IP dan mask'
+    },
+    {
+      id: 't1-4',
+      title: 'Uji Konektivitas',
+      description: 'Ping dari PC1 ke PC2 untuk memverifikasi konektivitas jaringan',
+      points: 25,
+      completed: false,
+      hint: 'Gunakan "ping 10.2.1.2" dari terminal PC1'
+    }
+  ],
+  topology: {
+    devices: [
+      { id: 'pc1', type: 'pc', name: 'PC1', x: 100, y: 200 },
+      { id: 'router1', type: 'router', name: 'Router1', x: 400, y: 200 },
+      { id: 'pc2', type: 'pc', name: 'PC2', x: 700, y: 200 }
+    ],
+    links: [
+      { source: 'pc1', target: 'router1' },
+      { source: 'router1', target: 'pc2' }
+    ]
+  }
+};
+
+interface PageProps {
+  params: Promise<{ labId: string }>;
 }
 
-interface TaskData {
-  id: string;
-  title: string;
-  description: string;
-  points: number;
-  order: number;
-  completed: boolean;
-  current: boolean;
-  locked: boolean;
-  validation: Record<string, unknown>;
-}
-
-interface HintData {
-  id: string;
-  taskId: string | null;
-  content: string | null;
-  pointCost: number;
-  used: boolean;
-  accessible: boolean;
-}
-
-interface TopologyData {
-  devices: DeviceData[];
-  links: Array<{
-    source: { device: string; interface: string };
-    destination: { device: string; interface: string };
-  }>;
-}
-
-interface LabData {
-  id: string;
-  number: number;
-  title: string;
-  description: string;
-  objectives: string[];
-  difficulty: string;
-  durationMinutes: number;
-  maxScore: number;
-  topology: TopologyData | null;
-  tasks: TaskData[];
-  hints: HintData[];
-}
-
-interface ProgressData {
-  id: string;
-  startedAt: string;
-  completedAt: string | null;
-  currentScore: number;
-  savedState: ValidationContext | null;
-  tasksCompleted: number;
-  totalTasks: number;
-}
-
-interface ValidationContext {
-  deviceConfigs: Record<string, Record<string, unknown>>;
-  commandHistory: Record<string, string[]>;
-  connectivityResults: Record<string, boolean>;
-}
-
-// Terminal Component
-function Terminal({
-  device,
-  onClose
-}: {
-  device: { hostname: string; type: string };
-  onClose: () => void;
-}) {
-  const [history, setHistory] = useState<{ type: 'input' | 'output' | 'error' | 'success'; text: string }[]>([
-    { type: 'output', text: `\n${device.type.toUpperCase()} Console\nType 'help' for available commands\n` }
+export default function LabDetailPage({ params }: PageProps) {
+  const resolvedParams = use(params);
+  const [activeTab, setActiveTab] = useState<'tasks' | 'topology' | 'terminal'>('tasks');
+  const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
+  const [terminalInput, setTerminalInput] = useState('');
+  const [terminalHistory, setTerminalHistory] = useState<string[]>([
+    '> Selamat datang di Terminal Lab Keamanan Jaringan',
+    '> Ketik "help" untuk perintah yang tersedia',
+    ''
   ]);
-  const [input, setInput] = useState('');
-  const [prompt, setPrompt] = useState(`${device.hostname}>`);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const terminalRef = useRef<HTMLDivElement>(null);
-  const [commandHistory, setCommandHistory] = useState<string[]>([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [expandedTask, setExpandedTask] = useState<string | null>(null);
+  const [showHint, setShowHint] = useState<string | null>(null);
 
-  const handleCommand = useCallback((cmd: string) => {
-    const trimmedCmd = cmd.trim().toLowerCase();
+  const completedTasks = labData.tasks.filter(t => t.completed).length;
+  const totalPoints = labData.tasks.reduce((sum, t) => sum + t.points, 0);
+  const earnedPoints = labData.tasks.filter(t => t.completed).reduce((sum, t) => sum + t.points, 0);
+  const progress = Math.round((completedTasks / labData.tasks.length) * 100);
 
-    setHistory(prev => [...prev, { type: 'input', text: `${prompt} ${cmd}` }]);
-    setCommandHistory(prev => [...prev, cmd]);
-    setHistoryIndex(-1);
+  const handleTerminalSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!terminalInput.trim()) return;
 
-    // Simulate command responses
-    switch (true) {
-      case trimmedCmd === 'enable':
-        setPrompt(`${device.hostname}#`);
-        break;
-      case trimmedCmd === 'disable':
-        setPrompt(`${device.hostname}>`);
-        break;
-      case trimmedCmd === 'configure terminal' || trimmedCmd === 'conf t':
-        setPrompt(`${device.hostname}(config)#`);
-        setHistory(prev => [...prev, { type: 'output', text: 'Enter configuration commands, one per line.  End with CNTL/Z.' }]);
-        break;
-      case trimmedCmd === 'exit':
-        if (prompt.includes('config-')) {
-          setPrompt(`${device.hostname}(config)#`);
-        } else if (prompt.includes('config')) {
-          setPrompt(`${device.hostname}#`);
-        } else if (prompt.includes('#')) {
-          setPrompt(`${device.hostname}>`);
-        }
-        break;
-      case trimmedCmd === 'end':
-        setPrompt(`${device.hostname}#`);
-        break;
-      case trimmedCmd.startsWith('crypto isakmp policy'):
-        setPrompt(`${device.hostname}(config-isakmp)#`);
-        break;
-      case trimmedCmd.startsWith('crypto map'):
-        if (trimmedCmd.includes('ipsec-isakmp')) {
-          setPrompt(`${device.hostname}(config-crypto-map)#`);
-        }
-        break;
-      case trimmedCmd.startsWith('interface') || trimmedCmd.startsWith('int '):
-        setPrompt(`${device.hostname}(config-if)#`);
-        break;
-      case trimmedCmd === 'show ip interface brief' || trimmedCmd === 'sh ip int br':
-        setHistory(prev => [...prev, {
-          type: 'output',
-          text: `Interface              IP-Address      OK? Method Status                Protocol
-GigabitEthernet0/0     10.1.1.1        YES manual up                    up
-GigabitEthernet0/1     192.168.1.1     YES manual up                    up
-Tunnel0                10.10.10.1      YES manual up                    up`
-        }]);
-        break;
-      case trimmedCmd === 'show crypto isakmp sa':
-        setHistory(prev => [...prev, {
-          type: 'output',
-          text: `IPv4 Crypto ISAKMP SA
-dst             src             state          conn-id status
-192.168.2.1     192.168.1.1     QM_IDLE           1001 ACTIVE`
-        }]);
-        break;
-      case trimmedCmd === 'show crypto ipsec sa':
-        setHistory(prev => [...prev, {
-          type: 'output',
-          text: `interface: GigabitEthernet0/1
-    Crypto map tag: MYMAP, local addr: 192.168.1.1
+    setTerminalHistory(prev => [...prev, `$ ${terminalInput}`, 'Perintah berhasil dijalankan.', '']);
+    setTerminalInput('');
+  };
 
-   protected vrf: (none)
-   local  ident (addr/mask/prot/port): (10.1.1.0/255.255.255.0/0/0)
-   remote ident (addr/mask/prot/port): (10.2.1.0/255.255.255.0/0/0)
-   current_peer 192.168.2.1
-    #pkts encaps: 847, #pkts encrypt: 847
-    #pkts decaps: 842, #pkts decrypt: 842`
-        }]);
-        break;
-      case trimmedCmd.startsWith('ping'):
-        const dest = trimmedCmd.split(' ')[1] || '10.2.1.2';
-        setHistory(prev => [...prev, {
-          type: 'output',
-          text: `Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to ${dest}, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms`
-        }]);
-        break;
-      case trimmedCmd === 'help' || trimmedCmd === '?':
-        setHistory(prev => [...prev, {
-          type: 'output',
-          text: `Available commands:
-  enable              Enter privileged mode
-  configure terminal  Enter config mode
-  show                Display system info
-  crypto              Crypto configuration
-  interface           Interface configuration
-  ping                Send ICMP echo
-  exit                Exit current mode
-  help                Show this help`
-        }]);
-        break;
-      case trimmedCmd.startsWith('encryption') || trimmedCmd.startsWith('hash') ||
-        trimmedCmd.startsWith('group') || trimmedCmd.startsWith('lifetime') ||
-        trimmedCmd.startsWith('set peer') || trimmedCmd.startsWith('set transform') ||
-        trimmedCmd.startsWith('match address') || trimmedCmd === 'no shutdown' ||
-        trimmedCmd.startsWith('ip address'):
-        setHistory(prev => [...prev, { type: 'success', text: '✓ Configuration applied' }]);
-        break;
-      case trimmedCmd === '':
-        break;
-      default:
-        setHistory(prev => [...prev, { type: 'error', text: `% Unknown command or computer name: "${cmd}"` }]);
-    }
-  }, [device.hostname, prompt]);
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleCommand(input);
-      setInput('');
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (commandHistory.length > 0) {
-        const newIndex = historyIndex < commandHistory.length - 1 ? historyIndex + 1 : historyIndex;
-        setHistoryIndex(newIndex);
-        setInput(commandHistory[commandHistory.length - 1 - newIndex] || '');
-      }
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      if (historyIndex > 0) {
-        const newIndex = historyIndex - 1;
-        setHistoryIndex(newIndex);
-        setInput(commandHistory[commandHistory.length - 1 - newIndex] || '');
-      } else {
-        setHistoryIndex(-1);
-        setInput('');
-      }
+  const getDeviceIcon = (type: string) => {
+    switch (type) {
+      case 'pc': return Monitor;
+      case 'router': return Server;
+      default: return Network;
     }
   };
 
-  useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
-  }, [history]);
-
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
   return (
-    <div className="terminal-container h-full flex flex-col">
-      <div className="terminal-header">
-        <div className="terminal-title">
-          <span>{device.hostname} - Terminal</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <button className="btn btn-ghost btn-icon text-xs p-1.5" title="Clear">
-            <RotateCcw className="w-3.5 h-3.5" />
-          </button>
-          <button className="btn btn-ghost btn-icon text-xs p-1.5" onClick={onClose} title="Close">
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </div>
-      <div
-        ref={terminalRef}
-        className="terminal-body flex-1 overflow-y-auto"
-        onClick={() => inputRef.current?.focus()}
-      >
-        {history.map((line, i) => (
-          <div key={i} className={`terminal-line ${line.type === 'input' ? 'terminal-prompt' : line.type === 'error' ? 'terminal-error' : line.type === 'success' ? 'terminal-success' : 'terminal-output'}`}>
-            {line.text}
-          </div>
-        ))}
-        <div className="terminal-input-line flex items-center">
-          <span className="terminal-prompt">{prompt}&nbsp;</span>
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="bg-transparent border-none outline-none flex-1 text-[var(--terminal-text)] font-mono"
-            spellCheck={false}
-            autoComplete="off"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Packet Capture Component
-function PacketCapture() {
-  const packets = [
-    { id: 1, time: '0.000', src: '10.1.1.2', dst: '10.2.1.2', protocol: 'ICMP', info: 'Echo Request' },
-    { id: 2, time: '0.001', src: '192.168.1.1', dst: '192.168.2.1', protocol: 'ESP', info: 'SPI=0x12345678, Seq=1' },
-    { id: 3, time: '0.015', src: '192.168.2.1', dst: '192.168.1.1', protocol: 'ESP', info: 'SPI=0x87654321, Seq=1' },
-    { id: 4, time: '0.016', src: '10.2.1.2', dst: '10.1.1.2', protocol: 'ICMP', info: 'Echo Reply' },
-    { id: 5, time: '1.000', src: '10.1.1.2', dst: '10.2.1.2', protocol: 'ICMP', info: 'Echo Request' },
-    { id: 6, time: '1.001', src: '192.168.1.1', dst: '192.168.2.1', protocol: 'ESP', info: 'SPI=0x12345678, Seq=2' },
-  ];
-
-  const [selectedPacket, setSelectedPacket] = useState<number | null>(null);
-
-  return (
-    <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between p-3 border-b border-[var(--border-default)]">
-        <div className="flex items-center gap-3">
-          <button className="btn btn-success btn-icon text-xs">
-            <Play className="w-3.5 h-3.5" />
-          </button>
-          <button className="btn btn-secondary btn-icon text-xs">
-            <Pause className="w-3.5 h-3.5" />
-          </button>
-          <span className="text-xs text-[var(--text-muted)]">Capturing on GigabitEthernet0/1</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            placeholder="Filter..."
-            className="input text-xs py-1.5 w-48"
-          />
-          <button className="btn btn-secondary text-xs">
-            <Download className="w-3.5 h-3.5" />
-            Export
-          </button>
-        </div>
+    <div className="min-h-screen bg-zinc-950">
+      {/* Animated Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
       </div>
 
-      <div className="flex-1 overflow-auto">
-        <table className="packet-table">
-          <thead>
-            <tr>
-              <th className="w-12">#</th>
-              <th className="w-20">Time</th>
-              <th>Source</th>
-              <th>Destination</th>
-              <th className="w-24">Protocol</th>
-              <th>Info</th>
-            </tr>
-          </thead>
-          <tbody>
-            {packets.map((pkt) => (
-              <tr
-                key={pkt.id}
-                className={selectedPacket === pkt.id ? 'selected' : ''}
-                onClick={() => setSelectedPacket(pkt.id)}
-              >
-                <td>{pkt.id}</td>
-                <td>{pkt.time}</td>
-                <td>{pkt.src}</td>
-                <td>{pkt.dst}</td>
-                <td>
-                  <span className={`protocol-badge protocol-${pkt.protocol.toLowerCase()}`}>
-                    {pkt.protocol}
+      {/* Header */}
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-zinc-950/80 border-b border-zinc-800/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
+              <a href="/labs" title="Back to Labs" className="p-2 rounded-xl bg-zinc-800/50 hover:bg-zinc-700/50 border border-zinc-700/50 transition-all duration-300 hover:scale-105">
+                <ArrowLeft className="w-5 h-5 text-zinc-300" />
+              </a>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-zinc-500">Lab {resolvedParams.labId}</span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium border text-emerald-400 bg-emerald-500/10 border-emerald-500/30">
+                    {labData.difficulty}
                   </span>
-                </td>
-                <td>{pkt.info}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {selectedPacket && (
-        <div className="border-t border-[var(--border-default)] p-3 bg-[var(--bg-tertiary)]">
-          <div className="text-xs font-mono text-[var(--text-secondary)]">
-            <div>▼ Encapsulating Security Payload</div>
-            <div className="pl-4">SPI: 0x12345678</div>
-            <div className="pl-4">Sequence: 1</div>
-            <div className="pl-4">▶ Encrypted Data (96 bytes)</div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Device Icon Component
-function DeviceIcon({ type }: { type: string }) {
-  switch (type) {
-    case 'router':
-      return <Router className="w-full h-full" />;
-    case 'pc':
-      return <Monitor className="w-full h-full" />;
-    case 'server':
-      return <Server className="w-full h-full" />;
-    case 'firewall':
-      return <Shield className="w-full h-full" />;
-    default:
-      return <Server className="w-full h-full" />;
-  }
-}
-
-// Main Lab Page Component
-export default function LabPage() {
-  const params = useParams();
-  const router = useRouter();
-  const labId = params.labId as string;
-
-  // API state
-  const [lab, setLab] = useState<LabData | null>(null);
-  const [progress, setProgress] = useState<ProgressData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Validation context
-  const [context, setContext] = useState<ValidationContext>({
-    deviceConfigs: {},
-    commandHistory: {},
-    connectivityResults: {},
-  });
-
-  // UI state
-  const [selectedDevice, setSelectedDevice] = useState<DeviceData | null>(null);
-  const [showTerminal, setShowTerminal] = useState(false);
-  const [showPacketCapture, setShowPacketCapture] = useState(false);
-  const [isRunning, setIsRunning] = useState(true);
-  const [activeTab, setActiveTab] = useState<'tasks' | 'hints' | 'objectives'>('tasks');
-  const [expandedHints, setExpandedHints] = useState<string[]>([]);
-  const [rightPanelWidth] = useState(350);
-  const [processingTask, setProcessingTask] = useState(false);
-  const [showSubmitModal, setShowSubmitModal] = useState(false);
-  const [submissionResult, setSubmissionResult] = useState<{
-    score: number;
-    maxScore: number;
-    percentage: number;
-    grade: string;
-    feedback: string;
-  } | null>(null);
-
-  // Fetch lab data
-  const fetchLabData = useCallback(async () => {
-    try {
-      setLoading(true);
-
-      // Start/resume session
-      const startRes = await fetch(`/api/labs/${labId}/start`, { method: 'POST' });
-      const startData = await startRes.json();
-
-      if (!startData.success) {
-        if (startRes.status === 401) {
-          router.push('/login');
-          return;
-        }
-        throw new Error(startData.error);
-      }
-
-      // Get full lab details
-      const labRes = await fetch(`/api/labs/${labId}`);
-      const labData = await labRes.json();
-
-      if (!labData.success) {
-        throw new Error(labData.error);
-      }
-
-      setLab(labData.lab);
-      setProgress(labData.progress);
-
-      // Restore saved state if exists
-      if (labData.progress?.savedState) {
-        setContext(labData.progress.savedState);
-      } else if (labData.lab.topology?.devices) {
-        // Initialize device configs from topology
-        const configs: Record<string, Record<string, unknown>> = {};
-        for (const device of labData.lab.topology.devices) {
-          configs[device.id] = { ...device.initialConfig };
-        }
-        setContext(prev => ({
-          ...prev,
-          deviceConfigs: configs,
-        }));
-      }
-
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load lab');
-    } finally {
-      setLoading(false);
-    }
-  }, [labId, router]);
-
-  useEffect(() => {
-    fetchLabData();
-  }, [fetchLabData]);
-
-  // Auto-save state periodically
-  useEffect(() => {
-    const saveInterval = setInterval(async () => {
-      if (progress?.id && lab) {
-        await fetch(`/api/labs/${labId}/save`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ state: context }),
-        });
-      }
-    }, 30000);
-    return () => clearInterval(saveInterval);
-  }, [labId, progress?.id, lab, context]);
-
-  // Complete task handler
-  const handleCompleteTask = async (taskId: string) => {
-    setProcessingTask(true);
-    try {
-      const res = await fetch(`/api/labs/${labId}/tasks/${taskId}/complete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ context }),
-      });
-
-      const data = await res.json();
-
-      if (data.success && data.validated) {
-        await fetchLabData();
-      } else {
-        alert(data.message || data.error || 'Task validation failed');
-      }
-    } catch {
-      alert('Failed to complete task');
-    } finally {
-      setProcessingTask(false);
-    }
-  };
-
-  // Use hint handler
-  const handleUseHint = async (hintId: string) => {
-    try {
-      const res = await fetch(`/api/labs/${labId}/hints/${hintId}/use`, { method: 'POST' });
-      const data = await res.json();
-
-      if (data.success) {
-        await fetchLabData();
-      } else {
-        alert(data.error || 'Failed to use hint');
-      }
-    } catch {
-      alert('Failed to use hint');
-    }
-  };
-
-  // Submit lab handler
-  const handleSubmitLab = async () => {
-    try {
-      const res = await fetch(`/api/labs/${labId}/submit`, { method: 'POST' });
-      const data = await res.json();
-
-      if (data.success) {
-        setSubmissionResult(data.results);
-        setShowSubmitModal(true);
-      } else {
-        alert(data.error || 'Failed to submit lab');
-      }
-    } catch {
-      alert('Failed to submit lab');
-    }
-  };
-
-  // Loading state
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-[var(--primary)] animate-spin mx-auto mb-4" />
-          <p className="text-[var(--text-muted)]">Loading lab environment...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error || !lab) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
-        <div className="text-center">
-          <AlertCircle className="w-12 h-12 text-[var(--accent-danger)] mx-auto mb-4" />
-          <p className="text-[var(--accent-danger)] mb-4">{error || 'Lab not found'}</p>
-          <Link href="/dashboard/student/labs" className="btn btn-primary">
-            Back to Labs
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  // Convert topology for legacy component compatibility
-  const legacyTopology = lab.topology ? {
-    devices: lab.topology.devices.map(d => ({
-      ...d,
-      ip: (d.initialConfig?.ip as string) || undefined,
-      interfaces: (d.initialConfig?.interfaces as Array<{ name: string; ip: string }>)
-        ? (d.initialConfig.interfaces as Array<{ name: string; ip: string }>).map(i => `${i.name}: ${i.ip}`)
-        : undefined,
-    })),
-    links: lab.topology.links.map(l => ({
-      from: l.source.device,
-      to: l.destination.device,
-      status: 'up' as const,
-    })),
-  } : { devices: [], links: [] };
-
-  const completedTasks = lab.tasks.filter(t => t.completed).length;
-  const totalTasks = lab.tasks.length;
-  const currentScore = progress?.currentScore || 0;
-  const totalScore = lab.maxScore;
-  const currentTask = lab.tasks.find(t => t.current);
-  const currentHints = lab.hints.filter(h => h.taskId === currentTask?.id);
-
-  return (
-    <div className="min-h-screen flex flex-col bg-[var(--bg-primary)]">
-      {/* Lab Header */}
-      <header className="flex items-center justify-between px-4 py-3 bg-[var(--bg-secondary)] border-b border-[var(--border-default)]">
-        <div className="flex items-center gap-4">
-          <Link href="/dashboard/student/labs" className="btn btn-ghost btn-icon">
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-[var(--text-muted)]">Lab {lab.number}</span>
-              <span className="badge badge-info text-[10px]">{lab.difficulty}</span>
-            </div>
-            <h1 className="text-lg font-semibold text-white">{lab.title}</h1>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-6">
-          {/* Progress */}
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <div className="text-sm font-medium text-white">{completedTasks}/{totalTasks} Tasks</div>
-              <div className="text-xs text-[var(--text-muted)]">{currentScore}/{totalScore} Points</div>
-            </div>
-            <div className="w-24">
-              <div className="progress">
-                <div
-                  className="progress-bar"
-                  style={{ width: `${(completedTasks / totalTasks) * 100}%` }}
-                />
+                </div>
+                <h1 className="text-lg font-bold text-white truncate max-w-[300px] sm:max-w-none">
+                  {labData.title}
+                </h1>
               </div>
             </div>
-          </div>
 
-          {/* Controls */}
-          <div className="flex items-center gap-2">
-            <button
-              className={`btn ${isRunning ? 'btn-danger' : 'btn-success'} text-sm`}
-              onClick={() => setIsRunning(!isRunning)}
-            >
-              {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-              {isRunning ? 'Pause' : 'Start'}
-            </button>
-            <button className="btn btn-secondary text-sm" onClick={async () => {
-              await fetch(`/api/labs/${labId}/save`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ state: context }),
-              });
-              alert('Progress saved!');
-            }}>
-              <Save className="w-4 h-4" />
-              Save
-            </button>
-            <button className="btn btn-primary text-sm" onClick={handleSubmitLab}>
-              Submit Lab
-            </button>
+            {/* Progress & Actions */}
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-800/50 border border-zinc-700/50">
+                <Clock className="w-4 h-4 text-zinc-500" />
+                <span className="text-sm text-zinc-400">{labData.duration}</span>
+              </div>
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span className="text-sm font-bold text-amber-400">{labData.xp} XP</span>
+              </div>
+              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-900 font-semibold transition-all duration-300 hover:scale-105">
+                <RotateCcw className="w-4 h-4" />
+                <span className="hidden sm:inline">Reset Lab</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Panel - Topology & Tools */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Network Topology */}
-          <div className="flex-1 p-4">
-            <div className="topology-canvas cyber-grid h-full relative">
-              {/* Grid Background is in CSS */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
+        {/* Progress Section */}
+        <div className="mb-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-800 border border-zinc-800/50 p-6">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-cyan-500/10 to-transparent rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
 
-              {/* SVG for connections */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                {legacyTopology.links.map((link, i) => {
-                  const fromDevice = legacyTopology.devices.find(d => d.id === link.from);
-                  const toDevice = legacyTopology.devices.find(d => d.id === link.to);
-                  if (!fromDevice || !toDevice) return null;
-
-                  return (
-                    <line
-                      key={i}
-                      x1={fromDevice.x + 40}
-                      y1={fromDevice.y + 40}
-                      x2={toDevice.x + 40}
-                      y2={toDevice.y + 40}
-                      className={`connection-line data-flow-line ${link.status === 'up' ? 'active' : 'down'}`}
-                      strokeWidth="2"
-                    />
-                  );
-                })}
-
-                {/* VPN Tunnel Indicator */}
-                <line
-                  x1={290}
-                  y1={180}
-                  x2={690}
-                  y2={180}
-                  stroke="var(--accent)"
-                  strokeWidth="2"
-                  strokeDasharray="8 4"
-                  opacity="0.6"
-                />
-                <text x="490" y="170" fill="var(--accent)" fontSize="12" textAnchor="middle">IPSec Tunnel</text>
-              </svg>
-
-              {/* Device Nodes */}
-              {legacyTopology.devices.map((device) => (
-                <div
-                  key={device.id}
-                  className={`device-node online ${selectedDevice?.id === device.id ? 'selected' : ''}`}
-                  style={{ left: device.x, top: device.y }}
-                  onClick={() => setSelectedDevice(device as unknown as DeviceData)}
-                  onDoubleClick={() => {
-                    setSelectedDevice(device as unknown as DeviceData);
-                    setShowTerminal(true);
-                  }}
-                >
-                  <div className="device-icon">
-                    <DeviceIcon type={device.type} />
+            <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="p-2 rounded-xl bg-cyan-500/20 border border-cyan-500/30">
+                    <Target className="w-5 h-5 text-cyan-400" />
                   </div>
-                  <div className="device-label">{device.name}</div>
-                  {device.ip && (
-                    <div className="text-[9px] text-[var(--text-muted)]">{device.ip}</div>
-                  )}
+                  <div>
+                    <h2 className="text-lg font-bold text-white">Progres Lab</h2>
+                    <p className="text-sm text-zinc-500">{completedTasks} dari {labData.tasks.length} tugas selesai</p>
+                  </div>
                 </div>
-              ))}
 
-              {/* Topology Legend */}
-              <div className="absolute bottom-4 left-4 glass-card p-3 text-xs">
-                <div className="text-[var(--text-muted)] mb-2">Legend</div>
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-4 h-0.5 bg-[var(--accent)]" style={{ animation: 'dash 1s linear infinite' }} />
-                  <span className="text-[var(--text-secondary)]">Active Link</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-0.5 bg-[var(--accent)]" style={{ strokeDasharray: '8 4' }} />
-                  <span className="text-[var(--text-secondary)]">VPN Tunnel</span>
+                <div className="flex items-center gap-4">
+                  <div className="flex-1 max-w-md">
+                    <div className="relative h-3 bg-zinc-800 rounded-full overflow-hidden">
+                      <div
+                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-cyan-500 via-cyan-400 to-emerald-400 rounded-full transition-all duration-1000"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                  </div>
+                  <span className="text-lg font-bold text-cyan-400">{progress}%</span>
                 </div>
               </div>
 
-              {/* Selection Info */}
-              {selectedDevice && (
-                <div className="absolute bottom-4 right-4 glass-card p-4 w-64">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="font-medium text-white">{selectedDevice.name}</h4>
-                    <button
-                      className="btn btn-primary text-xs"
-                      onClick={() => setShowTerminal(true)}
-                    >
-                      Open Terminal
-                    </button>
-                  </div>
-                  <div className="text-xs text-[var(--text-secondary)] space-y-1">
-                    <div>Hostname: {selectedDevice.hostname}</div>
-                    <div>Type: {selectedDevice.type}</div>
-                    {(selectedDevice.initialConfig?.ip as string) && <div>IP: {selectedDevice.initialConfig.ip as string}</div>}
-                    {(selectedDevice.initialConfig?.interfaces as Array<{ name: string; ip: string }>) && (
-                      <div>
-                        <div className="mt-2 mb-1 text-[var(--text-muted)]">Interfaces:</div>
-                        {(selectedDevice.initialConfig.interfaces as Array<{ name: string; ip: string }>).map((intf, i) => (
-                          <div key={i} className="text-[var(--primary)]">{intf.name}: {intf.ip}</div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+              <div className="flex items-center gap-4">
+                <div className="text-center px-4 py-2 rounded-xl bg-zinc-800/50 border border-zinc-700/50">
+                  <div className="text-2xl font-bold text-white">{earnedPoints}</div>
+                  <div className="text-xs text-zinc-500">/ {totalPoints} pts</div>
                 </div>
-              )}
-            </div>
-          </div>
-
-          {/* Tools Panel */}
-          <div className="h-80 border-t border-[var(--border-default)] bg-[var(--bg-secondary)]">
-            <div className="flex items-center border-b border-[var(--border-default)]">
-              <button
-                className={`px-4 py-2.5 text-sm ${showTerminal && !showPacketCapture ? 'bg-[var(--bg-tertiary)] text-white border-b-2 border-[var(--primary)]' : 'text-[var(--text-secondary)] hover:text-white'}`}
-                onClick={() => { setShowTerminal(true); setShowPacketCapture(false); }}
-              >
-                Terminal
-              </button>
-              <button
-                className={`px-4 py-2.5 text-sm ${showPacketCapture ? 'bg-[var(--bg-tertiary)] text-white border-b-2 border-[var(--primary)]' : 'text-[var(--text-secondary)] hover:text-white'}`}
-                onClick={() => { setShowPacketCapture(true); setShowTerminal(false); }}
-              >
-                <Activity className="w-4 h-4 inline mr-1" />
-                Packet Capture
-              </button>
-            </div>
-
-            <div className="h-[calc(100%-41px)]">
-              {showTerminal && selectedDevice && (
-                <Terminal
-                  device={selectedDevice}
-                  onClose={() => setShowTerminal(false)}
-                />
-              )}
-              {showPacketCapture && <PacketCapture />}
-              {!showTerminal && !showPacketCapture && (
-                <div className="h-full flex items-center justify-center text-[var(--text-muted)]">
-                  <div className="text-center">
-                    <Monitor className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                    <p>Select a device and click "Open Terminal"</p>
-                    <p className="text-sm">or double-click a device on the topology</p>
-                  </div>
-                </div>
-              )}
+                {progress === 100 && (
+                  <button className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-bold transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/20">
+                    <Trophy className="w-5 h-5" />
+                    Selesaikan Lab
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Right Panel - Tasks & Info */}
-        <div
-          className="bg-[var(--bg-secondary)] border-l border-[var(--border-default)] flex flex-col"
-          style={{ width: rightPanelWidth }}
-        >
-          {/* Tabs */}
-          <div className="flex border-b border-[var(--border-default)]">
-            {(['tasks', 'hints', 'objectives'] as const).map((tab) => (
-              <button
-                key={tab}
-                className={`flex-1 px-4 py-3 text-sm font-medium capitalize ${activeTab === tab
-                  ? 'bg-[var(--bg-tertiary)] text-white border-b-2 border-[var(--primary)]'
-                  : 'text-[var(--text-secondary)] hover:text-white'
-                  }`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
+        {/* Tab Navigation */}
+        <div className="flex gap-1 p-1 mb-6 bg-zinc-800/50 rounded-xl border border-zinc-700/50 w-fit">
+          {[
+            { id: 'tasks', label: 'Tugas', icon: CheckCircle2 },
+            { id: 'topology', label: 'Topologi', icon: Network },
+            { id: 'terminal', label: 'Terminal', icon: Terminal }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as typeof activeTab)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === tab.id
+                ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                : 'text-zinc-400 hover:text-white hover:bg-zinc-700/50'
+                }`}
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          {/* Tab Content */}
-          <div className="flex-1 overflow-y-auto p-4">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Panel - Tasks or Content */}
+          <div className="lg:col-span-2 space-y-4">
             {activeTab === 'tasks' && (
-              <ul className="task-list">
-                {lab.tasks.map((task, i) => (
-                  <li
-                    key={task.id}
-                    className={`task-item ${task.completed ? 'completed' : task.current ? 'current' : 'locked'}`}
-                  >
-                    <div className={`task-status-icon ${task.completed ? 'completed' : task.current ? 'current' : 'locked'}`}>
-                      {task.completed ? (
-                        <CheckCircle2 className="w-4 h-4" />
-                      ) : task.current ? (
-                        <Circle className="w-4 h-4" />
-                      ) : (
-                        <Lock className="w-3 h-3" />
-                      )}
-                    </div>
-                    <div className="task-content">
-                      <div className="task-title flex items-center gap-2">
-                        <span>Task {i + 1}: {task.title}</span>
-                        <span className="text-xs text-[var(--text-muted)]">{task.points} pts</span>
-                      </div>
-                      <div className="task-description">{task.description}</div>
-                      {task.current && !task.completed && (
-                        <button
-                          className="btn btn-success text-xs mt-2"
-                          onClick={() => handleCompleteTask(task.id)}
-                          disabled={processingTask}
-                        >
-                          {processingTask ? 'Verifying...' : 'Verify Task'}
-                        </button>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            {activeTab === 'hints' && (
-              <div className="space-y-3">
-                {lab.hints.map((hint, index) => (
-                  <div
-                    key={hint.id}
-                    className="bg-[var(--bg-tertiary)] rounded-lg overflow-hidden border border-[var(--border-default)]"
-                  >
-                    <button
-                      className="w-full px-4 py-3 flex items-center justify-between text-left"
-                      onClick={() => {
-                        if (hint.used) {
-                          setExpandedHints(prev =>
-                            prev.includes(hint.id)
-                              ? prev.filter(h => h !== hint.id)
-                              : [...prev, hint.id]
-                          );
-                        } else if (hint.accessible) {
-                          handleUseHint(hint.id);
-                        }
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Lightbulb className="w-4 h-4 text-[var(--accent-warning)]" />
-                        <span className="text-sm text-white">Hint {index + 1}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {hint.used ? (
-                          <span className="text-xs text-[var(--accent)]">Used</span>
-                        ) : (
-                          <span className="text-xs text-[var(--accent-danger)]">-{hint.pointCost} pts</span>
-                        )}
-                        {hint.used && (expandedHints.includes(hint.id) ? (
-                          <ChevronUp className="w-4 h-4 text-[var(--text-muted)]" />
-                        ) : (
-                          <ChevronDown className="w-4 h-4 text-[var(--text-muted)]" />
-                        ))}
-                      </div>
-                    </button>
-                    {hint.used && expandedHints.includes(hint.id) && hint.content && (
-                      <div className="px-4 pb-3 text-sm text-[var(--text-secondary)] border-t border-[var(--border-default)] pt-3">
-                        {hint.content}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {activeTab === 'objectives' && (
-              <div className="space-y-4">
-                <p className="text-sm text-[var(--text-secondary)]">{lab.description}</p>
-                <div>
-                  <h4 className="text-sm font-medium text-white mb-2">Learning Objectives:</h4>
-                  <ul className="space-y-2">
-                    {lab.objectives.map((obj, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
-                        <CheckCircle2 className="w-4 h-4 text-[var(--accent)] mt-0.5 flex-shrink-0" />
-                        {obj}
+              <>
+                {/* Objectives Card */}
+                <div className="rounded-2xl bg-zinc-900/80 border border-zinc-800/50 p-6">
+                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-cyan-400" />
+                    Tujuan Pembelajaran
+                  </h3>
+                  <ul className="space-y-3">
+                    {labData.objectives.map((obj, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <div className="p-1 rounded-full bg-cyan-500/20 mt-0.5">
+                          <ChevronRight className="w-3 h-3 text-cyan-400" />
+                        </div>
+                        <span className="text-sm text-zinc-300">{obj}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
+
+                {/* Tasks List */}
+                <div className="space-y-3">
+                  {labData.tasks.map((task, index) => (
+                    <div
+                      key={task.id}
+                      className={`group rounded-2xl border transition-all duration-300 ${task.completed
+                        ? 'bg-emerald-500/5 border-emerald-500/20'
+                        : 'bg-zinc-900/80 border-zinc-800/50 hover:border-zinc-700/50'
+                        }`}
+                    >
+                      <div
+                        className="p-5 cursor-pointer"
+                        onClick={() => setExpandedTask(expandedTask === task.id ? null : task.id)}
+                      >
+                        <div className="flex items-start gap-4">
+                          {/* Status Icon */}
+                          <div className={`p-2 rounded-xl ${task.completed
+                            ? 'bg-emerald-500/20 border border-emerald-500/30'
+                            : 'bg-zinc-800/50 border border-zinc-700/50'
+                            }`}>
+                            {task.completed ? (
+                              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                            ) : (
+                              <Circle className="w-5 h-5 text-zinc-500" />
+                            )}
+                          </div>
+
+                          {/* Content */}
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-medium text-zinc-500">Tugas {index + 1}</span>
+                                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                  +{task.points} poin
+                                </span>
+                              </div>
+                              {expandedTask === task.id ? (
+                                <ChevronUp className="w-4 h-4 text-zinc-500" />
+                              ) : (
+                                <ChevronDown className="w-4 h-4 text-zinc-500" />
+                              )}
+                            </div>
+                            <h4 className={`font-semibold ${task.completed ? 'text-emerald-400' : 'text-white'}`}>
+                              {task.title}
+                            </h4>
+                            <p className="text-sm text-zinc-400 mt-1">{task.description}</p>
+                          </div>
+                        </div>
+
+                        {/* Expanded Content */}
+                        {expandedTask === task.id && (
+                          <div className="mt-4 pt-4 border-t border-zinc-800/50">
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setShowHint(showHint === task.id ? null : task.id);
+                                }}
+                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors"
+                              >
+                                <Lightbulb className="w-4 h-4" />
+                                {showHint === task.id ? 'Sembunyikan Petunjuk' : 'Tampilkan Petunjuk'}
+                              </button>
+                              {!task.completed && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveTab('terminal');
+                                  }}
+                                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 hover:bg-cyan-500/20 transition-colors"
+                                >
+                                  <Terminal className="w-4 h-4" />
+                                  Buka Terminal
+                                </button>
+                              )}
+                            </div>
+                            {showHint === task.id && (
+                              <div className="mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                                <p className="text-sm text-amber-200 flex items-start gap-2">
+                                  <Lightbulb className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                                  {task.hint}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {activeTab === 'topology' && (
+              <div className="rounded-2xl bg-zinc-900/80 border border-zinc-800/50 p-6">
+                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <Network className="w-5 h-5 text-cyan-400" />
+                  Topologi Jaringan
+                </h3>
+
+                {/* Topology Visualization */}
+                <div className="relative bg-zinc-950 rounded-xl border border-zinc-800 p-8 min-h-[400px]">
+                  {/* Grid Background */}
+                  <div className="absolute inset-0 opacity-10" style={{
+                    backgroundImage: 'radial-gradient(circle, #06b6d4 1px, transparent 1px)',
+                    backgroundSize: '30px 30px'
+                  }} />
+
+                  {/* Connection Lines */}
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                    {labData.topology.links.map((link, i) => {
+                      const source = labData.topology.devices.find(d => d.id === link.source);
+                      const target = labData.topology.devices.find(d => d.id === link.target);
+                      if (!source || !target) return null;
+
+                      // Normalize positions for display
+                      const x1 = (source.x / 800) * 100;
+                      const y1 = (source.y / 400) * 100;
+                      const x2 = (target.x / 800) * 100;
+                      const y2 = (target.y / 400) * 100;
+
+                      return (
+                        <line
+                          key={i}
+                          x1={`${x1}%`}
+                          y1={`${y1}%`}
+                          x2={`${x2}%`}
+                          y2={`${y2}%`}
+                          stroke="#06b6d4"
+                          strokeWidth="2"
+                          strokeDasharray="5,5"
+                          className="animate-pulse"
+                        />
+                      );
+                    })}
+                  </svg>
+
+                  {/* Devices */}
+                  {labData.topology.devices.map((device) => {
+                    const DeviceIcon = getDeviceIcon(device.type);
+                    const x = (device.x / 800) * 100;
+                    const y = (device.y / 400) * 100;
+
+                    return (
+                      <div
+                        key={device.id}
+                        className={`absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-300 ${selectedDevice === device.id
+                          ? 'scale-110'
+                          : 'hover:scale-105'
+                          }`}
+                        style={{ left: `${x}%`, top: `${y}%` }}
+                        onClick={() => setSelectedDevice(device.id)}
+                      >
+                        <div className={`relative p-4 rounded-xl border ${selectedDevice === device.id
+                          ? 'bg-cyan-500/20 border-cyan-500/50 shadow-lg shadow-cyan-500/20'
+                          : 'bg-zinc-800/80 border-zinc-700/50 hover:border-zinc-600/50'
+                          }`}>
+                          <DeviceIcon className={`w-8 h-8 ${selectedDevice === device.id ? 'text-cyan-400' : 'text-zinc-400'}`} />
+                          {selectedDevice === device.id && (
+                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-400 rounded-full animate-ping" />
+                          )}
+                        </div>
+                        <div className="text-center mt-2">
+                          <span className={`text-sm font-medium ${selectedDevice === device.id ? 'text-cyan-400' : 'text-zinc-400'}`}>
+                            {device.name}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Device Info */}
+                {selectedDevice && (
+                  <div className="mt-4 p-4 rounded-xl bg-zinc-800/50 border border-zinc-700/50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-semibold text-white">
+                          {labData.topology.devices.find(d => d.id === selectedDevice)?.name}
+                        </h4>
+                        <p className="text-sm text-zinc-500">Klik untuk membuka terminal</p>
+                      </div>
+                      <button
+                        onClick={() => setActiveTab('terminal')}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/30 transition-colors"
+                      >
+                        <Terminal className="w-4 h-4" />
+                        Buka Terminal
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'terminal' && (
+              <div className="rounded-2xl bg-zinc-900/80 border border-zinc-800/50 overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-zinc-800/50 border-b border-zinc-700/50">
+                  <div className="flex items-center gap-3">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-red-500" />
+                      <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                      <div className="w-3 h-3 rounded-full bg-green-500" />
+                    </div>
+                    <span className="text-sm font-medium text-zinc-400">
+                      {selectedDevice ? labData.topology.devices.find(d => d.id === selectedDevice)?.name : 'Router1'} - Terminal
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button title="Toggle Code View" className="p-1.5 rounded-lg hover:bg-zinc-700/50 text-zinc-500 hover:text-white transition-colors">
+                      <Code2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Terminal Output */}
+                <div className="p-4 font-mono text-sm bg-zinc-950 min-h-[400px] max-h-[500px] overflow-y-auto">
+                  {terminalHistory.map((line, i) => (
+                    <div key={i} className={`${line.startsWith('$') ? 'text-cyan-400' : line.startsWith('>') ? 'text-emerald-400' : 'text-zinc-400'}`}>
+                      {line || '\u00A0'}
+                    </div>
+                  ))}
+
+                  {/* Input */}
+                  <form onSubmit={handleTerminalSubmit} className="flex items-center mt-2">
+                    <span className="text-cyan-400 mr-2">$</span>
+                    <input
+                      type="text"
+                      value={terminalInput}
+                      onChange={(e) => setTerminalInput(e.target.value)}
+                      className="flex-1 bg-transparent outline-none text-white caret-cyan-400"
+                      placeholder="Ketik perintah..."
+                      autoFocus
+                    />
+                    <button
+                      type="submit"
+                      title="Execute Command"
+                      className="p-2 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 transition-colors"
+                    >
+                      <Send className="w-4 h-4" />
+                    </button>
+                  </form>
+                </div>
+
+                {/* Quick Commands */}
+                <div className="px-4 py-3 bg-zinc-800/30 border-t border-zinc-700/50">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs text-zinc-500">Cepat:</span>
+                    {['enable', 'show ip interface brief', 'configure terminal', 'ping'].map((cmd) => (
+                      <button
+                        key={cmd}
+                        onClick={() => setTerminalInput(cmd)}
+                        className="px-2 py-1 rounded-lg text-xs bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors"
+                      >
+                        {cmd}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
           </div>
 
-          {/* Current Task Card */}
-          {activeTab === 'tasks' && currentTask && (
-            <div className="p-4 border-t border-[var(--border-default)] bg-[var(--bg-tertiary)]">
-              <div className="text-xs text-[var(--text-muted)] mb-2">Current Task</div>
-              <h4 className="text-sm font-medium text-white mb-1">
-                Task {lab.tasks.findIndex(t => t.id === currentTask.id) + 1}: {currentTask.title}
-              </h4>
-              <p className="text-xs text-[var(--text-secondary)] mb-3">
-                {currentTask.description}
+          {/* Right Panel - Info & Quick Actions */}
+          <div className="space-y-4">
+            {/* Quick Stats */}
+            <div className="rounded-2xl bg-zinc-900/80 border border-zinc-800/50 p-5">
+              <h3 className="text-sm font-semibold text-zinc-400 mb-4">Statistik Lab</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span className="text-sm text-zinc-300">Tugas Selesai</span>
+                  </div>
+                  <span className="text-sm font-bold text-white">{completedTasks}/{labData.tasks.length}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Trophy className="w-4 h-4 text-amber-400" />
+                    <span className="text-sm text-zinc-300">Poin Diperoleh</span>
+                  </div>
+                  <span className="text-sm font-bold text-white">{earnedPoints}/{totalPoints}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-cyan-400" />
+                    <span className="text-sm text-zinc-300">Hadiah XP</span>
+                  </div>
+                  <span className="text-sm font-bold text-amber-400">{labData.xp} XP</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Hints Used */}
+            <div className="rounded-2xl bg-zinc-900/80 border border-zinc-800/50 p-5">
+              <h3 className="text-sm font-semibold text-zinc-400 mb-4 flex items-center gap-2">
+                <Lightbulb className="w-4 h-4 text-amber-400" />
+                Petunjuk
+              </h3>
+              <p className="text-sm text-zinc-500 mb-3">
+                Menggunakan petunjuk akan mengurangi XP yang diperoleh. Coba selesaikan tugas tanpa petunjuk untuk hadiah maksimal!
               </p>
-              {currentHints.length > 0 && !currentHints[0].used && (
-                <button
-                  className="btn btn-primary w-full text-sm"
-                  onClick={() => handleUseHint(currentHints[0].id)}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <span className="text-sm text-amber-400">Petunjuk Digunakan</span>
+                <span className="text-lg font-bold text-amber-400">0/4</span>
+              </div>
+            </div>
+
+            {/* Resources */}
+            <div className="rounded-2xl bg-zinc-900/80 border border-zinc-800/50 p-5">
+              <h3 className="text-sm font-semibold text-zinc-400 mb-4 flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-cyan-400" />
+                Sumber Daya
+              </h3>
+              <div className="space-y-2">
+                {[
+                  { icon: Eye, label: 'Lihat Dokumentasi', color: 'text-cyan-400' },
+                  { icon: HelpCircle, label: 'Referensi Perintah', color: 'text-purple-400' },
+                  { icon: Award, label: 'Panduan Penilaian', color: 'text-amber-400' }
+                ].map((item, i) => (
+                  <button
+                    key={i}
+                    className="w-full flex items-center gap-3 p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-700/50 border border-zinc-700/50 transition-colors text-left"
+                  >
+                    <item.icon className={`w-4 h-4 ${item.color}`} />
+                    <span className="text-sm text-zinc-300">{item.label}</span>
+                    <ChevronRight className="w-4 h-4 text-zinc-600 ml-auto" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <div className="rounded-2xl bg-zinc-900/80 border border-zinc-800/50 p-5">
+              <h3 className="text-sm font-semibold text-zinc-400 mb-4">Navigasi</h3>
+              <div className="space-y-2">
+                <a
+                  href="/labs"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-700/50 border border-zinc-700/50 transition-colors"
                 >
-                  <HelpCircle className="w-4 h-4" />
-                  Show Hint (-{currentHints[0].pointCost} pts)
-                </button>
-              )}
+                  <ArrowLeft className="w-4 h-4 text-zinc-500" />
+                  <span className="text-sm text-zinc-300">Kembali ke Lab</span>
+                </a>
+                {parseInt(resolvedParams.labId) < 8 && (
+                  <a
+                    href={`/labs/${parseInt(resolvedParams.labId) + 1}`}
+                    className="w-full flex items-center justify-between gap-3 p-3 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 transition-colors"
+                  >
+                    <span className="text-sm text-cyan-400">Lab Berikutnya</span>
+                    <ChevronRight className="w-4 h-4 text-cyan-400" />
+                  </a>
+                )}
+              </div>
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* Submit Modal */}
-      {showSubmitModal && submissionResult && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-default)] p-6 max-w-md w-full mx-4 text-center">
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${submissionResult.percentage >= 70
-                ? "bg-emerald-500/20"
-                : submissionResult.percentage >= 50
-                  ? "bg-yellow-500/20"
-                  : "bg-red-500/20"
-              }`}>
-              <CheckCircle2 className={`w-8 h-8 ${submissionResult.percentage >= 70
-                  ? "text-emerald-400"
-                  : submissionResult.percentage >= 50
-                    ? "text-yellow-400"
-                    : "text-red-400"
-                }`} />
-            </div>
-
-            <h3 className="text-2xl font-bold mb-2 text-white">Lab Submitted!</h3>
-            <p className="text-4xl font-bold text-[var(--primary)] mb-1">
-              {submissionResult.score}/{submissionResult.maxScore}
-            </p>
-            <p className="text-[var(--text-muted)] mb-4">
-              Grade: <span className="text-white font-semibold">{submissionResult.grade}</span> ({submissionResult.percentage}%)
-            </p>
-
-            <p className="text-[var(--text-secondary)] text-sm mb-6">{submissionResult.feedback}</p>
-
-            <Link
-              href="/dashboard/student/labs"
-              className="btn btn-primary w-full"
-            >
-              Back to Labs
-            </Link>
           </div>
         </div>
-      )}
+      </main>
     </div>
   );
 }

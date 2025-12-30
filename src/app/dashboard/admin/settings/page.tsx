@@ -121,6 +121,7 @@ export default function SettingsPage() {
                   type="text"
                   value={settings.siteName}
                   onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
+                  placeholder="Enter site name"
                   className="w-full px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
                 />
               </div>
@@ -132,6 +133,7 @@ export default function SettingsPage() {
                   value={settings.siteDescription}
                   onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
                   rows={3}
+                  placeholder="Enter site description"
                   className="w-full px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 resize-none"
                 />
               </div>
@@ -148,6 +150,7 @@ export default function SettingsPage() {
                 </div>
                 <button
                   onClick={() => setSettings({ ...settings, allowRegistration: !settings.allowRegistration })}
+                  title="Toggle Allow Registration"
                   className={cn(
                     "w-12 h-6 rounded-full transition-colors relative",
                     settings.allowRegistration ? "bg-cyan-500" : "bg-zinc-700"
@@ -166,6 +169,7 @@ export default function SettingsPage() {
                 </div>
                 <button
                   onClick={() => setSettings({ ...settings, requireEmailVerification: !settings.requireEmailVerification })}
+                  title="Toggle Require Email Verification"
                   className={cn(
                     "w-12 h-6 rounded-full transition-colors relative",
                     settings.requireEmailVerification ? "bg-cyan-500" : "bg-zinc-700"
@@ -189,6 +193,7 @@ export default function SettingsPage() {
               </div>
               <button
                 onClick={() => setSettings({ ...settings, maintenanceMode: !settings.maintenanceMode })}
+                title="Toggle Maintenance Mode"
                 className={cn(
                   "w-12 h-6 rounded-full transition-colors relative",
                   settings.maintenanceMode ? "bg-red-500" : "bg-zinc-700"
@@ -220,6 +225,7 @@ export default function SettingsPage() {
                   onChange={(e) => setSettings({ ...settings, maxLoginAttempts: parseInt(e.target.value) })}
                   min={1}
                   max={10}
+                  placeholder="5"
                   className="w-full max-w-xs px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
                 />
                 <p className="text-sm text-zinc-500 mt-2">Number of failed attempts before lockout</p>
@@ -234,6 +240,7 @@ export default function SettingsPage() {
                   onChange={(e) => setSettings({ ...settings, sessionTimeout: parseInt(e.target.value) })}
                   min={15}
                   max={480}
+                  placeholder="60"
                   className="w-full max-w-xs px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
                 />
                 <p className="text-sm text-zinc-500 mt-2">Time before inactive sessions expire</p>
@@ -272,7 +279,7 @@ export default function SettingsPage() {
                   <p className="font-medium text-white">New User Registration</p>
                   <p className="text-sm text-zinc-500">Notify when a new user registers</p>
                 </div>
-                <button className="w-12 h-6 rounded-full bg-cyan-500 relative">
+                <button title="Toggle New User Registration Notification" className="w-12 h-6 rounded-full bg-cyan-500 relative">
                   <span className="absolute top-1 left-7 w-4 h-4 bg-white rounded-full" />
                 </button>
               </div>
@@ -281,7 +288,7 @@ export default function SettingsPage() {
                   <p className="font-medium text-white">Lab Completion</p>
                   <p className="text-sm text-zinc-500">Notify when a student completes a lab</p>
                 </div>
-                <button className="w-12 h-6 rounded-full bg-zinc-700 relative">
+                <button title="Toggle Lab Completion Notification" className="w-12 h-6 rounded-full bg-zinc-700 relative">
                   <span className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full" />
                 </button>
               </div>
@@ -290,7 +297,7 @@ export default function SettingsPage() {
                   <p className="font-medium text-white">System Alerts</p>
                   <p className="text-sm text-zinc-500">Critical system notifications</p>
                 </div>
-                <button className="w-12 h-6 rounded-full bg-cyan-500 relative">
+                <button title="Toggle System Alerts" className="w-12 h-6 rounded-full bg-cyan-500 relative">
                   <span className="absolute top-1 left-7 w-4 h-4 bg-white rounded-full" />
                 </button>
               </div>

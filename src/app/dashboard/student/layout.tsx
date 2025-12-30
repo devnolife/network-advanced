@@ -25,11 +25,11 @@ interface UserData {
 }
 
 const sidebarItems = [
-  { name: 'Dashboard', href: '/dashboard/student', icon: Home },
-  { name: 'My Labs', href: '/dashboard/student/labs', icon: BookOpen },
-  { name: 'Achievements', href: '/dashboard/student/achievements', icon: Trophy },
-  { name: 'Profile', href: '/dashboard/student/profile', icon: User },
-  { name: 'Settings', href: '/dashboard/student/settings', icon: Settings },
+  { name: 'Dasbor', href: '/dashboard/student', icon: Home },
+  { name: 'Lab Saya', href: '/dashboard/student/labs', icon: FlaskConical },
+  { name: 'Pencapaian', href: '/dashboard/student/achievements', icon: Trophy },
+  { name: 'Profil', href: '/dashboard/student/profile', icon: User },
+  { name: 'Pengaturan', href: '/dashboard/student/settings', icon: Settings },
 ];
 
 export default function StudentLayout({
@@ -93,7 +93,7 @@ export default function StudentLayout({
           </div>
           <div>
             <span className="text-lg font-bold text-white">CyberNexus</span>
-            <p className="text-xs text-zinc-500">Student Portal</p>
+            <p className="text-xs text-zinc-500">Portal Siswa</p>
           </div>
         </div>
 
@@ -131,7 +131,7 @@ export default function StudentLayout({
             className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-red-500/10 hover:text-red-400 transition-all"
           >
             <LogOut className="h-5 w-5" />
-            Logout
+            Keluar
           </button>
         </div>
       </aside>
@@ -152,14 +152,14 @@ export default function StudentLayout({
             <button
               onClick={() => setSidebarOpen(true)}
               className="lg:hidden p-2 rounded-lg hover:bg-zinc-800"
-              aria-label="Open menu"
+              aria-label="Buka menu"
             >
               <Menu className="h-5 w-5" />
             </button>
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white" aria-label="Notifications">
+            <button className="relative p-2 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white" aria-label="Notifikasi">
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-cyan-500 rounded-full"></span>
             </button>

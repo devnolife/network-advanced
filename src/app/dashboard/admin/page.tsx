@@ -64,28 +64,28 @@ export default function AdminDashboard() {
 
   const statCards = [
     {
-      label: 'Total Users',
+      label: 'Total Pengguna',
       value: stats.totalUsers,
       icon: Users,
       color: 'cyan',
       href: '/dashboard/admin/users',
     },
     {
-      label: 'Students',
+      label: 'Siswa',
       value: stats.totalStudents,
       icon: GraduationCap,
       color: 'emerald',
       href: '/dashboard/admin/students',
     },
     {
-      label: 'Active Labs',
+      label: 'Lab Aktif',
       value: stats.totalLabs,
       icon: BookOpen,
       color: 'violet',
       href: '/dashboard/admin/labs',
     },
     {
-      label: 'Avg. Score',
+      label: 'Rata-rata Nilai',
       value: `${stats.avgScore}%`,
       icon: TrendingUp,
       color: 'amber',
@@ -105,8 +105,8 @@ export default function AdminDashboard() {
     <div className="p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white mb-2">Admin Dashboard</h1>
-        <p className="text-zinc-400">Welcome back! Here's an overview of your platform.</p>
+        <h1 className="text-2xl font-bold text-white mb-2">Dasbor Admin</h1>
+        <p className="text-zinc-400">Selamat datang kembali! Berikut ringkasan platform Anda.</p>
       </div>
 
       {/* Stats Grid */}
@@ -150,12 +150,12 @@ export default function AdminDashboard() {
         {/* Recent Activity */}
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-white">Recent Activity</h2>
+            <h2 className="text-lg font-semibold text-white">Aktivitas Terbaru</h2>
             <Link
               href="/dashboard/admin/reports"
               className="text-sm text-cyan-400 hover:text-cyan-300"
             >
-              View all
+              Lihat semua
             </Link>
           </div>
           {recentActivity.length > 0 ? (
@@ -184,14 +184,14 @@ export default function AdminDashboard() {
           ) : (
             <div className="text-center py-8">
               <Clock className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-              <p className="text-zinc-400">No recent activity</p>
+              <p className="text-zinc-400">Belum ada aktivitas terbaru</p>
             </div>
           )}
         </div>
 
         {/* Quick Actions */}
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-          <h2 className="text-lg font-semibold text-white mb-6">Quick Actions</h2>
+          <h2 className="text-lg font-semibold text-white mb-6">Aksi Cepat</h2>
           <div className="grid gap-4">
             <Link
               href="/dashboard/admin/users"
@@ -201,8 +201,8 @@ export default function AdminDashboard() {
                 <Users className="h-5 w-5 text-cyan-400" />
               </div>
               <div>
-                <p className="font-medium text-white">Manage Users</p>
-                <p className="text-sm text-zinc-400">Add, edit, or remove users</p>
+                <p className="font-medium text-white">Kelola Pengguna</p>
+                <p className="text-sm text-zinc-400">Tambah, edit, atau hapus pengguna</p>
               </div>
             </Link>
             <Link
@@ -213,8 +213,8 @@ export default function AdminDashboard() {
                 <BookOpen className="h-5 w-5 text-violet-400" />
               </div>
               <div>
-                <p className="font-medium text-white">Manage Labs</p>
-                <p className="text-sm text-zinc-400">Configure labs and answers</p>
+                <p className="font-medium text-white">Kelola Lab</p>
+                <p className="text-sm text-zinc-400">Konfigurasi lab dan jawaban</p>
               </div>
             </Link>
             <Link
@@ -225,8 +225,8 @@ export default function AdminDashboard() {
                 <GraduationCap className="h-5 w-5 text-emerald-400" />
               </div>
               <div>
-                <p className="font-medium text-white">Student Progress</p>
-                <p className="text-sm text-zinc-400">View student lab progress</p>
+                <p className="font-medium text-white">Progres Siswa</p>
+                <p className="text-sm text-zinc-400">Lihat progres lab siswa</p>
               </div>
             </Link>
           </div>

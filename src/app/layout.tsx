@@ -3,13 +3,13 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
-  title: "CyberNexus - Virtual Security Lab",
-  description: "Advanced Cybersecurity Interactive Learning Platform - Master VPN, Firewall, IDS, and more through immersive hands-on simulations",
-  keywords: ["cybersecurity", "network security", "VPN", "IPSec", "firewall", "IDS", "hacking", "learning", "simulation", "virtual lab"],
-  authors: [{ name: "CyberNexus Team" }],
+  title: "CyberNexus - Laboratorium Keamanan Virtual",
+  description: "Platform Pembelajaran Interaktif Keamanan Siber Tingkat Lanjut - Kuasai VPN, Firewall, IDS, dan lainnya melalui simulasi langsung yang imersif",
+  keywords: ["keamanan siber", "keamanan jaringan", "VPN", "IPSec", "firewall", "IDS", "hacking", "pembelajaran", "simulasi", "laboratorium virtual"],
+  authors: [{ name: "Tim CyberNexus" }],
   openGraph: {
-    title: "CyberNexus - Virtual Security Lab",
-    description: "Immersive platform for mastering cybersecurity through hands-on virtual simulations",
+    title: "CyberNexus - Laboratorium Keamanan Virtual",
+    description: "Platform imersif untuk menguasai keamanan siber melalui simulasi virtual langsung",
     type: "website",
   },
 };
@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"

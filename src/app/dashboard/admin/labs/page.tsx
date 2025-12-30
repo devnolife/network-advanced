@@ -246,7 +246,7 @@ export default function AdminLabsPage() {
                 <Eye className="h-4 w-4" />
                 View Tasks & Answers
               </button>
-              <button className="p-2.5 rounded-xl bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors">
+              <button title="Edit Lab" className="p-2.5 rounded-xl bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors">
                 <Edit className="h-4 w-4" />
               </button>
             </div>

@@ -136,10 +136,10 @@ export default function StudentDashboard() {
     : 0;
 
   const formatTime = (minutes: number): string => {
-    if (minutes < 60) return `${minutes} min`;
+    if (minutes < 60) return `${minutes} menit`;
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    return mins > 0 ? `${hours}.${Math.round(mins / 6)} hrs` : `${hours} hrs`;
+    return mins > 0 ? `${hours}.${Math.round(mins / 6)} jam` : `${hours} jam`;
   };
 
   if (loading) {
@@ -160,10 +160,10 @@ export default function StudentDashboard() {
       {/* Welcome Banner */}
       <div className="rounded-2xl bg-linear-to-r from-cyan-500/20 to-blue-600/20 border border-cyan-500/20 p-6 mb-8">
         <h2 className="text-2xl font-bold text-white mb-2">
-          Welcome back! 👋
+          Selamat datang kembali! 👋
         </h2>
         <p className="text-zinc-300">
-          You've completed {stats.completedLabs} of {stats.totalLabs} labs. {stats.completedLabs < stats.totalLabs ? 'Keep going to unlock more achievements!' : 'Amazing! You\'ve completed all labs!'}
+          Kamu sudah menyelesaikan {stats.completedLabs} dari {stats.totalLabs} lab. {stats.completedLabs < stats.totalLabs ? 'Terus lanjutkan untuk membuka lebih banyak pencapaian!' : 'Luar biasa! Kamu sudah menyelesaikan semua lab!'}
         </p>
         <div className="mt-4 flex items-center gap-4">
           <div className="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden">
@@ -172,7 +172,7 @@ export default function StudentDashboard() {
               style={{ width: `${overallProgress}%` }}
             ></div>
           </div>
-          <span className="text-sm text-zinc-400">{overallProgress}% complete</span>
+          <span className="text-sm text-zinc-400">{overallProgress}% selesai</span>
         </div>
       </div>
 
@@ -183,7 +183,7 @@ export default function StudentDashboard() {
             <div className="p-2 rounded-lg bg-cyan-500/10">
               <BookOpen className="h-5 w-5 text-cyan-400" />
             </div>
-            <span className="text-sm text-zinc-400">Labs Completed</span>
+            <span className="text-sm text-zinc-400">Lab Selesai</span>
           </div>
           <p className="text-3xl font-bold text-white">{stats.completedLabs} / {stats.totalLabs}</p>
         </div>
@@ -192,7 +192,7 @@ export default function StudentDashboard() {
             <div className="p-2 rounded-lg bg-emerald-500/10">
               <Trophy className="h-5 w-5 text-emerald-400" />
             </div>
-            <span className="text-sm text-zinc-400">Achievements</span>
+            <span className="text-sm text-zinc-400">Pencapaian</span>
           </div>
           <p className="text-3xl font-bold text-white">{stats.unlockedAchievements} / {stats.totalAchievements}</p>
         </div>
@@ -201,7 +201,7 @@ export default function StudentDashboard() {
             <div className="p-2 rounded-lg bg-violet-500/10">
               <Clock className="h-5 w-5 text-violet-400" />
             </div>
-            <span className="text-sm text-zinc-400">Time Spent</span>
+            <span className="text-sm text-zinc-400">Waktu Belajar</span>
           </div>
           <p className="text-3xl font-bold text-white">{formatTime(stats.totalTimeMinutes)}</p>
         </div>
@@ -210,18 +210,18 @@ export default function StudentDashboard() {
             <div className="p-2 rounded-lg bg-amber-500/10">
               <Flame className="h-5 w-5 text-amber-400" />
             </div>
-            <span className="text-sm text-zinc-400">Streak</span>
+            <span className="text-sm text-zinc-400">Beruntun</span>
           </div>
-          <p className="text-3xl font-bold text-white">{stats.streak} days</p>
+          <p className="text-3xl font-bold text-white">{stats.streak} hari</p>
         </div>
       </div>
 
       {/* Continue Learning */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-white">Continue Learning</h2>
+          <h2 className="text-lg font-semibold text-white">Lanjutkan Belajar</h2>
           <Link href="/dashboard/student/labs" className="text-sm text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
-            View all <ArrowRight className="h-4 w-4" />
+            Lihat semua <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -280,17 +280,17 @@ export default function StudentDashboard() {
                       )}
                     >
                       {status === 'completed' ? (
-                        <>Review Lab</>
+                        <>Tinjau Lab</>
                       ) : (
                         <>
                           <Play className="h-4 w-4" />
-                          {progress > 0 ? 'Continue' : 'Start Lab'}
+                          {progress > 0 ? 'Lanjutkan' : 'Mulai Lab'}
                         </>
                       )}
                     </Link>
                   </>
                 ) : (
-                  <p className="text-xs text-zinc-500 mt-2">{lab.lockedReason || 'Complete previous lab to unlock'}</p>
+                  <p className="text-xs text-zinc-500 mt-2">{lab.lockedReason || 'Selesaikan lab sebelumnya untuk membuka'}</p>
                 )}
               </div>
             );
@@ -301,9 +301,9 @@ export default function StudentDashboard() {
       {/* Achievements */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-white">Recent Achievements</h2>
+          <h2 className="text-lg font-semibold text-white">Pencapaian Terbaru</h2>
           <Link href="/dashboard/student/achievements" className="text-sm text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
-            View all <ArrowRight className="h-4 w-4" />
+            Lihat semua <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
         {displayAchievements.length > 0 ? (
@@ -348,10 +348,10 @@ export default function StudentDashboard() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* Default achievements if no data */}
             {[
-              { title: 'First Steps', description: 'Complete your first lab', icon: Star, unlocked: false },
-              { title: 'Quick Learner', description: 'Complete 3 labs in a week', icon: Flame, unlocked: false },
-              { title: 'Security Expert', description: 'Complete all labs', icon: Shield, unlocked: false },
-              { title: 'Perfect Score', description: 'Get 100% on any lab', icon: Target, unlocked: false },
+              { title: 'Langkah Pertama', description: 'Selesaikan lab pertamamu', icon: Star, unlocked: false },
+              { title: 'Cepat Belajar', description: 'Selesaikan 3 lab dalam seminggu', icon: Flame, unlocked: false },
+              { title: 'Ahli Keamanan', description: 'Selesaikan semua lab', icon: Shield, unlocked: false },
+              { title: 'Nilai Sempurna', description: 'Dapatkan 100% di lab manapun', icon: Target, unlocked: false },
             ].map((achievement, i) => (
               <div
                 key={i}

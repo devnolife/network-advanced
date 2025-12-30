@@ -30,13 +30,13 @@ interface User {
 }
 
 const sidebarItems = [
-  { name: 'Dashboard', href: '/dashboard/admin', icon: Home },
-  { name: 'Users', href: '/dashboard/admin/users', icon: Users },
-  { name: 'Labs', href: '/dashboard/admin/labs', icon: BookOpen },
-  { name: 'Students', href: '/dashboard/admin/students', icon: GraduationCap },
-  { name: 'Reports', href: '/dashboard/admin/reports', icon: FileText },
-  { name: 'Analytics', href: '/dashboard/admin/analytics', icon: BarChart3 },
-  { name: 'Settings', href: '/dashboard/admin/settings', icon: Settings },
+  { name: 'Dasbor', href: '/dashboard/admin', icon: Home },
+  { name: 'Pengguna', href: '/dashboard/admin/users', icon: Users },
+  { name: 'Lab', href: '/dashboard/admin/labs', icon: FlaskConical },
+  { name: 'Siswa', href: '/dashboard/admin/students', icon: GraduationCap },
+  { name: 'Laporan', href: '/dashboard/admin/reports', icon: FileText },
+  { name: 'Analitik', href: '/dashboard/admin/analytics', icon: BarChart2 },
+  { name: 'Pengaturan', href: '/dashboard/admin/settings', icon: Settings },
 ];
 
 export default function AdminLayout({
@@ -100,7 +100,7 @@ export default function AdminLayout({
           </div>
           <div>
             <span className="text-lg font-bold text-white">CyberNexus</span>
-            <p className="text-xs text-zinc-500">Admin Panel</p>
+            <p className="text-xs text-zinc-500">Panel Admin</p>
           </div>
         </div>
 
@@ -137,7 +137,7 @@ export default function AdminLayout({
             className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all"
           >
             <LogOut className="h-5 w-5" />
-            Logout
+            Keluar
           </button>
         </div>
       </aside>
@@ -172,7 +172,7 @@ export default function AdminLayout({
                 <Search className="h-4 w-4 text-zinc-500" />
                 <input
                   type="text"
-                  placeholder="Search..."
+                  placeholder="Cari..."
                   className="bg-transparent border-none outline-none text-sm text-zinc-100 placeholder-zinc-500 w-full"
                 />
               </div>
@@ -180,7 +180,7 @@ export default function AdminLayout({
 
             <div className="flex items-center gap-4">
               {/* Notifications */}
-              <button className="relative p-2 rounded-lg hover:bg-zinc-800">
+              <button title="Notifications" className="relative p-2 rounded-lg hover:bg-zinc-800">
                 <Bell className="h-5 w-5 text-zinc-400" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-cyan-500 rounded-full"></span>
               </button>

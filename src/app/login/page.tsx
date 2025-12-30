@@ -29,7 +29,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Login failed');
+        setError(data.error || 'Gagal masuk');
         setLoading(false);
         return;
       }
@@ -43,7 +43,7 @@ export default function LoginPage() {
         router.push('/dashboard/student');
       }
     } catch {
-      setError('Something went wrong. Please try again.');
+      setError('Terjadi kesalahan. Silakan coba lagi.');
       setLoading(false);
     }
   };
@@ -96,21 +96,21 @@ export default function LoginPage() {
           <div className="flex flex-wrap gap-3">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-zinc-300">
               <Sparkles className="h-4 w-4 text-cyan-400" />
-              Interactive Labs
+              Lab Interaktif
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-zinc-300">
               <Zap className="h-4 w-4 text-yellow-400" />
-              Real-time Simulation
+              Simulasi Real-time
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-zinc-300">
               <Globe className="h-4 w-4 text-violet-400" />
-              Global Community
+              Komunitas Global
             </div>
           </div>
         </div>
 
         <div className="relative z-10 text-sm text-zinc-500">
-          © 2025 CyberNexus. All rights reserved.
+          © 2025 CyberNexus. Hak cipta dilindungi.
         </div>
       </div>
 
@@ -132,10 +132,10 @@ export default function LoginPage() {
           {/* Header */}
           <div className="text-center lg:text-left mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">
-              Welcome back
+              Selamat Datang Kembali
             </h1>
             <p className="text-zinc-400">
-              Enter your credentials to access your account
+              Masukkan kredensial untuk mengakses akun Anda
             </p>
           </div>
 
@@ -157,7 +157,7 @@ export default function LoginPage() {
                 {/* Username Field */}
                 <div className="space-y-2">
                   <label htmlFor="username" className="block text-sm font-medium text-zinc-300">
-                    Username
+                    Nama Pengguna
                   </label>
                   <div className="relative group">
                     <div className="absolute -inset-0.5 bg-linear-to-r from-cyan-500 to-violet-500 rounded-xl opacity-0 group-focus-within:opacity-100 blur transition-opacity" />
@@ -168,7 +168,7 @@ export default function LoginPage() {
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Enter your username"
+                        placeholder="Masukkan nama pengguna"
                         className="w-full rounded-xl border border-zinc-700 bg-zinc-800/50 pl-12 pr-4 py-3.5 text-white placeholder:text-zinc-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
                         required
                       />
@@ -179,7 +179,7 @@ export default function LoginPage() {
                 {/* Password Field */}
                 <div className="space-y-2">
                   <label htmlFor="password" className="block text-sm font-medium text-zinc-300">
-                    Password
+                    Kata Sandi
                   </label>
                   <div className="relative group">
                     <div className="absolute -inset-0.5 bg-linear-to-r from-cyan-500 to-violet-500 rounded-xl opacity-0 group-focus-within:opacity-100 blur transition-opacity" />
@@ -218,10 +218,10 @@ export default function LoginPage() {
                         <path d="M3.5 6L5.5 8L8.5 4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </div>
-                    <span className="text-sm text-zinc-400 group-hover:text-zinc-300 transition-colors">Remember me</span>
+                    <span className="text-sm text-zinc-400 group-hover:text-zinc-300 transition-colors">Ingat saya</span>
                   </label>
                   <Link href="/forgot-password" className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors">
-                    Forgot password?
+                    Lupa kata sandi?
                   </Link>
                 </div>
 
@@ -238,11 +238,11 @@ export default function LoginPage() {
                     {loading ? (
                       <>
                         <Loader2 className="h-5 w-5 animate-spin" />
-                        Signing in...
+                        Sedang masuk...
                       </>
                     ) : (
                       <>
-                        Sign In
+                        Masuk
                         <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                       </>
                     )}
@@ -255,19 +255,19 @@ export default function LoginPage() {
           {/* Register Link */}
           <div className="mt-8 text-center">
             <p className="text-zinc-500">
-              Don&apos;t have an account?{' '}
+              Belum punya akun?{' '}
               <Link href="/register" className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors">
-                Create one
+                Buat akun
               </Link>
             </p>
           </div>
 
           {/* Footer */}
           <p className="text-center text-xs text-zinc-600 mt-8">
-            By signing in, you agree to our{' '}
-            <Link href="/terms" className="text-zinc-500 hover:text-zinc-400 transition-colors">Terms</Link>
-            {' '}and{' '}
-            <Link href="/privacy" className="text-zinc-500 hover:text-zinc-400 transition-colors">Privacy Policy</Link>
+            Dengan masuk, Anda menyetujui{' '}
+            <Link href="/terms" className="text-zinc-500 hover:text-zinc-400 transition-colors">Syarat</Link>
+            {' '}dan{' '}
+            <Link href="/privacy" className="text-zinc-500 hover:text-zinc-400 transition-colors">Kebijakan Privasi</Link> kami
           </p>
         </div>
       </div>

@@ -7,10 +7,13 @@ const JWT_SECRET = new TextEncoder().encode(
 );
 
 // Routes that require authentication
-const protectedRoutes = ['/dashboard'];
+const protectedRoutes = ['/dashboard', '/labs'];
 const adminRoutes = ['/dashboard/admin'];
 const instructorRoutes = ['/dashboard/instructor'];
 const studentRoutes = ['/dashboard/student'];
+
+// Lab routes - specific paths within /labs that require auth
+const labDetailRoutes = /^\/labs\/[^/]+$/; // matches /labs/1, /labs/abc, etc.
 
 // Routes that should redirect to dashboard if already logged in
 const authRoutes = ['/login', '/register'];
@@ -24,10 +27,17 @@ export async function middleware(request: NextRequest) {
   const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
   const isAdminRoute = adminRoutes.some(route => pathname.startsWith(route));
   const isInstructorRoute = instructorRoutes.some(route => pathname.startsWith(route));
-  const isStudentRoute = studentRoutes.some(route => pathname.startsWith(route));
+  // studentRoutes check reserved for future use
+  void studentRoutes;
+
+  // Check if accessing lab detail page (/labs/[labId])
+  const isLabDetailRoute = labDetailRoutes.test(pathname);
+
+  // /labs (list page) is public, but /labs/[labId] requires auth
+  const requiresAuth = (isProtectedRoute && !pathname.match(/^\/labs\/?$/)) || isLabDetailRoute;
 
   // If no token and trying to access protected route
-  if (!token && isProtectedRoute) {
+  if (!token && requiresAuth) {
     const url = new URL('/login', request.url);
     url.searchParams.set('from', pathname);
     return NextResponse.redirect(url);
@@ -61,7 +71,7 @@ export async function middleware(request: NextRequest) {
 
     } catch {
       // Invalid token, clear it and redirect to login
-      if (isProtectedRoute) {
+      if (requiresAuth) {
         const response = NextResponse.redirect(new URL('/login', request.url));
         response.cookies.delete('auth-token');
         return response;
@@ -77,5 +87,6 @@ export const config = {
     '/dashboard/:path*',
     '/login',
     '/register',
+    '/labs/:path*',
   ],
 };

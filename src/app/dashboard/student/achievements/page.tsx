@@ -51,8 +51,8 @@ const achievementDefinitions: Achievement[] = [
   // Progress achievements
   {
     id: 'first-steps',
-    title: 'First Steps',
-    description: 'Complete your first lab',
+    title: 'Langkah Pertama',
+    description: 'Selesaikan lab pertamamu',
     icon: 'Star',
     category: 'progress',
     unlocked: false,
@@ -63,8 +63,8 @@ const achievementDefinitions: Achievement[] = [
   },
   {
     id: 'getting-started',
-    title: 'Getting Started',
-    description: 'Complete 3 labs',
+    title: 'Mulai Belajar',
+    description: 'Selesaikan 3 lab',
     icon: 'BookOpen',
     category: 'progress',
     unlocked: false,
@@ -75,8 +75,8 @@ const achievementDefinitions: Achievement[] = [
   },
   {
     id: 'lab-master',
-    title: 'Lab Master',
-    description: 'Complete all available labs',
+    title: 'Master Lab',
+    description: 'Selesaikan semua lab yang tersedia',
     icon: 'Trophy',
     category: 'progress',
     unlocked: false,
@@ -87,8 +87,8 @@ const achievementDefinitions: Achievement[] = [
   },
   {
     id: 'task-hunter',
-    title: 'Task Hunter',
-    description: 'Complete 25 tasks',
+    title: 'Pemburu Tugas',
+    description: 'Selesaikan 25 tugas',
     icon: 'Target',
     category: 'progress',
     unlocked: false,
@@ -99,8 +99,8 @@ const achievementDefinitions: Achievement[] = [
   },
   {
     id: 'dedicated-learner',
-    title: 'Dedicated Learner',
-    description: 'Complete 50 tasks',
+    title: 'Pelajar Tekun',
+    description: 'Selesaikan 50 tugas',
     icon: 'Flame',
     category: 'progress',
     unlocked: false,
@@ -112,8 +112,8 @@ const achievementDefinitions: Achievement[] = [
   // Performance achievements
   {
     id: 'perfect-score',
-    title: 'Perfect Score',
-    description: 'Get 100% on any lab',
+    title: 'Nilai Sempurna',
+    description: 'Dapatkan 100% di lab manapun',
     icon: 'Medal',
     category: 'performance',
     unlocked: false,
@@ -124,8 +124,8 @@ const achievementDefinitions: Achievement[] = [
   },
   {
     id: 'excellence',
-    title: 'Excellence',
-    description: 'Achieve an A grade on 3 labs',
+    title: 'Keunggulan',
+    description: 'Raih nilai A di 3 lab',
     icon: 'Award',
     category: 'performance',
     unlocked: false,
@@ -136,8 +136,8 @@ const achievementDefinitions: Achievement[] = [
   },
   {
     id: 'no-hints-needed',
-    title: 'No Hints Needed',
-    description: 'Complete a lab without using any hints',
+    title: 'Tanpa Petunjuk',
+    description: 'Selesaikan lab tanpa menggunakan petunjuk',
     icon: 'Zap',
     category: 'performance',
     unlocked: false,
@@ -148,8 +148,8 @@ const achievementDefinitions: Achievement[] = [
   },
   {
     id: 'speed-demon',
-    title: 'Speed Demon',
-    description: 'Complete a lab in under 30 minutes',
+    title: 'Kecepatan Kilat',
+    description: 'Selesaikan lab dalam waktu kurang dari 30 menit',
     icon: 'Clock',
     category: 'performance',
     unlocked: false,
@@ -161,8 +161,8 @@ const achievementDefinitions: Achievement[] = [
   // Special achievements
   {
     id: 'security-expert',
-    title: 'Security Expert',
-    description: 'Complete all security-related labs',
+    title: 'Ahli Keamanan',
+    description: 'Selesaikan semua lab terkait keamanan',
     icon: 'Shield',
     category: 'special',
     unlocked: false,
@@ -173,8 +173,8 @@ const achievementDefinitions: Achievement[] = [
   },
   {
     id: 'rising-star',
-    title: 'Rising Star',
-    description: 'Earn 500 total points',
+    title: 'Bintang Naik',
+    description: 'Kumpulkan 500 poin',
     icon: 'TrendingUp',
     category: 'special',
     unlocked: false,
@@ -185,8 +185,8 @@ const achievementDefinitions: Achievement[] = [
   },
   {
     id: 'champion',
-    title: 'Champion',
-    description: 'Earn 1000 total points',
+    title: 'Juara',
+    description: 'Kumpulkan 1000 poin',
     icon: 'Crown',
     category: 'special',
     unlocked: false,
@@ -365,7 +365,7 @@ export default function AchievementsPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-cyan-500 animate-spin mx-auto mb-4" />
-          <p className="text-zinc-400">Loading achievements...</p>
+          <p className="text-zinc-400">Memuat pencapaian...</p>
         </div>
       </div>
     );
@@ -378,7 +378,7 @@ export default function AchievementsPage() {
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <p className="text-red-400 mb-4">{error}</p>
           <Link href="/dashboard/student" className="btn btn-primary">
-            Back to Dashboard
+            Kembali ke Dasbor
           </Link>
         </div>
       </div>
@@ -394,13 +394,13 @@ export default function AchievementsPage() {
             <Trophy className="w-5 h-5 text-amber-400" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">Achievements</h1>
-            <p className="text-sm text-zinc-500">Track your progress and milestones</p>
+            <h1 className="text-xl font-bold text-white">Pencapaian</h1>
+            <p className="text-sm text-zinc-500">Lacak progres dan pencapaianmu</p>
           </div>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-amber-400">{unlockedCount}/{totalCount}</p>
-          <p className="text-xs text-zinc-500">Unlocked</p>
+          <p className="text-xs text-zinc-500">Terbuka</p>
         </div>
       </div>
 
@@ -411,22 +411,22 @@ export default function AchievementsPage() {
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
               <BookOpen className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
               <p className="text-2xl font-bold">{stats.labsCompleted}</p>
-              <p className="text-xs text-zinc-500">Labs Completed</p>
+              <p className="text-xs text-zinc-500">Lab Selesai</p>
             </div>
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
               <Target className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
               <p className="text-2xl font-bold">{stats.tasksCompleted}</p>
-              <p className="text-xs text-zinc-500">Tasks Done</p>
+              <p className="text-xs text-zinc-500">Tugas Selesai</p>
             </div>
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
               <Star className="w-6 h-6 text-amber-400 mx-auto mb-2" />
               <p className="text-2xl font-bold">{stats.totalScore}</p>
-              <p className="text-xs text-zinc-500">Total Points</p>
+              <p className="text-xs text-zinc-500">Total Poin</p>
             </div>
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
               <Medal className="w-6 h-6 text-violet-400 mx-auto mb-2" />
               <p className="text-2xl font-bold">{stats.perfectScores}</p>
-              <p className="text-xs text-zinc-500">Perfect Scores</p>
+              <p className="text-xs text-zinc-500">Nilai Sempurna</p>
             </div>
           </div>
         )}
@@ -434,10 +434,10 @@ export default function AchievementsPage() {
         {/* Category Tabs */}
         <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
           {[
-            { id: 'all', label: 'All' },
-            { id: 'progress', label: 'Progress' },
-            { id: 'performance', label: 'Performance' },
-            { id: 'special', label: 'Special' },
+            { id: 'all', label: 'Semua' },
+            { id: 'progress', label: 'Progres' },
+            { id: 'performance', label: 'Performa' },
+            { id: 'special', label: 'Spesial' },
           ].map((cat) => (
             <button
               key={cat.id}
@@ -494,7 +494,7 @@ export default function AchievementsPage() {
                 {/* Progress Bar */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-zinc-500">Progress</span>
+                    <span className="text-zinc-500">Progres</span>
                     <span className={achievement.unlocked ? 'text-emerald-400' : 'text-zinc-400'}>
                       {achievement.progress}/{achievement.maxProgress}
                     </span>
@@ -514,7 +514,7 @@ export default function AchievementsPage() {
                 {achievement.unlocked && (
                   <div className="flex items-center gap-2 mt-4 text-xs text-emerald-400">
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>Unlocked!</span>
+                    <span>Terbuka!</span>
                   </div>
                 )}
               </div>

@@ -180,6 +180,7 @@ export default function ReportsPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
+          title="Filter by Status"
           className="px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
         >
           <option value="all">All Status</option>
@@ -190,6 +191,7 @@ export default function ReportsPage() {
         <select
           value={filterLab}
           onChange={(e) => setFilterLab(e.target.value)}
+          title="Filter by Lab"
           className="px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
         >
           <option value="all">All Labs</option>

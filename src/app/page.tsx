@@ -32,44 +32,44 @@ import { useTheme } from 'next-themes';
 const labs = [
   {
     id: 1,
-    title: 'Network Fundamentals',
-    description: 'Review network security concepts, configure basic devices, and test connectivity',
+    title: 'Dasar-Dasar Jaringan',
+    description: 'Pelajari konsep keamanan jaringan, konfigurasi perangkat dasar, dan uji konektivitas',
     icon: Network,
-    difficulty: 'Beginner',
-    duration: '30 min',
+    difficulty: 'Pemula',
+    duration: '30 menit',
     gradient: 'from-cyan-500 to-blue-600',
     shadowColor: 'shadow-cyan-500/30',
     iconBg: 'bg-linear-to-br from-cyan-500 to-blue-600',
   },
   {
     id: 2,
-    title: 'TCP/IP Protocol Analysis',
-    description: 'Capture and analyze TCP/IP packets, understand protocol security vulnerabilities',
+    title: 'Analisis Protokol TCP/IP',
+    description: 'Tangkap dan analisis paket TCP/IP, pahami kerentanan keamanan protokol',
     icon: Activity,
-    difficulty: 'Beginner',
-    duration: '45 min',
+    difficulty: 'Pemula',
+    duration: '45 menit',
     gradient: 'from-emerald-500 to-teal-600',
     shadowColor: 'shadow-emerald-500/30',
     iconBg: 'bg-linear-to-br from-emerald-500 to-teal-600',
   },
   {
     id: 3,
-    title: 'IPSec VPN Configuration',
-    description: 'Configure site-to-site IPSec VPN with IKE phases and ESP encryption',
+    title: 'Konfigurasi VPN IPSec',
+    description: 'Konfigurasi VPN IPSec site-to-site dengan fase IKE dan enkripsi ESP',
     icon: Lock,
-    difficulty: 'Intermediate',
-    duration: '60 min',
+    difficulty: 'Menengah',
+    duration: '60 menit',
     gradient: 'from-violet-500 to-purple-600',
     shadowColor: 'shadow-violet-500/30',
     iconBg: 'bg-linear-to-br from-violet-500 to-purple-600',
   },
   {
     id: 4,
-    title: 'Next-Gen Firewall',
-    description: 'Configure zone-based firewall policies and application-layer filtering',
+    title: 'Firewall Generasi Baru',
+    description: 'Konfigurasi kebijakan firewall berbasis zona dan filtering lapisan aplikasi',
     icon: Shield,
-    difficulty: 'Intermediate',
-    duration: '60 min',
+    difficulty: 'Menengah',
+    duration: '60 menit',
     gradient: 'from-orange-500 to-red-600',
     shadowColor: 'shadow-orange-500/30',
     iconBg: 'bg-linear-to-br from-orange-500 to-red-600',
@@ -77,43 +77,43 @@ const labs = [
   {
     id: 5,
     title: 'Access Control Lists',
-    description: 'Create standard and extended ACLs for advanced traffic filtering',
+    description: 'Buat ACL standar dan extended untuk filtering lalu lintas tingkat lanjut',
     icon: FileCode,
-    difficulty: 'Intermediate',
-    duration: '45 min',
+    difficulty: 'Menengah',
+    duration: '45 menit',
     gradient: 'from-pink-500 to-rose-600',
     shadowColor: 'shadow-pink-500/30',
     iconBg: 'bg-linear-to-br from-pink-500 to-rose-600',
   },
   {
     id: 6,
-    title: 'NAT Security',
-    description: 'Implement static, dynamic NAT and PAT for network address translation',
+    title: 'Keamanan NAT',
+    description: 'Implementasi NAT statis, dinamis, dan PAT untuk translasi alamat jaringan',
     icon: Wifi,
-    difficulty: 'Intermediate',
-    duration: '45 min',
+    difficulty: 'Menengah',
+    duration: '45 menit',
     gradient: 'from-amber-500 to-orange-600',
     shadowColor: 'shadow-amber-500/30',
     iconBg: 'bg-linear-to-br from-amber-500 to-orange-600',
   },
   {
     id: 7,
-    title: 'Intrusion Detection',
-    description: 'Deploy IDS sensors, create signatures, and analyze security alerts',
+    title: 'Deteksi Intrusi',
+    description: 'Deploy sensor IDS, buat signature, dan analisis alert keamanan',
     icon: Eye,
-    difficulty: 'Advanced',
-    duration: '60 min',
+    difficulty: 'Lanjutan',
+    duration: '60 menit',
     gradient: 'from-sky-500 to-indigo-600',
     shadowColor: 'shadow-sky-500/30',
     iconBg: 'bg-linear-to-br from-sky-500 to-indigo-600',
   },
   {
     id: 8,
-    title: 'UTS Project',
-    description: 'Design and implement a complete secure network with multiple controls',
+    title: 'Proyek UTS',
+    description: 'Desain dan implementasi jaringan aman lengkap dengan berbagai kontrol keamanan',
     icon: Award,
-    difficulty: 'Advanced',
-    duration: '120 min',
+    difficulty: 'Lanjutan',
+    duration: '120 menit',
     gradient: 'from-fuchsia-500 to-purple-600',
     shadowColor: 'shadow-fuchsia-500/30',
     iconBg: 'bg-linear-to-br from-fuchsia-500 to-purple-600',
@@ -123,32 +123,32 @@ const labs = [
 const features = [
   {
     icon: Terminal,
-    title: 'Real CLI Terminal',
-    description: 'Authentic Cisco-like command line interface with auto-completion',
+    title: 'Terminal CLI Nyata',
+    description: 'Antarmuka command line seperti Cisco dengan auto-completion',
     color: 'text-cyan-400',
     bgColor: 'from-cyan-500/20 to-blue-500/20',
     ringColor: 'ring-cyan-500/30',
   },
   {
     icon: Network,
-    title: 'Interactive Topology',
-    description: 'Drag-and-drop network canvas with real-time packet animation',
+    title: 'Topologi Interaktif',
+    description: 'Canvas jaringan drag-and-drop dengan animasi paket real-time',
     color: 'text-violet-400',
     bgColor: 'from-violet-500/20 to-purple-500/20',
     ringColor: 'ring-violet-500/30',
   },
   {
     icon: Activity,
-    title: 'Live Packet Capture',
-    description: 'Monitor and analyze network traffic in real-time',
+    title: 'Penangkapan Paket Live',
+    description: 'Pantau dan analisis lalu lintas jaringan secara real-time',
     color: 'text-emerald-400',
     bgColor: 'from-emerald-500/20 to-teal-500/20',
     ringColor: 'ring-emerald-500/30',
   },
   {
     icon: Zap,
-    title: 'Instant Feedback',
-    description: 'Auto-validation of configurations with scoring system',
+    title: 'Umpan Balik Instan',
+    description: 'Validasi otomatis konfigurasi dengan sistem penilaian',
     color: 'text-amber-400',
     bgColor: 'from-amber-500/20 to-orange-500/20',
     ringColor: 'ring-amber-500/30',
@@ -156,10 +156,10 @@ const features = [
 ];
 
 const stats = [
-  { value: '8+', label: 'Lab Modules', icon: Layers, color: 'text-cyan-400', glowColor: 'group-hover:shadow-cyan-500/20' },
-  { value: '50+', label: 'CLI Commands', icon: Code2, color: 'text-violet-400', glowColor: 'group-hover:shadow-violet-500/20' },
-  { value: '100%', label: 'Browser Based', icon: Globe, color: 'text-emerald-400', glowColor: 'group-hover:shadow-emerald-500/20' },
-  { value: 'Free', label: 'Open Source', icon: Sparkles, color: 'text-amber-400', glowColor: 'group-hover:shadow-amber-500/20' }
+  { value: '8+', label: 'Modul Lab', icon: Layers, color: 'text-cyan-400', glowColor: 'group-hover:shadow-cyan-500/20' },
+  { value: '50+', label: 'Perintah CLI', icon: Code2, color: 'text-violet-400', glowColor: 'group-hover:shadow-violet-500/20' },
+  { value: '100%', label: 'Berbasis Browser', icon: Globe, color: 'text-emerald-400', glowColor: 'group-hover:shadow-emerald-500/20' },
+  { value: 'Gratis', label: 'Open Source', icon: Sparkles, color: 'text-amber-400', glowColor: 'group-hover:shadow-amber-500/20' }
 ];
 
 // Badge component - modern soft style
@@ -169,7 +169,7 @@ function Badge({
   className,
 }: {
   children: React.ReactNode;
-  variant?: 'default' | 'beginner' | 'intermediate' | 'advanced';
+  variant?: 'default' | 'beginner' | 'intermediate' | 'advanced' | 'pemula' | 'menengah' | 'lanjutan';
   className?: string;
 }) {
   return (
@@ -257,7 +257,7 @@ export default function HomePage() {
 
           {/* Desktop Nav */}
           <nav className="hidden items-center gap-1 md:flex">
-            {['Features', 'Labs', 'Docs'].map((item, i) => (
+            {['Fitur', 'Lab', 'Dokumentasi'].map((item, i) => (
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
@@ -293,13 +293,13 @@ export default function HomePage() {
               href="/login"
               className="hidden rounded-lg border border-zinc-200 dark:border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all sm:inline-flex animate-fade-in"
             >
-              Login
+              Masuk
             </a>
             <a
               href="/register"
               className="hidden rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/25 transition-all hover:shadow-cyan-500/40 hover:-translate-y-0.5 sm:inline-flex animate-fade-in"
             >
-              Get Started
+              Mulai Sekarang
             </a>
             <button
               className="inline-flex h-9 w-9 items-center justify-center rounded-md text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 md:hidden transition-colors"
@@ -314,7 +314,7 @@ export default function HomePage() {
         {mobileMenuOpen && (
           <div className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-4 md:hidden animate-fade-in">
             <nav className="flex flex-col gap-2">
-              {['Features', 'Labs', 'Docs'].map((item) => (
+              {['Fitur', 'Lab', 'Dokumentasi'].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
@@ -328,7 +328,7 @@ export default function HomePage() {
                 href="/labs"
                 className="mt-2 rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 px-4 py-2 text-center text-sm font-semibold text-white"
               >
-                Get Started
+                Mulai Sekarang
               </a>
             </nav>
           </div>
@@ -345,26 +345,26 @@ export default function HomePage() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
               </span>
-              <span className="text-zinc-600 dark:text-zinc-400">Interactive Learning Platform</span>
+              <span className="text-zinc-600 dark:text-zinc-400">Platform Pembelajaran Interaktif</span>
             </div>
 
             {/* Title */}
             <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl animate-fade-in-up animation-delay-100">
-              <span className="text-zinc-900 dark:text-white">Master </span>
+              <span className="text-zinc-900 dark:text-white">Kuasai </span>
               <span className="bg-linear-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent animate-gradient">
-                Network
+                Keamanan
               </span>
               <br />
               <span className="bg-linear-to-r from-violet-500 to-purple-600 bg-clip-text text-transparent animate-gradient">
-                Security
+                Jaringan
               </span>
-              <span className="text-zinc-900 dark:text-white"> Hands-on</span>
+              <span className="text-zinc-900 dark:text-white"> Langsung</span>
             </h1>
 
             {/* Description */}
             <p className="mx-auto mb-10 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400 sm:text-xl animate-fade-in-up animation-delay-200">
-              The most advanced platform to learn VPNs, Firewalls, and IDS through
-              real-time browser-based simulations.
+              Platform paling canggih untuk belajar VPN, Firewall, dan IDS melalui
+              simulasi berbasis browser secara real-time.
             </p>
 
             {/* CTA Buttons */}
@@ -374,14 +374,14 @@ export default function HomePage() {
                 className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-cyan-500 to-blue-600 px-8 py-4 text-lg font-bold text-white shadow-xl shadow-cyan-500/25 transition-all hover:-translate-y-1 hover:shadow-cyan-500/40 hover-lift"
               >
                 <Play className="h-5 w-5" />
-                Start Learning
+                Mulai Belajar
               </a>
               <a
                 href="#labs"
                 className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-8 py-4 text-lg font-semibold text-zinc-900 dark:text-white transition-all hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover-lift"
               >
                 <BookOpen className="h-5 w-5" />
-                View Modules
+                Lihat Modul
               </a>
             </div>
           </div>
@@ -428,7 +428,7 @@ export default function HomePage() {
                     <span className="text-cyan-400">admin@router-01:~$</span>{' '}
                     <span className="text-zinc-300 typing-cursor">configure terminal</span>
                   </div>
-                  <div className="text-zinc-600"># Entering configuration mode...</div>
+                  <div className="text-zinc-600"># Masuk ke mode konfigurasi...</div>
                   <div className="animate-fade-in animation-delay-200">
                     <span className="text-violet-400">router(config)#</span>{' '}
                     <span className="text-zinc-300">interface gigabitEthernet 0/1</span>
@@ -455,10 +455,10 @@ export default function HomePage() {
           <div className="mx-auto max-w-7xl">
             <div className="mb-12 text-center">
               <h2 className="mb-4 text-3xl font-bold text-zinc-900 dark:text-white sm:text-4xl">
-                Platform <span className="text-cyan-500 dark:text-cyan-400">Features</span>
+                Fitur <span className="text-cyan-500 dark:text-cyan-400">Platform</span>
               </h2>
               <p className="mx-auto max-w-2xl text-zinc-600 dark:text-zinc-400">
-                Everything you need to master network security in one platform.
+                Semua yang Anda butuhkan untuk menguasai keamanan jaringan dalam satu platform.
               </p>
             </div>
 
@@ -483,17 +483,17 @@ export default function HomePage() {
             <div className="mb-12 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
               <div>
                 <h2 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-white sm:text-4xl">
-                  Available <span className="text-cyan-500 dark:text-cyan-400">Laboratories</span>
+                  <span className="text-cyan-500 dark:text-cyan-400">Laboratorium</span> Tersedia
                 </h2>
                 <p className="text-zinc-600 dark:text-zinc-400">
-                  Progressive learning path from basics to advanced security.
+                  Jalur pembelajaran progresif dari dasar hingga keamanan lanjutan.
                 </p>
               </div>
               <a
                 href="/labs"
                 className="group inline-flex items-center gap-2 text-sm font-semibold text-cyan-500 dark:text-cyan-400 hover:text-cyan-400 dark:hover:text-cyan-300"
               >
-                View All Labs
+                Lihat Semua Lab
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
             </div>
@@ -519,9 +519,9 @@ export default function HomePage() {
                       </span>
                       <Badge
                         variant={
-                          lab.difficulty === 'Beginner'
+                          lab.difficulty === 'Pemula'
                             ? 'beginner'
-                            : lab.difficulty === 'Intermediate'
+                            : lab.difficulty === 'Menengah'
                               ? 'intermediate'
                               : 'advanced'
                         }
@@ -569,8 +569,8 @@ export default function HomePage() {
                 <span className="text-xl font-bold text-zinc-900 dark:text-white">CyberNexus</span>
               </a>
               <p className="max-w-sm text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
-                Empowering the next generation of cybersecurity professionals
-                through immersive, hands-on virtual lab experiences.
+                Memberdayakan generasi profesional keamanan siber berikutnya
+                melalui pengalaman laboratorium virtual yang imersif dan langsung.
               </p>
             </div>
 
@@ -578,14 +578,14 @@ export default function HomePage() {
             <div>
               <h4 className="mb-5 text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-300">Platform</h4>
               <ul className="space-y-3 text-sm">
-                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Lab Modules</a></li>
-                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Documentation</a></li>
-                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Learning Paths</a></li>
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Modul Lab</a></li>
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Dokumentasi</a></li>
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Jalur Pembelajaran</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="mb-5 text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-300">Community</h4>
+              <h4 className="mb-5 text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-300">Komunitas</h4>
               <ul className="space-y-3 text-sm">
                 <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">GitHub</a></li>
                 <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Discord</a></li>
@@ -595,10 +595,10 @@ export default function HomePage() {
           </div>
 
           <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-zinc-200/50 dark:border-zinc-700/50 pt-8 text-sm text-zinc-500 dark:text-zinc-400 sm:flex-row">
-            <p>© 2024 CyberNexus. Open Source Education.</p>
+            <p>© 2024 CyberNexus. Edukasi Open Source.</p>
             <div className="flex gap-8">
-              <a href="#" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Terms of Service</a>
+              <a href="#" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Kebijakan Privasi</a>
+              <a href="#" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Syarat Layanan</a>
             </div>
           </div>
         </div>
