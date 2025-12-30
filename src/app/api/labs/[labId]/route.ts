@@ -106,7 +106,7 @@ export async function GET(
     const totalPoints = lab.tasks.reduce((sum, t) => sum + t.points, 0)
     const earnedPoints = progress?.currentScore || 0
     const hintsPointsUsed = progress?.hintUsages.reduce(
-      (sum, hu) => sum + hu.pointsDeducted,
+      (sum, hu) => sum + hu.pointsCost,
       0
     ) || 0
 

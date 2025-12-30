@@ -53,7 +53,7 @@ export function Tooltip({
     right: 'right-full top-1/2 -translate-y-1/2 border-r-zinc-800 border-y-transparent border-l-transparent',
   };
 
-  const motionProps: Record<TooltipPosition, { initial: object; animate: object; exit: object }> = {
+  const motionProps = {
     top: {
       initial: { opacity: 0, y: 5 },
       animate: { opacity: 1, y: 0 },
@@ -74,7 +74,7 @@ export function Tooltip({
       animate: { opacity: 1, x: 0 },
       exit: { opacity: 0, x: -5 },
     },
-  };
+  } as const;
 
   return (
     <div
@@ -86,7 +86,9 @@ export function Tooltip({
       <AnimatePresence>
         {isVisible && (
           <motion.div
-            {...motionProps[position]}
+            initial={motionProps[position].initial}
+            animate={motionProps[position].animate}
+            exit={motionProps[position].exit}
             transition={{ duration: 0.15 }}
             className={cn(
               'absolute z-50 px-3 py-2 text-xs font-medium text-zinc-100 bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg shadow-black/20 whitespace-nowrap',

@@ -12,6 +12,7 @@ import {
   User,
   Settings,
   Bell,
+  FlaskConical,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';

@@ -16,6 +16,8 @@ import {
   Bell,
   Search,
   ChevronDown,
+  FlaskConical,
+  BarChart2,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';

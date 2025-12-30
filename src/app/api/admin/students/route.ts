@@ -39,11 +39,10 @@ export async function GET() {
               },
             },
             taskCompletions: true,
-            submissions: {
-              orderBy: { submittedAt: 'desc' },
-              take: 1,
-            },
           },
+        },
+        submissions: {
+          orderBy: { submittedAt: 'desc' },
         },
       },
       orderBy: { name: 'asc' },
@@ -54,6 +53,11 @@ export async function GET() {
 
     // Format student data with statistics
     const studentsWithStats = students.map((student) => {
+      // Create a map of submissions by labId
+      const submissionsByLab = new Map(
+        student.submissions.map((s) => [s.labId, s])
+      )
+
       const completedLabs = student.labProgress.filter(
         (p) => p.completedAt !== null
       ).length
@@ -61,13 +65,12 @@ export async function GET() {
         (p) => p.completedAt === null
       ).length
 
-      const totalScore = student.labProgress.reduce((sum, p) => {
-        const submission = p.submissions[0]
-        return sum + (submission?.finalScore || 0)
+      const totalScore = student.submissions.reduce((sum, s) => {
+        return sum + s.score
       }, 0)
 
-      const maxPossibleScore = student.labProgress.reduce((sum, p) => {
-        return sum + p.lab.maxScore
+      const maxPossibleScore = student.submissions.reduce((sum, s) => {
+        return sum + s.maxScore
       }, 0)
 
       const avgScore = maxPossibleScore > 0
@@ -97,23 +100,26 @@ export async function GET() {
           avgScore,
           grade: getGrade(avgScore),
         },
-        labProgress: student.labProgress.map((p) => ({
-          labId: p.lab.id,
-          labNumber: p.lab.number,
-          labTitle: p.lab.title,
-          maxScore: p.lab.maxScore,
-          startedAt: p.startedAt,
-          completedAt: p.completedAt,
-          currentScore: p.currentScore,
-          tasksCompleted: p.taskCompletions.length,
-          submission: p.submissions[0]
-            ? {
-              finalScore: p.submissions[0].finalScore,
-              grade: p.submissions[0].grade,
-              submittedAt: p.submissions[0].submittedAt,
-            }
-            : null,
-        })),
+        labProgress: student.labProgress.map((p) => {
+          const submission = submissionsByLab.get(p.labId)
+          return {
+            labId: p.lab.id,
+            labNumber: p.lab.number,
+            labTitle: p.lab.title,
+            maxScore: p.lab.maxScore,
+            startedAt: p.startedAt,
+            completedAt: p.completedAt,
+            currentScore: p.currentScore,
+            tasksCompleted: p.taskCompletions.length,
+            submission: submission
+              ? {
+                score: submission.score,
+                grade: submission.grade,
+                submittedAt: submission.submittedAt,
+              }
+              : null,
+          }
+        }),
       }
     })
 

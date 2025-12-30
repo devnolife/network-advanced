@@ -188,6 +188,7 @@ function TutorialOverlayComponent({
                 <button
                   onClick={onExit}
                   className="p-1 hover:bg-white/20 rounded-lg transition-colors"
+                  title="Keluar dari tutorial"
                 >
                   <X size={18} className="text-white" />
                 </button>

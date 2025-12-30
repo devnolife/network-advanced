@@ -1,6 +1,7 @@
 // Lab Progress and Session Management Utilities
 
 import prisma from '@/lib/prisma';
+import { Prisma } from '@/generated/prisma/client';
 
 export interface LabSession {
   progressId: string;
@@ -10,7 +11,6 @@ export interface LabSession {
   lastActivityAt: Date;
   currentTaskOrder: number;
   savedState: SavedLabState | null;
-  totalTimeSpent: number;
   score: number;
   maxPossibleScore: number;
   hintsUsed: number;
@@ -59,7 +59,7 @@ export async function startOrResumeLabSession(
 
   if (!progress) {
     // Create new progress record
-    progress = await prisma.labProgress.create({
+    const newProgress = await prisma.labProgress.create({
       data: {
         userId,
         labId,
@@ -67,8 +67,7 @@ export async function startOrResumeLabSession(
         lastActivityAt: new Date(),
         currentScore: 0,
         maxScoreEarned: 0,
-        savedState: null,
-        totalTimeSpent: 0,
+        savedState: Prisma.DbNull,
       },
       include: {
         lab: {
@@ -82,6 +81,7 @@ export async function startOrResumeLabSession(
         },
       },
     });
+    progress = newProgress;
   } else {
     // Update last activity
     await prisma.labProgress.update({
@@ -111,7 +111,6 @@ export async function startOrResumeLabSession(
     lastActivityAt: progress.lastActivityAt,
     currentTaskOrder,
     savedState: progress.savedState as SavedLabState | null,
-    totalTimeSpent: progress.totalTimeSpent,
     score: progress.currentScore,
     maxPossibleScore: progress.lab.maxScore,
     hintsUsed: progress.hintUsages.length,
@@ -124,17 +123,13 @@ export async function startOrResumeLabSession(
 // Save lab state (auto-save)
 export async function saveLabState(
   progressId: string,
-  state: SavedLabState,
-  additionalTimeSpent: number = 0
+  state: SavedLabState
 ): Promise<void> {
   await prisma.labProgress.update({
     where: { id: progressId },
     data: {
-      savedState: state as unknown as Record<string, unknown>,
+      savedState: JSON.parse(JSON.stringify(state)) as Prisma.InputJsonValue,
       lastActivityAt: new Date(),
-      totalTimeSpent: {
-        increment: additionalTimeSpent,
-      },
     },
   });
 }
@@ -369,8 +364,8 @@ export async function submitLab(
         labId,
         submittedAt: new Date(),
         score: finalScore,
-        totalTimeSpent: progress.totalTimeSpent,
-        configuration: configuration,
+        maxScore: progress.lab.maxScore,
+        configuration: configuration as Prisma.InputJsonValue,
         feedback,
         grade,
       },
@@ -423,7 +418,7 @@ export async function getUserLabProgress(userId: string) {
     maxScore: p.lab.maxScore,
     startedAt: p.startedAt,
     completedAt: p.completedAt,
-    totalTimeSpent: p.totalTimeSpent,
+    lastActivityAt: p.lastActivityAt,
     status: p.completedAt
       ? 'completed'
       : p.taskCompletions.length > 0

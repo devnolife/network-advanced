@@ -63,6 +63,7 @@ function TopologyLegendComponent({
               <button
                 onClick={onClose}
                 className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                title="Tutup legenda"
               >
                 <X size={16} className="text-gray-500" />
               </button>

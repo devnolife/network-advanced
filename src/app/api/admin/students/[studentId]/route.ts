@@ -50,11 +50,14 @@ export async function GET(
                 hint: true,
               },
             },
-            submissions: {
-              orderBy: { submittedAt: 'desc' },
-            },
           },
           orderBy: { startedAt: 'desc' },
+        },
+        submissions: {
+          include: {
+            lab: true,
+          },
+          orderBy: { submittedAt: 'desc' },
         },
       },
     })
@@ -92,6 +95,14 @@ export async function GET(
       student.labProgress.map((p) => [p.labId, p])
     )
 
+    // Map submissions by lab ID
+    const submissionsByLab = new Map<string, typeof student.submissions>()
+    for (const submission of student.submissions) {
+      const existing = submissionsByLab.get(submission.labId) || []
+      existing.push(submission)
+      submissionsByLab.set(submission.labId, existing)
+    }
+
     // Calculate detailed statistics
     const completedLabs = student.labProgress.filter((p) => p.completedAt !== null).length
     const inProgressLabs = student.labProgress.filter((p) => p.completedAt === null).length
@@ -108,13 +119,12 @@ export async function GET(
       0
     )
     const totalPointsDeducted = student.labProgress.reduce(
-      (sum, p) => sum + p.hintUsages.reduce((s, h) => s + h.pointsDeducted, 0),
+      (sum, p) => sum + p.hintUsages.reduce((s, h) => s + h.pointsCost, 0),
       0
     )
 
-    const submissions = student.labProgress.flatMap((p) => p.submissions)
-    const totalScore = submissions.reduce((sum, s) => sum + s.finalScore, 0)
-    const maxPossibleScore = submissions.reduce((sum, s) => sum + s.maxScore, 0)
+    const totalScore = student.submissions.reduce((sum, s) => sum + s.score, 0)
+    const maxPossibleScore = student.submissions.reduce((sum, s) => sum + s.maxScore, 0)
     const avgPercentage = maxPossibleScore > 0
       ? Math.round((totalScore / maxPossibleScore) * 100)
       : 0
@@ -122,6 +132,8 @@ export async function GET(
     // Build detailed lab progress
     const labsProgress = allLabs.map((lab) => {
       const progress = progressByLab.get(lab.id)
+      const labSubmissions = submissionsByLab.get(lab.id) || []
+      const latestSubmission = labSubmissions[0]
 
       if (!progress) {
         return {
@@ -134,8 +146,6 @@ export async function GET(
           progress: null,
         }
       }
-
-      const latestSubmission = progress.submissions[0]
 
       return {
         labId: lab.id,
@@ -152,7 +162,7 @@ export async function GET(
           tasksCompleted: progress.taskCompletions.length,
           hintsUsed: progress.hintUsages.length,
           pointsDeducted: progress.hintUsages.reduce(
-            (s, h) => s + h.pointsDeducted,
+            (s, h) => s + h.pointsCost,
             0
           ),
           taskDetails: progress.taskCompletions.map((tc) => ({
@@ -164,10 +174,10 @@ export async function GET(
           })),
           submission: latestSubmission
             ? {
-              finalScore: latestSubmission.finalScore,
+              score: latestSubmission.score,
               maxScore: latestSubmission.maxScore,
               percentage: Math.round(
-                (latestSubmission.finalScore / latestSubmission.maxScore) * 100
+                (latestSubmission.score / latestSubmission.maxScore) * 100
               ),
               grade: latestSubmission.grade,
               submittedAt: latestSubmission.submittedAt,
@@ -200,15 +210,13 @@ export async function GET(
           taskTitle: tc.task.title,
         }))
       ),
-      ...student.labProgress.flatMap((p) =>
-        p.submissions.map((s) => ({
-          type: 'submission' as const,
-          timestamp: s.submittedAt,
-          labTitle: p.lab.title,
-          grade: s.grade,
-          score: s.finalScore,
-        }))
-      ),
+      ...student.submissions.map((s) => ({
+        type: 'submission' as const,
+        timestamp: s.submittedAt,
+        labTitle: s.lab.title,
+        grade: s.grade,
+        score: s.score,
+      })),
     ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
     return NextResponse.json({

@@ -3,9 +3,10 @@
 import { cn } from '@/lib/utils';
 
 interface StatusIndicatorProps {
-  status: 'up' | 'down' | 'admin-down' | 'booting' | 'online' | 'offline';
+  status: 'up' | 'down' | 'admin-down' | 'booting' | 'online' | 'offline' | 'warning';
   size?: 'sm' | 'md' | 'lg';
   showPulse?: boolean;
+  showLabel?: boolean;
   className?: string;
 }
 
@@ -13,6 +14,7 @@ export function StatusIndicator({
   status,
   size = 'md',
   showPulse = true,
+  showLabel = false,
   className,
 }: StatusIndicatorProps) {
   const sizes = {
@@ -28,6 +30,7 @@ export function StatusIndicator({
     offline: 'bg-red-500',
     'admin-down': 'bg-amber-500',
     booting: 'bg-amber-500',
+    warning: 'bg-orange-500',
   };
 
   const pulseColors: Record<StatusIndicatorProps['status'], string> = {
@@ -37,27 +40,45 @@ export function StatusIndicator({
     offline: 'bg-red-400',
     'admin-down': 'bg-amber-400',
     booting: 'bg-amber-400',
+    warning: 'bg-orange-400',
   };
 
-  const shouldPulse = showPulse && (status === 'booting' || status === 'admin-down');
+  const statusLabelsMap: Record<StatusIndicatorProps['status'], string> = {
+    up: 'Aktif',
+    online: 'Online',
+    down: 'Mati',
+    offline: 'Offline',
+    'admin-down': 'Dinonaktifkan',
+    booting: 'Booting',
+    warning: 'Peringatan',
+  };
+
+  const shouldPulse = showPulse && (status === 'booting' || status === 'admin-down' || status === 'warning');
 
   return (
-    <span className={cn('relative inline-flex', className)}>
-      <span
-        className={cn(
-          'rounded-full',
-          sizes[size],
-          statusColors[status]
-        )}
-      />
-      {shouldPulse && (
+    <span className={cn('relative inline-flex items-center gap-2', className)}>
+      <span className="relative inline-flex">
         <span
           className={cn(
-            'absolute inset-0 rounded-full animate-ping opacity-75',
+            'rounded-full',
             sizes[size],
-            pulseColors[status]
+            statusColors[status]
           )}
         />
+        {shouldPulse && (
+          <span
+            className={cn(
+              'absolute inset-0 rounded-full animate-ping opacity-75',
+              sizes[size],
+              pulseColors[status]
+            )}
+          />
+        )}
+      </span>
+      {showLabel && (
+        <span className="text-sm text-gray-600 dark:text-gray-400">
+          {statusLabelsMap[status]}
+        </span>
       )}
     </span>
   );

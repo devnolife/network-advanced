@@ -3,13 +3,15 @@
 import { cn } from '@/lib/utils';
 import { forwardRef, InputHTMLAttributes, ReactNode } from 'react';
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string;
   error?: string;
   hint?: string;
+  helperText?: string;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
   inputSize?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -19,15 +21,19 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       label,
       error,
       hint,
+      helperText,
       leftIcon,
       rightIcon,
-      inputSize = 'md',
+      inputSize,
+      size,
       type = 'text',
       disabled,
       ...props
     },
     ref
   ) => {
+    const effectiveSize = size || inputSize || 'md';
+
     const sizes = {
       sm: 'h-8 text-xs px-3',
       md: 'h-10 text-sm px-4',
@@ -65,8 +71,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               error
                 ? 'border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50'
                 : 'border-zinc-700',
-              sizes[inputSize],
-              iconPadding[inputSize],
+              sizes[effectiveSize],
+              iconPadding[effectiveSize],
               rightIcon ? 'pr-10' : '',
               className
             )}
@@ -81,8 +87,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {error && (
           <p className="mt-1.5 text-xs text-red-400">{error}</p>
         )}
-        {hint && !error && (
-          <p className="mt-1.5 text-xs text-zinc-500">{hint}</p>
+        {(hint || helperText) && !error && (
+          <p className="mt-1.5 text-xs text-zinc-500">{hint || helperText}</p>
         )}
       </div>
     );

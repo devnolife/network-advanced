@@ -19,9 +19,7 @@ export async function GET() {
         id: true,
         username: true,
         name: true,
-        email: true,
         role: true,
-        isActive: true,
         createdAt: true,
         _count: {
           select: {

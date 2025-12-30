@@ -13,6 +13,7 @@ interface BadgeProps {
   dot?: boolean;
   dotColor?: string;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export function Badge({
@@ -22,6 +23,7 @@ export function Badge({
   dot = false,
   dotColor,
   className,
+  style,
 }: BadgeProps) {
   const variants: Record<BadgeVariant, string> = {
     default: 'bg-zinc-800 text-zinc-300 border-zinc-700',
@@ -61,6 +63,7 @@ export function Badge({
         sizes[size],
         className
       )}
+      style={style}
     >
       {dot && (
         <span

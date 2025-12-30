@@ -72,8 +72,8 @@ function TutorialWelcomeComponent({
                   transition={{ delay: index * 0.1 }}
                   className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400"
                 >
-                  <CheckCircle size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
-                  <span>{objective}</span>
+                  <CheckCircle size={16} className="text-green-500 mt-0.5 shrink-0" />
+                  {objective}
                 </motion.li>
               ))}
             </ul>

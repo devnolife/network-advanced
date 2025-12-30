@@ -35,7 +35,7 @@ export async function PUT(request: NextRequest) {
     const existingUser = await prisma.user.findFirst({
       where: {
         username,
-        NOT: { id: user.id },
+        NOT: { id: user.userId },
       },
     })
 
@@ -48,7 +48,7 @@ export async function PUT(request: NextRequest) {
 
     // Update user
     const updatedUser = await prisma.user.update({
-      where: { id: user.id },
+      where: { id: user.userId },
       data: { name, username },
       select: {
         id: true,

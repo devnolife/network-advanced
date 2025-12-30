@@ -37,7 +37,7 @@ export async function GET() {
         },
         taskCompletions: true,
       },
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { lastActivityAt: 'desc' },
     })
 
     // Format reports

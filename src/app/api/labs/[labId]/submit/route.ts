@@ -70,7 +70,7 @@ export async function POST(
       0
     )
     const hintsDeducted = progress.hintUsages.reduce(
-      (sum, hu) => sum + hu.pointsDeducted,
+      (sum, hu) => sum + hu.pointsCost,
       0
     )
     const finalScore = Math.max(0, earnedPoints - hintsDeducted)
@@ -108,8 +108,9 @@ export async function POST(
         userId: user.userId,
         labId: labId,
         score: finalScore,
-        maxPossibleScore: totalPoints,
+        maxScore: totalPoints,
         feedback: feedback,
+        configuration: {},
       },
     })
 
@@ -185,7 +186,7 @@ export async function GET(
       submission: {
         id: submission.id,
         score: submission.score,
-        maxPossibleScore: submission.maxPossibleScore,
+        maxScore: submission.maxScore,
         feedback: submission.feedback,
         submittedAt: submission.submittedAt,
       },

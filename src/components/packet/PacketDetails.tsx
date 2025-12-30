@@ -80,6 +80,7 @@ function PacketDetailsComponent({
         <button
           onClick={onClose}
           className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          title="Tutup detail paket"
         >
           <X size={18} className="text-gray-500" />
         </button>

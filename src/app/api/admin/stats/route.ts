@@ -24,7 +24,7 @@ export async function GET() {
           user: { select: { name: true } },
           lab: { select: { title: true, maxScore: true } },
         },
-        orderBy: { updatedAt: 'desc' },
+        orderBy: { lastActivityAt: 'desc' },
         take: 10,
       }),
     ])
@@ -43,7 +43,7 @@ export async function GET() {
       user: p.user.name,
       action: p.completedAt ? 'completed' : 'started',
       lab: p.lab.title,
-      time: getTimeAgo(p.updatedAt),
+      time: getTimeAgo(p.lastActivityAt),
     }))
 
     return NextResponse.json({

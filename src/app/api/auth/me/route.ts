@@ -16,7 +16,7 @@ export async function GET() {
       success: true,
       user: {
         id: user.userId,
-        email: user.email,
+        username: user.username,
         name: user.name,
         role: user.role,
       },

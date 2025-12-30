@@ -2,19 +2,19 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  X, 
-  Check, 
-  Loader2 
+import {
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Check,
+  Loader2
 } from 'lucide-react';
 import { Button, Card } from '../ui';
 import { WizardProgress } from './WizardProgress';
-import { 
-  ConfigWizardProps, 
-  WizardData, 
-  WizardValidationResult 
+import {
+  ConfigWizardProps,
+  WizardData,
+  WizardValidationResult
 } from './types';
 
 export function ConfigWizard({
@@ -49,13 +49,13 @@ export function ConfigWizard({
   // Validate current step
   const validateCurrentStep = useCallback((): boolean => {
     if (!currentStep.validation) return true;
-    
+
     const result: WizardValidationResult = currentStep.validation(data);
     if (!result.isValid) {
       setErrors(result.errors);
       return false;
     }
-    
+
     setErrors({});
     return true;
   }, [currentStep, data]);
@@ -63,12 +63,12 @@ export function ConfigWizard({
   // Go to next step
   const handleNext = useCallback(async () => {
     if (!validateCurrentStep()) return;
-    
+
     // Mark current step as completed
     if (!completedSteps.includes(currentStep.id)) {
       setCompletedSteps(prev => [...prev, currentStep.id]);
     }
-    
+
     if (isLastStep) {
       // Submit wizard
       setIsSubmitting(true);
@@ -138,6 +138,7 @@ export function ConfigWizard({
               <button
                 onClick={handleCancel}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                title="Tutup wizard"
               >
                 <X size={20} className="text-gray-500" />
               </button>
@@ -221,7 +222,7 @@ export function ConfigWizard({
                 >
                   Batal
                 </Button>
-                
+
                 <Button
                   variant="outline"
                   onClick={handleBack}
@@ -230,7 +231,7 @@ export function ConfigWizard({
                   <ChevronLeft size={16} className="mr-1" />
                   Kembali
                 </Button>
-                
+
                 <Button
                   onClick={handleNext}
                   disabled={isSubmitting}

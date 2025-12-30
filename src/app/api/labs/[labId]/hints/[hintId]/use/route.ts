@@ -107,7 +107,7 @@ export async function POST(
       data: {
         progressId: progress.id,
         hintId: hintId,
-        pointsDeducted: hint.pointCost,
+        pointsCost: hint.pointCost,
       },
     })
 
@@ -130,7 +130,6 @@ export async function POST(
       },
       progress: {
         currentScore: newScore,
-        pointsDeducted: hint.pointCost,
       },
     })
   } catch (error) {

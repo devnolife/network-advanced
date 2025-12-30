@@ -262,8 +262,8 @@ export function ConfigurationPanel({
               <button
                 onClick={() => setConfigMode('gui')}
                 className={`px-3 py-1.5 text-sm font-medium transition-colors ${configMode === 'gui'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
                   }`}
               >
                 GUI
@@ -271,8 +271,8 @@ export function ConfigurationPanel({
               <button
                 onClick={() => setConfigMode('cli')}
                 className={`px-3 py-1.5 text-sm font-medium transition-colors ${configMode === 'cli'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
                   }`}
               >
                 <Terminal size={14} className="inline mr-1" />
@@ -301,8 +301,8 @@ export function ConfigurationPanel({
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === tab.id
-                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400'
-                        : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400'
+                      : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
                       }`}
                   >
                     {tab.icon}
@@ -377,6 +377,7 @@ export function ConfigurationPanel({
                               <button
                                 onClick={() => removeInterface(index)}
                                 className="p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                                title="Hapus interface"
                               >
                                 <Trash2 size={14} />
                               </button>
@@ -503,6 +504,7 @@ export function ConfigurationPanel({
                                     markChange();
                                   }}
                                   className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                                  title="Hapus route"
                                 >
                                   <Trash2 size={14} />
                                 </button>
@@ -621,6 +623,8 @@ export function ConfigurationPanel({
                     onKeyDown={handleCliCommand}
                     className="flex-1 bg-transparent outline-none border-none text-green-400"
                     autoFocus
+                    placeholder="Ketik perintah..."
+                    aria-label="CLI input"
                   />
                 </div>
               </div>
