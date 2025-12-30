@@ -32,7 +32,7 @@ import { useTheme } from 'next-themes';
 const labs = [
   {
     id: 1,
-    title: 'Dasar-Dasar Jaringan',
+    title: 'Network Fundamentals',
     description: 'Pelajari konsep keamanan jaringan, konfigurasi perangkat dasar, dan uji konektivitas',
     icon: Network,
     difficulty: 'Pemula',
@@ -43,7 +43,7 @@ const labs = [
   },
   {
     id: 2,
-    title: 'Analisis Protokol TCP/IP',
+    title: 'TCP/IP Protocol Analysis',
     description: 'Tangkap dan analisis paket TCP/IP, pahami kerentanan keamanan protokol',
     icon: Activity,
     difficulty: 'Pemula',
@@ -54,7 +54,7 @@ const labs = [
   },
   {
     id: 3,
-    title: 'Konfigurasi VPN IPSec',
+    title: 'IPSec VPN Configuration',
     description: 'Konfigurasi VPN IPSec site-to-site dengan fase IKE dan enkripsi ESP',
     icon: Lock,
     difficulty: 'Menengah',
@@ -65,7 +65,7 @@ const labs = [
   },
   {
     id: 4,
-    title: 'Firewall Generasi Baru',
+    title: 'Next-Gen Firewall',
     description: 'Konfigurasi kebijakan firewall berbasis zona dan filtering lapisan aplikasi',
     icon: Shield,
     difficulty: 'Menengah',
@@ -87,7 +87,7 @@ const labs = [
   },
   {
     id: 6,
-    title: 'Keamanan NAT',
+    title: 'NAT Security',
     description: 'Implementasi NAT statis, dinamis, dan PAT untuk translasi alamat jaringan',
     icon: Wifi,
     difficulty: 'Menengah',
@@ -98,7 +98,7 @@ const labs = [
   },
   {
     id: 7,
-    title: 'Deteksi Intrusi',
+    title: 'Intrusion Detection',
     description: 'Deploy sensor IDS, buat signature, dan analisis alert keamanan',
     icon: Eye,
     difficulty: 'Lanjutan',
@@ -109,7 +109,7 @@ const labs = [
   },
   {
     id: 8,
-    title: 'Proyek UTS',
+    title: 'Midterm Project',
     description: 'Desain dan implementasi jaringan aman lengkap dengan berbagai kontrol keamanan',
     icon: Award,
     difficulty: 'Lanjutan',

@@ -92,8 +92,8 @@ export default function AnalyticsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">Analytics</h1>
-          <p className="text-zinc-400">Platform performance and student insights</p>
+          <h1 className="text-2xl font-bold text-white mb-2">Analitik</h1>
+          <p className="text-zinc-400">Performa platform dan wawasan siswa</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -105,7 +105,7 @@ export default function AnalyticsPage() {
                 : "bg-zinc-800 text-zinc-400 hover:text-white"
             )}
           >
-            Week
+            Minggu
           </button>
           <button
             onClick={() => setTimeRange('month')}
@@ -116,7 +116,7 @@ export default function AnalyticsPage() {
                 : "bg-zinc-800 text-zinc-400 hover:text-white"
             )}
           >
-            Month
+            Bulan
           </button>
           <button
             onClick={() => setTimeRange('all')}
@@ -127,7 +127,7 @@ export default function AnalyticsPage() {
                 : "bg-zinc-800 text-zinc-400 hover:text-white"
             )}
           >
-            All Time
+            Semua Waktu
           </button>
         </div>
       </div>
@@ -137,42 +137,42 @@ export default function AnalyticsPage() {
         <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4">
           <div className="flex items-center gap-2 mb-2">
             <Users className="h-4 w-4 text-cyan-400" />
-            <span className="text-xs text-zinc-500">Total Students</span>
+            <span className="text-xs text-zinc-500">Total Siswa</span>
           </div>
           <p className="text-2xl font-bold text-white">{overview.totalStudents}</p>
         </div>
         <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="h-4 w-4 text-emerald-400" />
-            <span className="text-xs text-zinc-500">Active</span>
+            <span className="text-xs text-zinc-500">Aktif</span>
           </div>
           <p className="text-2xl font-bold text-white">{overview.activeStudents}</p>
         </div>
         <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4">
           <div className="flex items-center gap-2 mb-2">
             <Target className="h-4 w-4 text-violet-400" />
-            <span className="text-xs text-zinc-500">Completion Rate</span>
+            <span className="text-xs text-zinc-500">Tingkat Penyelesaian</span>
           </div>
           <p className="text-2xl font-bold text-white">{overview.completionRate}%</p>
         </div>
         <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4">
           <div className="flex items-center gap-2 mb-2">
             <Award className="h-4 w-4 text-amber-400" />
-            <span className="text-xs text-zinc-500">Avg Score</span>
+            <span className="text-xs text-zinc-500">Rata-rata Nilai</span>
           </div>
           <p className="text-2xl font-bold text-white">{overview.avgScore}%</p>
         </div>
         <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4">
           <div className="flex items-center gap-2 mb-2">
             <Clock className="h-4 w-4 text-blue-400" />
-            <span className="text-xs text-zinc-500">Time Spent</span>
+            <span className="text-xs text-zinc-500">Waktu Belajar</span>
           </div>
           <p className="text-2xl font-bold text-white">{Math.round(overview.totalTimeSpent / 60)}h</p>
         </div>
         <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4">
           <div className="flex items-center gap-2 mb-2">
             <BookOpen className="h-4 w-4 text-pink-400" />
-            <span className="text-xs text-zinc-500">Labs Completed</span>
+            <span className="text-xs text-zinc-500">Lab Selesai</span>
           </div>
           <p className="text-2xl font-bold text-white">{overview.labsCompleted}</p>
         </div>
@@ -182,7 +182,7 @@ export default function AnalyticsPage() {
       <div className="grid lg:grid-cols-2 gap-6 mb-8">
         {/* Weekly Activity */}
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-          <h2 className="text-lg font-semibold text-white mb-6">Weekly Activity</h2>
+          <h2 className="text-lg font-semibold text-white mb-6">Aktivitas Mingguan</h2>
           <div className="space-y-4">
             {(data?.weeklyActivity || []).map((day) => (
               <div key={day.day} className="flex items-center gap-4">
@@ -196,13 +196,13 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
                 <span className="text-sm text-zinc-400 w-16 text-right">
-                  {day.submissions} sub
+                  {day.submissions} kirim
                 </span>
               </div>
             ))}
             {(!data?.weeklyActivity || data.weeklyActivity.length === 0) && (
               <div className="text-center py-8 text-zinc-500">
-                No activity data available
+                Tidak ada data aktivitas tersedia
               </div>
             )}
           </div>
@@ -210,7 +210,7 @@ export default function AnalyticsPage() {
 
         {/* Top Performers */}
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-          <h2 className="text-lg font-semibold text-white mb-6">Top Performers</h2>
+          <h2 className="text-lg font-semibold text-white mb-6">Siswa Terbaik</h2>
           <div className="space-y-4">
             {(data?.topPerformers || []).slice(0, 5).map((student, index) => (
               <div key={student.id} className="flex items-center gap-4 p-3 rounded-xl bg-zinc-800/50">
@@ -229,13 +229,13 @@ export default function AnalyticsPage() {
                 </div>
                 <div className="text-right">
                   <p className="font-medium text-cyan-400">{student.avgScore}%</p>
-                  <p className="text-xs text-zinc-500">{student.completedLabs} labs</p>
+                  <p className="text-xs text-zinc-500">{student.completedLabs} lab</p>
                 </div>
               </div>
             ))}
             {(!data?.topPerformers || data.topPerformers.length === 0) && (
               <div className="text-center py-8 text-zinc-500">
-                No student data available
+                Tidak ada data siswa tersedia
               </div>
             )}
           </div>
@@ -244,17 +244,17 @@ export default function AnalyticsPage() {
 
       {/* Lab Performance */}
       <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-        <h2 className="text-lg font-semibold text-white mb-6">Lab Performance</h2>
+        <h2 className="text-lg font-semibold text-white mb-6">Performa Lab</h2>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-zinc-800">
                 <th className="text-left py-3 px-4 text-sm font-medium text-zinc-400">Lab</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-zinc-400">Enrollments</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-zinc-400">Completions</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-zinc-400">Avg Score</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-zinc-400">Avg Time</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-zinc-400">Completion Rate</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-zinc-400">Pendaftaran</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-zinc-400">Penyelesaian</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-zinc-400">Rata-rata Nilai</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-zinc-400">Rata-rata Waktu</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-zinc-400">Tingkat Penyelesaian</th>
               </tr>
             </thead>
             <tbody>
@@ -298,7 +298,7 @@ export default function AnalyticsPage() {
           </table>
           {(!data?.labStats || data.labStats.length === 0) && (
             <div className="text-center py-12 text-zinc-500">
-              No lab data available
+              Tidak ada data lab tersedia
             </div>
           )}
         </div>

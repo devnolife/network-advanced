@@ -54,9 +54,9 @@ export default function SettingsPage() {
   };
 
   const tabs = [
-    { id: 'general', label: 'General', icon: Settings },
-    { id: 'security', label: 'Security', icon: Shield },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'general', label: 'Umum', icon: Settings },
+    { id: 'security', label: 'Keamanan', icon: Shield },
+    { id: 'notifications', label: 'Notifikasi', icon: Bell },
   ];
 
   return (
@@ -64,8 +64,8 @@ export default function SettingsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">Settings</h1>
-          <p className="text-zinc-400">Configure platform settings and preferences</p>
+          <h1 className="text-2xl font-bold text-white mb-2">Pengaturan</h1>
+          <p className="text-zinc-400">Konfigurasi pengaturan dan preferensi platform</p>
         </div>
         <button
           onClick={handleSave}
@@ -84,7 +84,7 @@ export default function SettingsPage() {
           ) : (
             <Save className="h-5 w-5" />
           )}
-          {saved ? 'Saved!' : 'Save Changes'}
+          {saved ? 'Tersimpan!' : 'Simpan Perubahan'}
         </button>
       </div>
 
@@ -111,29 +111,29 @@ export default function SettingsPage() {
       {activeTab === 'general' && (
         <div className="space-y-6">
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-            <h3 className="text-lg font-semibold text-white mb-6">Site Information</h3>
+            <h3 className="text-lg font-semibold text-white mb-6">Informasi Situs</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-zinc-400 mb-2">
-                  Site Name
+                  Nama Situs
                 </label>
                 <input
                   type="text"
                   value={settings.siteName}
                   onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
-                  placeholder="Enter site name"
+                  placeholder="Masukkan nama situs"
                   className="w-full px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-400 mb-2">
-                  Site Description
+                  Deskripsi Situs
                 </label>
                 <textarea
                   value={settings.siteDescription}
                   onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
                   rows={3}
-                  placeholder="Enter site description"
+                  placeholder="Masukkan deskripsi situs"
                   className="w-full px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 resize-none"
                 />
               </div>
@@ -141,12 +141,12 @@ export default function SettingsPage() {
           </div>
 
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-            <h3 className="text-lg font-semibold text-white mb-6">Registration</h3>
+            <h3 className="text-lg font-semibold text-white mb-6">Pendaftaran</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-800/50">
                 <div>
-                  <p className="font-medium text-white">Allow Registration</p>
-                  <p className="text-sm text-zinc-500">Enable new user registration</p>
+                  <p className="font-medium text-white">Izinkan Pendaftaran</p>
+                  <p className="text-sm text-zinc-500">Aktifkan pendaftaran pengguna baru</p>
                 </div>
                 <button
                   onClick={() => setSettings({ ...settings, allowRegistration: !settings.allowRegistration })}
@@ -164,8 +164,8 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-800/50">
                 <div>
-                  <p className="font-medium text-white">Require Email Verification</p>
-                  <p className="text-sm text-zinc-500">Users must verify email before access</p>
+                  <p className="font-medium text-white">Wajib Verifikasi Email</p>
+                  <p className="text-sm text-zinc-500">Pengguna harus memverifikasi email sebelum akses</p>
                 </div>
                 <button
                   onClick={() => setSettings({ ...settings, requireEmailVerification: !settings.requireEmailVerification })}
@@ -185,11 +185,11 @@ export default function SettingsPage() {
           </div>
 
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-            <h3 className="text-lg font-semibold text-white mb-6">Maintenance</h3>
+            <h3 className="text-lg font-semibold text-white mb-6">Pemeliharaan</h3>
             <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-800/50">
               <div>
-                <p className="font-medium text-white">Maintenance Mode</p>
-                <p className="text-sm text-zinc-500">Temporarily disable platform access</p>
+                <p className="font-medium text-white">Mode Pemeliharaan</p>
+                <p className="text-sm text-zinc-500">Nonaktifkan akses platform sementara</p>
               </div>
               <button
                 onClick={() => setSettings({ ...settings, maintenanceMode: !settings.maintenanceMode })}
@@ -213,11 +213,11 @@ export default function SettingsPage() {
       {activeTab === 'security' && (
         <div className="space-y-6">
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-            <h3 className="text-lg font-semibold text-white mb-6">Login Security</h3>
+            <h3 className="text-lg font-semibold text-white mb-6">Keamanan Login</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-zinc-400 mb-2">
-                  Max Login Attempts
+                  Percobaan Login Maksimal
                 </label>
                 <input
                   type="number"
@@ -228,11 +228,11 @@ export default function SettingsPage() {
                   placeholder="5"
                   className="w-full max-w-xs px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
                 />
-                <p className="text-sm text-zinc-500 mt-2">Number of failed attempts before lockout</p>
+                <p className="text-sm text-zinc-500 mt-2">Jumlah percobaan gagal sebelum dikunci</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-400 mb-2">
-                  Session Timeout (minutes)
+                  Batas Waktu Sesi (menit)
                 </label>
                 <input
                   type="number"
@@ -243,25 +243,25 @@ export default function SettingsPage() {
                   placeholder="60"
                   className="w-full max-w-xs px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
                 />
-                <p className="text-sm text-zinc-500 mt-2">Time before inactive sessions expire</p>
+                <p className="text-sm text-zinc-500 mt-2">Waktu sebelum sesi tidak aktif kedaluwarsa</p>
               </div>
             </div>
           </div>
 
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-            <h3 className="text-lg font-semibold text-white mb-6">Password Policy</h3>
+            <h3 className="text-lg font-semibold text-white mb-6">Kebijakan Kata Sandi</h3>
             <div className="space-y-3">
               <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-800/50">
                 <Check className="h-4 w-4 text-emerald-400" />
-                <span className="text-zinc-300">Minimum 8 characters</span>
+                <span className="text-zinc-300">Minimal 8 karakter</span>
               </div>
               <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-800/50">
                 <Check className="h-4 w-4 text-emerald-400" />
-                <span className="text-zinc-300">At least one uppercase letter</span>
+                <span className="text-zinc-300">Setidaknya satu huruf kapital</span>
               </div>
               <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-800/50">
                 <Check className="h-4 w-4 text-emerald-400" />
-                <span className="text-zinc-300">At least one number</span>
+                <span className="text-zinc-300">Setidaknya satu angka</span>
               </div>
             </div>
           </div>
@@ -272,12 +272,12 @@ export default function SettingsPage() {
       {activeTab === 'notifications' && (
         <div className="space-y-6">
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-            <h3 className="text-lg font-semibold text-white mb-6">Email Notifications</h3>
+            <h3 className="text-lg font-semibold text-white mb-6">Notifikasi Email</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-800/50">
                 <div>
-                  <p className="font-medium text-white">New User Registration</p>
-                  <p className="text-sm text-zinc-500">Notify when a new user registers</p>
+                  <p className="font-medium text-white">Pendaftaran Pengguna Baru</p>
+                  <p className="text-sm text-zinc-500">Notifikasi saat pengguna baru mendaftar</p>
                 </div>
                 <button title="Toggle New User Registration Notification" className="w-12 h-6 rounded-full bg-cyan-500 relative">
                   <span className="absolute top-1 left-7 w-4 h-4 bg-white rounded-full" />
@@ -285,8 +285,8 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-800/50">
                 <div>
-                  <p className="font-medium text-white">Lab Completion</p>
-                  <p className="text-sm text-zinc-500">Notify when a student completes a lab</p>
+                  <p className="font-medium text-white">Penyelesaian Lab</p>
+                  <p className="text-sm text-zinc-500">Notifikasi saat siswa menyelesaikan lab</p>
                 </div>
                 <button title="Toggle Lab Completion Notification" className="w-12 h-6 rounded-full bg-zinc-700 relative">
                   <span className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full" />
@@ -294,8 +294,8 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-800/50">
                 <div>
-                  <p className="font-medium text-white">System Alerts</p>
-                  <p className="text-sm text-zinc-500">Critical system notifications</p>
+                  <p className="font-medium text-white">Peringatan Sistem</p>
+                  <p className="text-sm text-zinc-500">Notifikasi sistem penting</p>
                 </div>
                 <button title="Toggle System Alerts" className="w-12 h-6 rounded-full bg-cyan-500 relative">
                   <span className="absolute top-1 left-7 w-4 h-4 bg-white rounded-full" />

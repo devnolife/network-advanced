@@ -3,12 +3,12 @@
         "id": "lab-1",
         "number": 1,
         "title": "Network Security Fundamentals Review",
-        "description": "Review network security concepts, set up the lab environment, and configure basic devices. Learn CLI navigation, IP configuration, and connectivity testing.",
+        "description": "Review konsep keamanan jaringan, siapkan lingkungan lab, dan konfigurasi perangkat dasar. Pelajari navigasi CLI, konfigurasi IP, dan pengujian konektivitas.",
         "objectives": [
-            "Navigate the lab interface and CLI terminal",
-            "Configure IP addresses on network devices",
-            "Understand basic routing concepts",
-            "Test network connectivity using ping and traceroute"
+            "Navigasi antarmuka lab dan terminal CLI",
+            "Konfigurasi alamat IP pada perangkat jaringan",
+            "Memahami konsep dasar routing",
+            "Uji konektivitas jaringan menggunakan ping dan traceroute"
         ],
         "difficulty": "BEGINNER",
         "durationMinutes": 30,
@@ -80,69 +80,69 @@
         "tasks": [
             {
                 "id": "t1-1",
-                "title": "Access Router CLI",
-                "description": "Open the terminal for Router1 and enter privileged mode using the 'enable' command",
+                "title": "Akses CLI Router",
+                "description": "Buka terminal untuk Router1 dan masuk ke mode privileged menggunakan perintah 'enable'",
                 "points": 10,
                 "order": 1,
                 "validation": { "type": "command-executed", "device": "router1", "command": "enable" }
             },
             {
                 "id": "t1-2",
-                "title": "View Interface Status",
-                "description": "Use the 'show ip interface brief' command to view all interfaces",
+                "title": "Lihat Status Interface",
+                "description": "Gunakan perintah 'show ip interface brief' untuk melihat semua interface",
                 "points": 15,
                 "order": 2,
                 "validation": { "type": "command-executed", "device": "router1", "command": "show ip interface brief" }
             },
             {
                 "id": "t1-3",
-                "title": "Configure PC1 IP Address",
-                "description": "Set PC1's IP address to 10.1.1.2 with mask 255.255.255.0 and gateway 10.1.1.1",
+                "title": "Konfigurasi Alamat IP PC1",
+                "description": "Atur alamat IP PC1 ke 10.1.1.2 dengan mask 255.255.255.0 dan gateway 10.1.1.1",
                 "points": 20,
                 "order": 3,
                 "validation": { "type": "config-check", "device": "pc1", "expected": { "ip": "10.1.1.2", "gateway": "10.1.1.1" } }
             },
             {
                 "id": "t1-4",
-                "title": "Test Local Connectivity",
-                "description": "Ping from PC1 to the router's GigabitEthernet0/0 interface (10.1.1.1)",
+                "title": "Uji Konektivitas Lokal",
+                "description": "Ping dari PC1 ke interface GigabitEthernet0/0 router (10.1.1.1)",
                 "points": 15,
                 "order": 4,
                 "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.1.1.1" }
             },
             {
                 "id": "t1-5",
-                "title": "View Routing Table",
-                "description": "Display the routing table on Router1 using 'show ip route'",
+                "title": "Lihat Tabel Routing",
+                "description": "Tampilkan tabel routing pada Router1 menggunakan 'show ip route'",
                 "points": 15,
                 "order": 5,
                 "validation": { "type": "command-executed", "device": "router1", "command": "show ip route" }
             },
             {
                 "id": "t1-6",
-                "title": "Test End-to-End Connectivity",
-                "description": "Ping from PC1 to PC2 (10.2.1.2) through the router",
+                "title": "Uji Konektivitas End-to-End",
+                "description": "Ping dari PC1 ke PC2 (10.2.1.2) melalui router",
                 "points": 25,
                 "order": 6,
                 "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.2.1.2" }
             }
         ],
         "hints": [
-            { "id": "h1-1", "taskId": "t1-1", "content": "Double-click on Router1 to open the terminal, then type 'enable' and press Enter", "pointCost": 2, "order": 1 },
-            { "id": "h1-2", "taskId": "t1-3", "content": "Use the command: set ip 10.1.1.2 255.255.255.0 10.1.1.1", "pointCost": 3, "order": 1 },
-            { "id": "h1-3", "taskId": "t1-4", "content": "Use the command: ping 10.1.1.1", "pointCost": 2, "order": 1 }
+            { "id": "h1-1", "taskId": "t1-1", "content": "Double-click pada Router1 untuk membuka terminal, lalu ketik 'enable' dan tekan Enter", "pointCost": 2, "order": 1 },
+            { "id": "h1-2", "taskId": "t1-3", "content": "Gunakan perintah: set ip 10.1.1.2 255.255.255.0 10.1.1.1", "pointCost": 3, "order": 1 },
+            { "id": "h1-3", "taskId": "t1-4", "content": "Gunakan perintah: ping 10.1.1.1", "pointCost": 2, "order": 1 }
         ]
     },
     {
         "id": "lab-2",
         "number": 2,
         "title": "TCP/IP Protocol Analysis",
-        "description": "Deep dive into TCP/IP protocols using packet capture and analysis. Learn to understand headers, three-way handshake, and common protocols.",
+        "description": "Pelajari mendalam protokol TCP/IP menggunakan penangkapan dan analisis paket. Pelajari untuk memahami header, three-way handshake, dan protokol umum.",
         "objectives": [
-            "Capture network packets using built-in tools",
-            "Analyze TCP three-way handshake",
-            "Understand IP header fields",
-            "Identify common protocols (HTTP, DNS, ICMP)"
+            "Menangkap paket jaringan menggunakan tools bawaan",
+            "Menganalisis TCP three-way handshake",
+            "Memahami field header IP",
+            "Mengidentifikasi protokol umum (HTTP, DNS, ICMP)"
         ],
         "difficulty": "BEGINNER",
         "durationMinutes": 45,
@@ -161,29 +161,29 @@
             ]
         },
         "tasks": [
-            { "id": "t2-1", "title": "Start Packet Capture", "description": "Enable packet capture on the Client PC", "points": 10, "order": 1, "validation": { "type": "command-executed", "device": "pc1", "command": "capture start" } },
-            { "id": "t2-2", "title": "Generate ICMP Traffic", "description": "Ping the server to generate ICMP packets", "points": 15, "order": 2, "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.0.0.100" } },
-            { "id": "t2-3", "title": "Analyze ICMP Packets", "description": "View captured ICMP packets and identify echo request/reply", "points": 20, "order": 3, "validation": { "type": "packet-capture", "protocol": "ICMP" } },
-            { "id": "t2-4", "title": "Generate TCP Traffic", "description": "Initiate a TCP connection to the server on port 80", "points": 20, "order": 4, "validation": { "type": "command-executed", "device": "pc1", "command": "telnet 10.0.0.100 80" } },
-            { "id": "t2-5", "title": "Identify TCP Handshake", "description": "Find SYN, SYN-ACK, and ACK packets in the capture", "points": 25, "order": 5, "validation": { "type": "packet-analysis", "expected": ["SYN", "SYN-ACK", "ACK"] } },
-            { "id": "t2-6", "title": "Export Analysis Report", "description": "Save the packet capture analysis report", "points": 10, "order": 6, "validation": { "type": "command-executed", "device": "pc1", "command": "capture export" } }
+            { "id": "t2-1", "title": "Mulai Penangkapan Paket", "description": "Aktifkan penangkapan paket pada PC Client", "points": 10, "order": 1, "validation": { "type": "command-executed", "device": "pc1", "command": "capture start" } },
+            { "id": "t2-2", "title": "Generate Lalu Lintas ICMP", "description": "Ping server untuk menghasilkan paket ICMP", "points": 15, "order": 2, "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.0.0.100" } },
+            { "id": "t2-3", "title": "Analisis Paket ICMP", "description": "Lihat paket ICMP yang ditangkap dan identifikasi echo request/reply", "points": 20, "order": 3, "validation": { "type": "packet-capture", "protocol": "ICMP" } },
+            { "id": "t2-4", "title": "Generate Lalu Lintas TCP", "description": "Mulai koneksi TCP ke server pada port 80", "points": 20, "order": 4, "validation": { "type": "command-executed", "device": "pc1", "command": "telnet 10.0.0.100 80" } },
+            { "id": "t2-5", "title": "Identifikasi TCP Handshake", "description": "Temukan paket SYN, SYN-ACK, dan ACK dalam tangkapan", "points": 25, "order": 5, "validation": { "type": "packet-analysis", "expected": ["SYN", "SYN-ACK", "ACK"] } },
+            { "id": "t2-6", "title": "Ekspor Laporan Analisis", "description": "Simpan laporan analisis penangkapan paket", "points": 10, "order": 6, "validation": { "type": "command-executed", "device": "pc1", "command": "capture export" } }
         ],
         "hints": [
-            { "id": "h2-1", "taskId": "t2-1", "content": "Use 'capture start' command to begin packet capture", "pointCost": 2, "order": 1 },
-            { "id": "h2-2", "taskId": "t2-5", "content": "Look for TCP flags: SYN=0x02, SYN-ACK=0x12, ACK=0x10", "pointCost": 4, "order": 1 }
+            { "id": "h2-1", "taskId": "t2-1", "content": "Gunakan perintah 'capture start' untuk memulai penangkapan paket", "pointCost": 2, "order": 1 },
+            { "id": "h2-2", "taskId": "t2-5", "content": "Cari flag TCP: SYN=0x02, SYN-ACK=0x12, ACK=0x10", "pointCost": 4, "order": 1 }
         ]
     },
     {
         "id": "lab-3",
         "number": 3,
         "title": "VPN Technologies - IPSec Configuration",
-        "description": "Configure a site-to-site IPSec VPN between two routers with IKE Phase 1 and Phase 2 negotiation, crypto maps, and ESP encryption.",
+        "description": "Konfigurasi VPN IPSec site-to-site antara dua router dengan negosiasi IKE Phase 1 dan Phase 2, crypto maps, dan enkripsi ESP.",
         "objectives": [
-            "Understand IKE Phase 1 and Phase 2 negotiation",
-            "Configure ISAKMP policies",
-            "Set up pre-shared keys",
-            "Create and apply crypto maps",
-            "Verify IPSec tunnel establishment"
+            "Memahami negosiasi IKE Phase 1 dan Phase 2",
+            "Mengkonfigurasi kebijakan ISAKMP",
+            "Menyiapkan pre-shared keys",
+            "Membuat dan menerapkan crypto maps",
+            "Memverifikasi pembentukan tunnel IPSec"
         ],
         "difficulty": "INTERMEDIATE",
         "durationMinutes": 60,
@@ -204,30 +204,30 @@
             ]
         },
         "tasks": [
-            { "id": "t3-1", "title": "Configure ISAKMP Policy", "description": "Create ISAKMP policy with AES-256 encryption and SHA-256 hash", "points": 15, "order": 1, "validation": { "type": "config-check", "device": "r1", "expected": { "crypto-policy": "10" } } },
-            { "id": "t3-2", "title": "Set Pre-Shared Key", "description": "Configure pre-shared key for peer authentication", "points": 10, "order": 2, "validation": { "type": "config-check", "device": "r1", "expected": { "psk": "configured" } } },
-            { "id": "t3-3", "title": "Create Transform Set", "description": "Define IPSec transform set with ESP encryption", "points": 15, "order": 3, "validation": { "type": "config-check", "device": "r1", "expected": { "transform-set": "MYSET" } } },
-            { "id": "t3-4", "title": "Configure Crypto Map", "description": "Create and configure crypto map with peer and transform set", "points": 20, "order": 4, "validation": { "type": "config-check", "device": "r1", "expected": { "crypto-map": "MYMAP" } } },
-            { "id": "t3-5", "title": "Apply Crypto Map", "description": "Apply crypto map to the WAN interface", "points": 10, "order": 5, "validation": { "type": "interface-check", "device": "r1", "interface": "GigabitEthernet0/1", "expected": { "crypto-map": "applied" } } },
-            { "id": "t3-6", "title": "Verify IPSec Tunnel", "description": "Check IKE and IPSec SA status", "points": 20, "order": 6, "validation": { "type": "tunnel-status", "status": "up" } },
-            { "id": "t3-7", "title": "Test VPN Connectivity", "description": "Ping from PC1 to PC2 through the VPN tunnel", "points": 10, "order": 7, "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.2.1.2" } }
+            { "id": "t3-1", "title": "Konfigurasi Kebijakan ISAKMP", "description": "Buat kebijakan ISAKMP dengan enkripsi AES-256 dan hash SHA-256", "points": 15, "order": 1, "validation": { "type": "config-check", "device": "r1", "expected": { "crypto-policy": "10" } } },
+            { "id": "t3-2", "title": "Atur Pre-Shared Key", "description": "Konfigurasi pre-shared key untuk autentikasi peer", "points": 10, "order": 2, "validation": { "type": "config-check", "device": "r1", "expected": { "psk": "configured" } } },
+            { "id": "t3-3", "title": "Buat Transform Set", "description": "Definisikan transform set IPSec dengan enkripsi ESP", "points": 15, "order": 3, "validation": { "type": "config-check", "device": "r1", "expected": { "transform-set": "MYSET" } } },
+            { "id": "t3-4", "title": "Konfigurasi Crypto Map", "description": "Buat dan konfigurasi crypto map dengan peer dan transform set", "points": 20, "order": 4, "validation": { "type": "config-check", "device": "r1", "expected": { "crypto-map": "MYMAP" } } },
+            { "id": "t3-5", "title": "Terapkan Crypto Map", "description": "Terapkan crypto map ke interface WAN", "points": 10, "order": 5, "validation": { "type": "interface-check", "device": "r1", "interface": "GigabitEthernet0/1", "expected": { "crypto-map": "applied" } } },
+            { "id": "t3-6", "title": "Verifikasi Tunnel IPSec", "description": "Periksa status IKE dan IPSec SA", "points": 20, "order": 6, "validation": { "type": "tunnel-status", "status": "up" } },
+            { "id": "t3-7", "title": "Uji Konektivitas VPN", "description": "Ping dari PC1 ke PC2 melalui tunnel VPN", "points": 10, "order": 7, "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.2.1.2" } }
         ],
         "hints": [
-            { "id": "h3-1", "taskId": "t3-1", "content": "Use: crypto isakmp policy 10, then encryption aes 256, hash sha256", "pointCost": 3, "order": 1 },
-            { "id": "h3-2", "taskId": "t3-4", "content": "Use: crypto map MYMAP 10 ipsec-isakmp, then set peer and transform-set", "pointCost": 4, "order": 1 }
+            { "id": "h3-1", "taskId": "t3-1", "content": "Gunakan: crypto isakmp policy 10, lalu encryption aes 256, hash sha256", "pointCost": 3, "order": 1 },
+            { "id": "h3-2", "taskId": "t3-4", "content": "Gunakan: crypto map MYMAP 10 ipsec-isakmp, lalu set peer dan transform-set", "pointCost": 4, "order": 1 }
         ]
     },
     {
         "id": "lab-4",
         "number": 4,
         "title": "Firewall Configuration & ACLs",
-        "description": "Configure access control lists and firewall rules to control network traffic. Learn to permit and deny traffic based on source, destination, and protocol.",
+        "description": "Konfigurasi access control lists dan aturan firewall untuk mengontrol lalu lintas jaringan. Pelajari untuk mengizinkan dan menolak lalu lintas berdasarkan sumber, tujuan, dan protokol.",
         "objectives": [
-            "Understand ACL syntax and numbering",
-            "Configure standard and extended ACLs",
-            "Apply ACLs to interfaces",
-            "Test and verify firewall rules",
-            "Implement zone-based firewall concepts"
+            "Memahami sintaks dan penomoran ACL",
+            "Mengkonfigurasi ACL standar dan extended",
+            "Menerapkan ACL ke interface",
+            "Menguji dan memverifikasi aturan firewall",
+            "Mengimplementasikan konsep firewall berbasis zona"
         ],
         "difficulty": "INTERMEDIATE",
         "durationMinutes": 50,
@@ -246,29 +246,29 @@
             ]
         },
         "tasks": [
-            { "id": "t4-1", "title": "Create Standard ACL", "description": "Create a standard ACL to permit inside network", "points": 15, "order": 1, "validation": { "type": "config-check", "device": "firewall", "expected": { "acl": "10" } } },
-            { "id": "t4-2", "title": "Create Extended ACL", "description": "Create extended ACL to permit HTTP and HTTPS only", "points": 20, "order": 2, "validation": { "type": "config-check", "device": "firewall", "expected": { "acl": "100" } } },
-            { "id": "t4-3", "title": "Apply Inbound ACL", "description": "Apply ACL to inside interface for inbound filtering", "points": 15, "order": 3, "validation": { "type": "interface-check", "device": "firewall", "interface": "GigabitEthernet0/0", "expected": { "acl-in": "applied" } } },
-            { "id": "t4-4", "title": "Apply Outbound ACL", "description": "Apply ACL to outside interface for outbound filtering", "points": 15, "order": 4, "validation": { "type": "interface-check", "device": "firewall", "interface": "GigabitEthernet0/1", "expected": { "acl-out": "applied" } } },
-            { "id": "t4-5", "title": "Test Permitted Traffic", "description": "Verify HTTP traffic is allowed through the firewall", "points": 15, "order": 5, "validation": { "type": "connectivity-test", "from": "inside-pc", "to": "203.0.113.100", "port": 80 } },
-            { "id": "t4-6", "title": "Test Denied Traffic", "description": "Verify SSH traffic is blocked by the firewall", "points": 20, "order": 6, "validation": { "type": "connectivity-blocked", "from": "inside-pc", "to": "203.0.113.100", "port": 22 } }
+            { "id": "t4-1", "title": "Buat ACL Standar", "description": "Buat ACL standar untuk mengizinkan jaringan inside", "points": 15, "order": 1, "validation": { "type": "config-check", "device": "firewall", "expected": { "acl": "10" } } },
+            { "id": "t4-2", "title": "Buat ACL Extended", "description": "Buat ACL extended untuk mengizinkan HTTP dan HTTPS saja", "points": 20, "order": 2, "validation": { "type": "config-check", "device": "firewall", "expected": { "acl": "100" } } },
+            { "id": "t4-3", "title": "Terapkan ACL Inbound", "description": "Terapkan ACL ke interface inside untuk filtering masuk", "points": 15, "order": 3, "validation": { "type": "interface-check", "device": "firewall", "interface": "GigabitEthernet0/0", "expected": { "acl-in": "applied" } } },
+            { "id": "t4-4", "title": "Terapkan ACL Outbound", "description": "Terapkan ACL ke interface outside untuk filtering keluar", "points": 15, "order": 4, "validation": { "type": "interface-check", "device": "firewall", "interface": "GigabitEthernet0/1", "expected": { "acl-out": "applied" } } },
+            { "id": "t4-5", "title": "Uji Lalu Lintas Diizinkan", "description": "Verifikasi lalu lintas HTTP diizinkan melalui firewall", "points": 15, "order": 5, "validation": { "type": "connectivity-test", "from": "inside-pc", "to": "203.0.113.100", "port": 80 } },
+            { "id": "t4-6", "title": "Uji Lalu Lintas Ditolak", "description": "Verifikasi lalu lintas SSH diblokir oleh firewall", "points": 20, "order": 6, "validation": { "type": "connectivity-blocked", "from": "inside-pc", "to": "203.0.113.100", "port": 22 } }
         ],
         "hints": [
-            { "id": "h4-1", "taskId": "t4-1", "content": "Use: access-list 10 permit 10.1.1.0 0.0.0.255", "pointCost": 2, "order": 1 },
-            { "id": "h4-2", "taskId": "t4-2", "content": "Use: access-list 100 permit tcp any host 203.0.113.100 eq 80", "pointCost": 3, "order": 1 }
+            { "id": "h4-1", "taskId": "t4-1", "content": "Gunakan: access-list 10 permit 10.1.1.0 0.0.0.255", "pointCost": 2, "order": 1 },
+            { "id": "h4-2", "taskId": "t4-2", "content": "Gunakan: access-list 100 permit tcp any host 203.0.113.100 eq 80", "pointCost": 3, "order": 1 }
         ]
     },
     {
         "id": "lab-5",
         "number": 5,
         "title": "Intrusion Detection System (IDS)",
-        "description": "Configure and monitor an Intrusion Detection System to identify suspicious network activity and potential security threats.",
+        "description": "Konfigurasi dan monitor Intrusion Detection System untuk mengidentifikasi aktivitas jaringan mencurigakan dan potensi ancaman keamanan.",
         "objectives": [
-            "Understand IDS vs IPS concepts",
-            "Configure signature-based detection",
-            "Set up anomaly-based detection rules",
-            "Monitor and analyze security alerts",
-            "Respond to detected intrusions"
+            "Memahami konsep IDS vs IPS",
+            "Mengkonfigurasi deteksi berbasis signature",
+            "Menyiapkan aturan deteksi berbasis anomali",
+            "Memantau dan menganalisis alert keamanan",
+            "Merespons intrusi yang terdeteksi"
         ],
         "difficulty": "INTERMEDIATE",
         "durationMinutes": 55,
@@ -287,29 +287,29 @@
             ]
         },
         "tasks": [
-            { "id": "t5-1", "title": "Enable IDS Mode", "description": "Enable intrusion detection on the IDS sensor", "points": 10, "order": 1, "validation": { "type": "config-check", "device": "ids-sensor", "expected": { "ids-mode": "enabled" } } },
-            { "id": "t5-2", "title": "Load Signature Database", "description": "Load the threat signature database", "points": 15, "order": 2, "validation": { "type": "config-check", "device": "ids-sensor", "expected": { "signatures": "loaded" } } },
-            { "id": "t5-3", "title": "Configure Alert Threshold", "description": "Set alert severity threshold to medium", "points": 10, "order": 3, "validation": { "type": "config-check", "device": "ids-sensor", "expected": { "threshold": "medium" } } },
-            { "id": "t5-4", "title": "Simulate Port Scan", "description": "Run a port scan from attacker to target", "points": 20, "order": 4, "validation": { "type": "command-executed", "device": "attacker", "command": "nmap -sS 10.0.0.100" } },
-            { "id": "t5-5", "title": "View IDS Alerts", "description": "Check IDS alerts for detected port scan", "points": 20, "order": 5, "validation": { "type": "alert-check", "device": "ids-sensor", "expected": { "alert-type": "port-scan" } } },
-            { "id": "t5-6", "title": "Generate Report", "description": "Export security incident report", "points": 25, "order": 6, "validation": { "type": "command-executed", "device": "ids-sensor", "command": "export report" } }
+            { "id": "t5-1", "title": "Aktifkan Mode IDS", "description": "Aktifkan deteksi intrusi pada sensor IDS", "points": 10, "order": 1, "validation": { "type": "config-check", "device": "ids-sensor", "expected": { "ids-mode": "enabled" } } },
+            { "id": "t5-2", "title": "Muat Database Signature", "description": "Muat database signature ancaman", "points": 15, "order": 2, "validation": { "type": "config-check", "device": "ids-sensor", "expected": { "signatures": "loaded" } } },
+            { "id": "t5-3", "title": "Konfigurasi Ambang Alert", "description": "Atur ambang tingkat keparahan alert ke medium", "points": 10, "order": 3, "validation": { "type": "config-check", "device": "ids-sensor", "expected": { "threshold": "medium" } } },
+            { "id": "t5-4", "title": "Simulasi Port Scan", "description": "Jalankan port scan dari attacker ke target", "points": 20, "order": 4, "validation": { "type": "command-executed", "device": "attacker", "command": "nmap -sS 10.0.0.100" } },
+            { "id": "t5-5", "title": "Lihat Alert IDS", "description": "Periksa alert IDS untuk port scan yang terdeteksi", "points": 20, "order": 5, "validation": { "type": "alert-check", "device": "ids-sensor", "expected": { "alert-type": "port-scan" } } },
+            { "id": "t5-6", "title": "Generate Laporan", "description": "Ekspor laporan insiden keamanan", "points": 25, "order": 6, "validation": { "type": "command-executed", "device": "ids-sensor", "command": "export report" } }
         ],
         "hints": [
-            { "id": "h5-1", "taskId": "t5-1", "content": "Use: ids enable on the sensor device", "pointCost": 2, "order": 1 },
-            { "id": "h5-4", "taskId": "t5-4", "content": "nmap -sS performs a SYN stealth scan", "pointCost": 3, "order": 1 }
+            { "id": "h5-1", "taskId": "t5-1", "content": "Gunakan: ids enable pada perangkat sensor", "pointCost": 2, "order": 1 },
+            { "id": "h5-4", "taskId": "t5-4", "content": "nmap -sS melakukan SYN stealth scan", "pointCost": 3, "order": 1 }
         ]
     },
     {
         "id": "lab-6",
         "number": 6,
         "title": "Network Address Translation (NAT)",
-        "description": "Configure various types of NAT including static NAT, dynamic NAT, and PAT (Port Address Translation) for network address translation.",
+        "description": "Konfigurasi berbagai jenis NAT termasuk static NAT, dynamic NAT, dan PAT (Port Address Translation) untuk translasi alamat jaringan.",
         "objectives": [
-            "Understand NAT types and use cases",
-            "Configure static NAT for servers",
-            "Set up dynamic NAT with address pools",
-            "Implement PAT for multiple hosts",
-            "Verify NAT translations"
+            "Memahami jenis NAT dan kasus penggunaan",
+            "Mengkonfigurasi static NAT untuk server",
+            "Menyiapkan dynamic NAT dengan address pools",
+            "Mengimplementasikan PAT untuk multiple hosts",
+            "Memverifikasi translasi NAT"
         ],
         "difficulty": "INTERMEDIATE",
         "durationMinutes": 45,
@@ -330,29 +330,29 @@
             ]
         },
         "tasks": [
-            { "id": "t6-1", "title": "Define Inside/Outside Interfaces", "description": "Mark inside and outside NAT interfaces", "points": 10, "order": 1, "validation": { "type": "interface-check", "device": "nat-router", "expected": { "nat-inside": "Gi0/0", "nat-outside": "Gi0/1" } } },
-            { "id": "t6-2", "title": "Configure Static NAT", "description": "Create static NAT for the web server", "points": 20, "order": 2, "validation": { "type": "config-check", "device": "nat-router", "expected": { "static-nat": "192.168.1.100 to 203.0.113.100" } } },
-            { "id": "t6-3", "title": "Configure PAT", "description": "Set up PAT for internal network using overload", "points": 25, "order": 3, "validation": { "type": "config-check", "device": "nat-router", "expected": { "pat": "configured" } } },
-            { "id": "t6-4", "title": "Test Outbound NAT", "description": "Ping external host from internal PC", "points": 15, "order": 4, "validation": { "type": "connectivity-test", "from": "internal-pc", "to": "203.0.113.50" } },
-            { "id": "t6-5", "title": "Test Static NAT", "description": "Access web server from external client", "points": 15, "order": 5, "validation": { "type": "connectivity-test", "from": "external-pc", "to": "203.0.113.100" } },
-            { "id": "t6-6", "title": "View NAT Translations", "description": "Display active NAT translation table", "points": 15, "order": 6, "validation": { "type": "command-executed", "device": "nat-router", "command": "show ip nat translations" } }
+            { "id": "t6-1", "title": "Definisikan Interface Inside/Outside", "description": "Tandai interface NAT inside dan outside", "points": 10, "order": 1, "validation": { "type": "interface-check", "device": "nat-router", "expected": { "nat-inside": "Gi0/0", "nat-outside": "Gi0/1" } } },
+            { "id": "t6-2", "title": "Konfigurasi Static NAT", "description": "Buat static NAT untuk web server", "points": 20, "order": 2, "validation": { "type": "config-check", "device": "nat-router", "expected": { "static-nat": "192.168.1.100 to 203.0.113.100" } } },
+            { "id": "t6-3", "title": "Konfigurasi PAT", "description": "Siapkan PAT untuk jaringan internal menggunakan overload", "points": 25, "order": 3, "validation": { "type": "config-check", "device": "nat-router", "expected": { "pat": "configured" } } },
+            { "id": "t6-4", "title": "Uji NAT Outbound", "description": "Ping host eksternal dari PC internal", "points": 15, "order": 4, "validation": { "type": "connectivity-test", "from": "internal-pc", "to": "203.0.113.50" } },
+            { "id": "t6-5", "title": "Uji Static NAT", "description": "Akses web server dari client eksternal", "points": 15, "order": 5, "validation": { "type": "connectivity-test", "from": "external-pc", "to": "203.0.113.100" } },
+            { "id": "t6-6", "title": "Lihat Translasi NAT", "description": "Tampilkan tabel translasi NAT aktif", "points": 15, "order": 6, "validation": { "type": "command-executed", "device": "nat-router", "command": "show ip nat translations" } }
         ],
         "hints": [
-            { "id": "h6-1", "taskId": "t6-1", "content": "Use: ip nat inside on Gi0/0, ip nat outside on Gi0/1", "pointCost": 2, "order": 1 },
-            { "id": "h6-3", "taskId": "t6-3", "content": "Use: ip nat inside source list 1 interface Gi0/1 overload", "pointCost": 3, "order": 1 }
+            { "id": "h6-1", "taskId": "t6-1", "content": "Gunakan: ip nat inside pada Gi0/0, ip nat outside pada Gi0/1", "pointCost": 2, "order": 1 },
+            { "id": "h6-3", "taskId": "t6-3", "content": "Gunakan: ip nat inside source list 1 interface Gi0/1 overload", "pointCost": 3, "order": 1 }
         ]
     },
     {
         "id": "lab-7",
         "number": 7,
         "title": "Wireless Security - WPA2/WPA3",
-        "description": "Configure secure wireless networks with WPA2-Enterprise and WPA3. Understand authentication methods and encryption protocols.",
+        "description": "Konfigurasi jaringan wireless yang aman dengan WPA2-Enterprise dan WPA3. Pahami metode autentikasi dan protokol enkripsi.",
         "objectives": [
-            "Understand wireless security protocols",
-            "Configure WPA2-Enterprise with RADIUS",
-            "Set up WPA3-Personal with SAE",
-            "Implement 802.1X authentication",
-            "Analyze wireless security vulnerabilities"
+            "Memahami protokol keamanan wireless",
+            "Mengkonfigurasi WPA2-Enterprise dengan RADIUS",
+            "Menyiapkan WPA3-Personal dengan SAE",
+            "Mengimplementasikan autentikasi 802.1X",
+            "Menganalisis kerentanan keamanan wireless"
         ],
         "difficulty": "ADVANCED",
         "durationMinutes": 70,
@@ -373,29 +373,29 @@
             ]
         },
         "tasks": [
-            { "id": "t7-1", "title": "Configure SSID", "description": "Set up wireless SSID on access point", "points": 10, "order": 1, "validation": { "type": "config-check", "device": "access-point", "expected": { "ssid": "SecureWiFi" } } },
-            { "id": "t7-2", "title": "Enable WPA2-Enterprise", "description": "Configure WPA2-Enterprise security mode", "points": 15, "order": 2, "validation": { "type": "config-check", "device": "access-point", "expected": { "security": "WPA2-Enterprise" } } },
-            { "id": "t7-3", "title": "Configure RADIUS Server", "description": "Set up RADIUS server authentication", "points": 20, "order": 3, "validation": { "type": "config-check", "device": "access-point", "expected": { "radius": "10.0.0.10" } } },
-            { "id": "t7-4", "title": "Create User Account", "description": "Add user account on RADIUS server", "points": 15, "order": 4, "validation": { "type": "config-check", "device": "radius-server", "expected": { "user": "testuser" } } },
-            { "id": "t7-5", "title": "Connect Client", "description": "Connect wireless client using EAP-TLS", "points": 20, "order": 5, "validation": { "type": "wireless-connect", "device": "wireless-client", "expected": { "connected": true, "auth": "EAP-TLS" } } },
-            { "id": "t7-6", "title": "Verify Encryption", "description": "Confirm AES encryption is active", "points": 20, "order": 6, "validation": { "type": "wireless-check", "expected": { "encryption": "AES" } } }
+            { "id": "t7-1", "title": "Konfigurasi SSID", "description": "Siapkan SSID wireless pada access point", "points": 10, "order": 1, "validation": { "type": "config-check", "device": "access-point", "expected": { "ssid": "SecureWiFi" } } },
+            { "id": "t7-2", "title": "Aktifkan WPA2-Enterprise", "description": "Konfigurasi mode keamanan WPA2-Enterprise", "points": 15, "order": 2, "validation": { "type": "config-check", "device": "access-point", "expected": { "security": "WPA2-Enterprise" } } },
+            { "id": "t7-3", "title": "Konfigurasi Server RADIUS", "description": "Siapkan autentikasi server RADIUS", "points": 20, "order": 3, "validation": { "type": "config-check", "device": "access-point", "expected": { "radius": "10.0.0.10" } } },
+            { "id": "t7-4", "title": "Buat Akun Pengguna", "description": "Tambahkan akun pengguna pada server RADIUS", "points": 15, "order": 4, "validation": { "type": "config-check", "device": "radius-server", "expected": { "user": "testuser" } } },
+            { "id": "t7-5", "title": "Hubungkan Client", "description": "Hubungkan wireless client menggunakan EAP-TLS", "points": 20, "order": 5, "validation": { "type": "wireless-connect", "device": "wireless-client", "expected": { "connected": true, "auth": "EAP-TLS" } } },
+            { "id": "t7-6", "title": "Verifikasi Enkripsi", "description": "Konfirmasi enkripsi AES aktif", "points": 20, "order": 6, "validation": { "type": "wireless-check", "expected": { "encryption": "AES" } } }
         ],
         "hints": [
-            { "id": "h7-1", "taskId": "t7-2", "content": "Use: security wpa2 enterprise mode", "pointCost": 3, "order": 1 },
-            { "id": "h7-3", "taskId": "t7-3", "content": "Use: radius-server host 10.0.0.10 key SharedSecret", "pointCost": 4, "order": 1 }
+            { "id": "h7-1", "taskId": "t7-2", "content": "Gunakan: security wpa2 enterprise mode", "pointCost": 3, "order": 1 },
+            { "id": "h7-3", "taskId": "t7-3", "content": "Gunakan: radius-server host 10.0.0.10 key SharedSecret", "pointCost": 4, "order": 1 }
         ]
     },
     {
         "id": "lab-8",
         "number": 8,
         "title": "Advanced Threat Analysis & Response",
-        "description": "Analyze advanced persistent threats, perform forensic analysis, and implement incident response procedures for sophisticated attacks.",
+        "description": "Analisis advanced persistent threats, lakukan analisis forensik, dan implementasikan prosedur incident response untuk serangan canggih.",
         "objectives": [
-            "Identify advanced persistent threat patterns",
-            "Perform network forensic analysis",
-            "Implement incident response procedures",
-            "Analyze malware communication patterns",
-            "Document and report security incidents"
+            "Mengidentifikasi pola advanced persistent threat",
+            "Melakukan analisis forensik jaringan",
+            "Mengimplementasikan prosedur incident response",
+            "Menganalisis pola komunikasi malware",
+            "Mendokumentasikan dan melaporkan insiden keamanan"
         ],
         "difficulty": "ADVANCED",
         "durationMinutes": 90,
@@ -416,17 +416,17 @@
             ]
         },
         "tasks": [
-            { "id": "t8-1", "title": "Analyze SIEM Alerts", "description": "Review SIEM alerts for suspicious activity", "points": 10, "order": 1, "validation": { "type": "command-executed", "device": "siem-server", "command": "show alerts" } },
-            { "id": "t8-2", "title": "Identify C2 Communication", "description": "Find command and control traffic patterns", "points": 20, "order": 2, "validation": { "type": "analysis-check", "expected": { "c2-detected": true } } },
-            { "id": "t8-3", "title": "Capture Malware Traffic", "description": "Capture network traffic from compromised host", "points": 15, "order": 3, "validation": { "type": "packet-capture", "device": "edge-firewall", "protocol": "any" } },
-            { "id": "t8-4", "title": "Block C2 Domain", "description": "Add firewall rule to block C2 server", "points": 15, "order": 4, "validation": { "type": "config-check", "device": "edge-firewall", "expected": { "blocked": "203.0.113.66" } } },
-            { "id": "t8-5", "title": "Isolate Compromised Host", "description": "Quarantine the infected system", "points": 15, "order": 5, "validation": { "type": "network-isolation", "device": "compromised-host", "expected": { "isolated": true } } },
-            { "id": "t8-6", "title": "Document IOCs", "description": "Record indicators of compromise", "points": 10, "order": 6, "validation": { "type": "command-executed", "device": "siem-server", "command": "export ioc" } },
-            { "id": "t8-7", "title": "Generate Incident Report", "description": "Create comprehensive incident report", "points": 15, "order": 7, "validation": { "type": "command-executed", "device": "siem-server", "command": "generate report" } }
+            { "id": "t8-1", "title": "Analisis Alert SIEM", "description": "Tinjau alert SIEM untuk aktivitas mencurigakan", "points": 10, "order": 1, "validation": { "type": "command-executed", "device": "siem-server", "command": "show alerts" } },
+            { "id": "t8-2", "title": "Identifikasi Komunikasi C2", "description": "Temukan pola lalu lintas command and control", "points": 20, "order": 2, "validation": { "type": "analysis-check", "expected": { "c2-detected": true } } },
+            { "id": "t8-3", "title": "Tangkap Lalu Lintas Malware", "description": "Tangkap lalu lintas jaringan dari host terkompromi", "points": 15, "order": 3, "validation": { "type": "packet-capture", "device": "edge-firewall", "protocol": "any" } },
+            { "id": "t8-4", "title": "Blokir Domain C2", "description": "Tambahkan aturan firewall untuk memblokir server C2", "points": 15, "order": 4, "validation": { "type": "config-check", "device": "edge-firewall", "expected": { "blocked": "203.0.113.66" } } },
+            { "id": "t8-5", "title": "Isolasi Host Terkompromi", "description": "Karantina sistem yang terinfeksi", "points": 15, "order": 5, "validation": { "type": "network-isolation", "device": "compromised-host", "expected": { "isolated": true } } },
+            { "id": "t8-6", "title": "Dokumentasi IOC", "description": "Catat indikator kompromi", "points": 10, "order": 6, "validation": { "type": "command-executed", "device": "siem-server", "command": "export ioc" } },
+            { "id": "t8-7", "title": "Generate Laporan Insiden", "description": "Buat laporan insiden komprehensif", "points": 15, "order": 7, "validation": { "type": "command-executed", "device": "siem-server", "command": "generate report" } }
         ],
         "hints": [
-            { "id": "h8-1", "taskId": "t8-2", "content": "Look for beaconing patterns - regular interval connections to external IPs", "pointCost": 4, "order": 1 },
-            { "id": "h8-4", "taskId": "t8-4", "content": "Use: access-list 100 deny ip any host 203.0.113.66", "pointCost": 3, "order": 1 }
+            { "id": "h8-1", "taskId": "t8-2", "content": "Cari pola beaconing - koneksi interval reguler ke IP eksternal", "pointCost": 4, "order": 1 },
+            { "id": "h8-4", "taskId": "t8-4", "content": "Gunakan: access-list 100 deny ip any host 203.0.113.66", "pointCost": 3, "order": 1 }
         ]
     }
 ]

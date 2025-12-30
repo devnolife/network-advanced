@@ -103,15 +103,15 @@ export default function UsersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">User Management</h1>
-          <p className="text-zinc-400">Manage all users including admins, instructors, and students</p>
+          <h1 className="text-2xl font-bold text-white mb-2">Manajemen Pengguna</h1>
+          <p className="text-zinc-400">Kelola semua pengguna termasuk admin, instruktur, dan siswa</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500 text-white font-medium hover:bg-cyan-400 transition-colors"
         >
           <Plus className="h-5 w-5" />
-          Add User
+          Tambah Pengguna
         </button>
       </div>
 
@@ -124,7 +124,7 @@ export default function UsersPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{users.length}</p>
-              <p className="text-xs text-zinc-500">Total Users</p>
+              <p className="text-xs text-zinc-500">Total Pengguna</p>
             </div>
           </div>
         </div>
@@ -146,7 +146,7 @@ export default function UsersPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{users.filter(u => u.role === 'INSTRUCTOR').length}</p>
-              <p className="text-xs text-zinc-500">Instructors</p>
+              <p className="text-xs text-zinc-500">Instruktur</p>
             </div>
           </div>
         </div>
@@ -157,7 +157,7 @@ export default function UsersPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{users.filter(u => u.role === 'STUDENT').length}</p>
-              <p className="text-xs text-zinc-500">Students</p>
+              <p className="text-xs text-zinc-500">Siswa</p>
             </div>
           </div>
         </div>
@@ -169,7 +169,7 @@ export default function UsersPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
           <input
             type="text"
-            placeholder="Search users..."
+            placeholder="Cari pengguna..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
@@ -181,10 +181,10 @@ export default function UsersPage() {
           title="Filter by Role"
           className="px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
         >
-          <option value="all">All Roles</option>
+          <option value="all">Semua Peran</option>
           <option value="ADMIN">Admin</option>
-          <option value="INSTRUCTOR">Instructor</option>
-          <option value="STUDENT">Student</option>
+          <option value="INSTRUCTOR">Instruktur</option>
+          <option value="STUDENT">Siswa</option>
         </select>
       </div>
 
@@ -194,12 +194,12 @@ export default function UsersPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-zinc-800">
-                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">User</th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Role</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Pengguna</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Peran</th>
                 <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Status</th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Labs</th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Joined</th>
-                <th className="text-right py-4 px-6 text-sm font-medium text-zinc-400">Actions</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Lab</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Bergabung</th>
+                <th className="text-right py-4 px-6 text-sm font-medium text-zinc-400">Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -231,12 +231,12 @@ export default function UsersPage() {
                     {user.isActive ? (
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                        Active
+                        Aktif
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-zinc-500/10 text-zinc-400">
                         <span className="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
-                        Inactive
+                        Nonaktif
                       </span>
                     )}
                   </td>
@@ -265,7 +265,7 @@ export default function UsersPage() {
         {filteredUsers.length === 0 && (
           <div className="text-center py-12">
             <Users className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400">No users found</p>
+            <p className="text-zinc-400">Pengguna tidak ditemukan</p>
           </div>
         )}
       </div>

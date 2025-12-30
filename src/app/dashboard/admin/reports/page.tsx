@@ -108,12 +108,12 @@ export default function ReportsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">Reports</h1>
-          <p className="text-zinc-400">View student progress and lab completion reports</p>
+          <h1 className="text-2xl font-bold text-white mb-2">Laporan</h1>
+          <p className="text-zinc-400">Lihat progres siswa dan laporan penyelesaian lab</p>
         </div>
         <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500 text-white font-medium hover:bg-cyan-400 transition-colors">
           <Download className="h-5 w-5" />
-          Export CSV
+          Ekspor CSV
         </button>
       </div>
 
@@ -126,7 +126,7 @@ export default function ReportsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.totalSubmissions}</p>
-              <p className="text-xs text-zinc-500">Total Progress</p>
+              <p className="text-xs text-zinc-500">Total Progres</p>
             </div>
           </div>
         </div>
@@ -137,7 +137,7 @@ export default function ReportsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.completedLabs}</p>
-              <p className="text-xs text-zinc-500">Completed</p>
+              <p className="text-xs text-zinc-500">Selesai</p>
             </div>
           </div>
         </div>
@@ -148,7 +148,7 @@ export default function ReportsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.avgScore}%</p>
-              <p className="text-xs text-zinc-500">Avg Score</p>
+              <p className="text-xs text-zinc-500">Rata-rata Nilai</p>
             </div>
           </div>
         </div>
@@ -159,7 +159,7 @@ export default function ReportsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.activeStudents}</p>
-              <p className="text-xs text-zinc-500">Active Students</p>
+              <p className="text-xs text-zinc-500">Siswa Aktif</p>
             </div>
           </div>
         </div>
@@ -171,7 +171,7 @@ export default function ReportsPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
           <input
             type="text"
-            placeholder="Search by student or lab..."
+            placeholder="Cari berdasarkan siswa atau lab..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
@@ -183,10 +183,10 @@ export default function ReportsPage() {
           title="Filter by Status"
           className="px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
         >
-          <option value="all">All Status</option>
-          <option value="completed">Completed</option>
-          <option value="in-progress">In Progress</option>
-          <option value="not-started">Not Started</option>
+          <option value="all">Semua Status</option>
+          <option value="completed">Selesai</option>
+          <option value="in-progress">Sedang Berjalan</option>
+          <option value="not-started">Belum Dimulai</option>
         </select>
         <select
           value={filterLab}
@@ -194,7 +194,7 @@ export default function ReportsPage() {
           title="Filter by Lab"
           className="px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
         >
-          <option value="all">All Labs</option>
+          <option value="all">Semua Lab</option>
           {uniqueLabs.map(num => (
             <option key={num} value={num.toString()}>Lab {num}</option>
           ))}
@@ -207,13 +207,13 @@ export default function ReportsPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-zinc-800">
-                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Student</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Siswa</th>
                 <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Lab</th>
                 <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Status</th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Progress</th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Score</th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Started</th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Completed</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Progres</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Nilai</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Dimulai</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-zinc-400">Selesai</th>
               </tr>
             </thead>
             <tbody>
@@ -285,7 +285,7 @@ export default function ReportsPage() {
         {filteredReports.length === 0 && (
           <div className="text-center py-12">
             <FileText className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400">No reports found</p>
+            <p className="text-zinc-400">Laporan tidak ditemukan</p>
           </div>
         )}
       </div>

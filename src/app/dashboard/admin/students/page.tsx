@@ -144,7 +144,7 @@ export default function AdminStudentsPage() {
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-cyan-500 animate-spin mx-auto mb-4" />
-          <p className="text-zinc-400">Loading students...</p>
+          <p className="text-zinc-400">Memuat siswa...</p>
         </div>
       </div>
     );
@@ -157,7 +157,7 @@ export default function AdminStudentsPage() {
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <p className="text-red-400 mb-4">{error}</p>
           <Link href="/dashboard/admin" className="btn btn-primary">
-            Back to Dashboard
+            Kembali ke Dasbor
           </Link>
         </div>
       </div>
@@ -182,8 +182,8 @@ export default function AdminStudentsPage() {
                   <GraduationCap className="w-5 h-5 text-cyan-400" />
                 </div>
                 <div>
-                  <h1 className="text-lg font-semibold">Student Progress</h1>
-                  <p className="text-xs text-zinc-500">Monitor student lab activities</p>
+                  <h1 className="text-lg font-semibold">Progres Siswa</h1>
+                  <p className="text-xs text-zinc-500">Pantau aktivitas lab siswa</p>
                 </div>
               </div>
             </div>
@@ -200,7 +200,7 @@ export default function AdminStudentsPage() {
                 <div className="p-2.5 rounded-lg bg-cyan-500/20">
                   <Users className="w-5 h-5 text-cyan-400" />
                 </div>
-                <span className="text-sm text-zinc-400">Total Students</span>
+                <span className="text-sm text-zinc-400">Total Siswa</span>
               </div>
               <p className="text-3xl font-bold">{stats.totalStudents}</p>
             </div>
@@ -210,7 +210,7 @@ export default function AdminStudentsPage() {
                 <div className="p-2.5 rounded-lg bg-emerald-500/20">
                   <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                 </div>
-                <span className="text-sm text-zinc-400">Lab Completions</span>
+                <span className="text-sm text-zinc-400">Lab Selesai</span>
               </div>
               <p className="text-3xl font-bold">{stats.totalCompletions}</p>
             </div>
@@ -220,7 +220,7 @@ export default function AdminStudentsPage() {
                 <div className="p-2.5 rounded-lg bg-violet-500/20">
                   <TrendingUp className="w-5 h-5 text-violet-400" />
                 </div>
-                <span className="text-sm text-zinc-400">Avg Completion Rate</span>
+                <span className="text-sm text-zinc-400">Rata-rata Penyelesaian</span>
               </div>
               <p className="text-3xl font-bold">{stats.avgCompletionRate}%</p>
             </div>
@@ -230,7 +230,7 @@ export default function AdminStudentsPage() {
                 <div className="p-2.5 rounded-lg bg-amber-500/20">
                   <Trophy className="w-5 h-5 text-amber-400" />
                 </div>
-                <span className="text-sm text-zinc-400">Average Score</span>
+                <span className="text-sm text-zinc-400">Rata-rata Nilai</span>
               </div>
               <p className="text-3xl font-bold">{stats.avgScore}%</p>
             </div>
@@ -245,7 +245,7 @@ export default function AdminStudentsPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
               <input
                 type="text"
-                placeholder="Search by name or username..."
+                placeholder="Cari berdasarkan nama atau username..."
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -267,12 +267,12 @@ export default function AdminStudentsPage() {
                 title="Filter by Grade"
                 className="px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
               >
-                <option value="all">All Grades</option>
-                <option value="A">Grade A</option>
-                <option value="B">Grade B</option>
-                <option value="C">Grade C</option>
-                <option value="D">Grade D</option>
-                <option value="F">Grade F</option>
+                <option value="all">Semua Nilai</option>
+                <option value="A">Nilai A</option>
+                <option value="B">Nilai B</option>
+                <option value="C">Nilai C</option>
+                <option value="D">Nilai D</option>
+                <option value="F">Nilai F</option>
               </select>
             </div>
 
@@ -283,9 +283,9 @@ export default function AdminStudentsPage() {
               title="Sort Students"
               className="px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
             >
-              <option value="name">Sort by Name</option>
-              <option value="score">Sort by Score</option>
-              <option value="completions">Sort by Completions</option>
+              <option value="name">Urutkan Nama</option>
+              <option value="score">Urutkan Nilai</option>
+              <option value="completions">Urutkan Penyelesaian</option>
             </select>
           </div>
         </div>
@@ -297,19 +297,19 @@ export default function AdminStudentsPage() {
               <thead>
                 <tr className="border-b border-zinc-800 bg-zinc-800/50">
                   <th className="text-left px-6 py-4 text-sm font-medium text-zinc-400">
-                    Student
+                    Siswa
                   </th>
                   <th className="text-center px-4 py-4 text-sm font-medium text-zinc-400">
-                    Labs Progress
+                    Progres Lab
                   </th>
                   <th className="text-center px-4 py-4 text-sm font-medium text-zinc-400">
-                    Avg Score
+                    Rata-rata Nilai
                   </th>
                   <th className="text-center px-4 py-4 text-sm font-medium text-zinc-400">
-                    Grade
+                    Nilai
                   </th>
                   <th className="text-center px-4 py-4 text-sm font-medium text-zinc-400">
-                    Actions
+                    Aksi
                   </th>
                 </tr>
               </thead>
@@ -317,7 +317,7 @@ export default function AdminStudentsPage() {
                 {paginatedStudents.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-12 text-center text-zinc-500">
-                      No students found
+                      Siswa tidak ditemukan
                     </td>
                   </tr>
                 ) : (
@@ -341,11 +341,11 @@ export default function AdminStudentsPage() {
                         <div className="flex flex-col items-center gap-1">
                           <div className="flex items-center gap-2 text-sm">
                             <span className="text-emerald-400">
-                              {student.stats.completedLabs} completed
+                              {student.stats.completedLabs} selesai
                             </span>
                             <span className="text-zinc-600">•</span>
                             <span className="text-amber-400">
-                              {student.stats.inProgressLabs} in progress
+                              {student.stats.inProgressLabs} sedang berjalan
                             </span>
                           </div>
                           <div className="w-32 h-2 bg-zinc-800 rounded-full overflow-hidden">
@@ -357,7 +357,7 @@ export default function AdminStudentsPage() {
                             />
                           </div>
                           <span className="text-xs text-zinc-500">
-                            {student.stats.completedLabs}/{student.stats.totalLabs} labs
+                            {student.stats.completedLabs}/{student.stats.totalLabs} lab
                           </span>
                         </div>
                       </td>
@@ -379,7 +379,7 @@ export default function AdminStudentsPage() {
                           className="inline-flex items-center gap-2 px-3 py-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-colors text-sm"
                         >
                           <Eye className="w-4 h-4" />
-                          View Details
+                          Lihat Detail
                         </Link>
                       </td>
                     </tr>
@@ -393,9 +393,9 @@ export default function AdminStudentsPage() {
           {totalPages > 1 && (
             <div className="flex items-center justify-between px-6 py-4 border-t border-zinc-800">
               <p className="text-sm text-zinc-500">
-                Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
-                {Math.min(currentPage * itemsPerPage, filteredStudents.length)} of{' '}
-                {filteredStudents.length} students
+                Menampilkan {(currentPage - 1) * itemsPerPage + 1} sampai{' '}
+                {Math.min(currentPage * itemsPerPage, filteredStudents.length)} dari{' '}
+                {filteredStudents.length} siswa
               </p>
               <div className="flex items-center gap-2">
                 <button

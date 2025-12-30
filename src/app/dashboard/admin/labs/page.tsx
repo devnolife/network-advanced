@@ -114,12 +114,12 @@ export default function AdminLabsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">Lab Management</h1>
-          <p className="text-zinc-400">Manage labs, tasks, and expected answers</p>
+          <h1 className="text-2xl font-bold text-white mb-2">Manajemen Lab</h1>
+          <p className="text-zinc-400">Kelola lab, tugas, dan jawaban yang diharapkan</p>
         </div>
         <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500 text-white font-medium hover:bg-cyan-400 transition-colors">
           <Plus className="h-5 w-5" />
-          Add Lab
+          Tambah Lab
         </button>
       </div>
 
@@ -132,7 +132,7 @@ export default function AdminLabsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{labs.length}</p>
-              <p className="text-xs text-zinc-500">Total Labs</p>
+              <p className="text-xs text-zinc-500">Total Lab</p>
             </div>
           </div>
         </div>
@@ -143,7 +143,7 @@ export default function AdminLabsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{labs.filter(l => l.isActive).length}</p>
-              <p className="text-xs text-zinc-500">Active</p>
+              <p className="text-xs text-zinc-500">Aktif</p>
             </div>
           </div>
         </div>
@@ -154,7 +154,7 @@ export default function AdminLabsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{labs.reduce((acc, l) => acc + (l._count?.tasks || 0), 0)}</p>
-              <p className="text-xs text-zinc-500">Total Tasks</p>
+              <p className="text-xs text-zinc-500">Total Tugas</p>
             </div>
           </div>
         </div>
@@ -165,7 +165,7 @@ export default function AdminLabsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{labs.reduce((acc, l) => acc + (l._count?.progress || 0), 0)}</p>
-              <p className="text-xs text-zinc-500">Enrollments</p>
+              <p className="text-xs text-zinc-500">Pendaftaran</p>
             </div>
           </div>
         </div>
@@ -176,7 +176,7 @@ export default function AdminLabsPage() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
         <input
           type="text"
-          placeholder="Search labs..."
+          placeholder="Cari lab..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full max-w-md pl-10 pr-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
@@ -206,12 +206,12 @@ export default function AdminLabsPage() {
                   {lab.isActive ? (
                     <span className="text-xs text-emerald-400 flex items-center gap-1">
                       <CheckCircle className="h-3.5 w-3.5" />
-                      Active
+                      Aktif
                     </span>
                   ) : (
                     <span className="text-xs text-zinc-500 flex items-center gap-1">
                       <Lock className="h-3.5 w-3.5" />
-                      Inactive
+                      Nonaktif
                     </span>
                   )}
                 </div>
@@ -228,11 +228,11 @@ export default function AdminLabsPage() {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Target className="h-4 w-4" />
-                  {lab._count?.tasks || 0} tasks
+                  {lab._count?.tasks || 0} tugas
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Users className="h-4 w-4" />
-                  {lab._count?.progress || 0} students
+                  {lab._count?.progress || 0} siswa
                 </div>
               </div>
             </div>
@@ -244,7 +244,7 @@ export default function AdminLabsPage() {
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition-colors text-sm font-medium"
               >
                 <Eye className="h-4 w-4" />
-                View Tasks & Answers
+                Lihat Tugas & Jawaban
               </button>
               <button title="Edit Lab" className="p-2.5 rounded-xl bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors">
                 <Edit className="h-4 w-4" />
@@ -257,7 +257,7 @@ export default function AdminLabsPage() {
       {filteredLabs.length === 0 && (
         <div className="text-center py-16">
           <BookOpen className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-          <p className="text-zinc-400">No labs found</p>
+          <p className="text-zinc-400">Lab tidak ditemukan</p>
         </div>
       )}
 
@@ -269,7 +269,7 @@ export default function AdminLabsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-semibold text-white">{selectedLab.title}</h2>
-                  <p className="text-sm text-zinc-400">Tasks and Expected Answers</p>
+                  <p className="text-sm text-zinc-400">Tugas dan Jawaban yang Diharapkan</p>
                 </div>
                 <button
                   onClick={() => setShowTasksModal(false)}
@@ -286,14 +286,14 @@ export default function AdminLabsPage() {
                     <div key={task.id} className="rounded-xl border border-zinc-800 bg-zinc-800/50 p-4">
                       <div className="flex items-start justify-between mb-2">
                         <h4 className="font-medium text-white">
-                          Task {index + 1}: {task.title}
+                          Tugas {index + 1}: {task.title}
                         </h4>
                         <span className="text-xs font-medium px-2 py-1 rounded-full bg-cyan-500/10 text-cyan-400">
                           {task.points} pts
                         </span>
                       </div>
                       <div className="mt-3 p-3 rounded-lg bg-zinc-900 border border-zinc-700">
-                        <p className="text-xs text-zinc-500 mb-1">Expected Answer:</p>
+                        <p className="text-xs text-zinc-500 mb-1">Jawaban yang Diharapkan:</p>
                         <code className="text-sm text-emerald-400 font-mono">
                           {task.expectedAnswer}
                         </code>
@@ -304,7 +304,7 @@ export default function AdminLabsPage() {
               ) : (
                 <div className="text-center py-8">
                   <Target className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-                  <p className="text-zinc-400">No tasks configured for this lab</p>
+                  <p className="text-zinc-400">Tidak ada tugas yang dikonfigurasi untuk lab ini</p>
                 </div>
               )}
             </div>
@@ -313,7 +313,7 @@ export default function AdminLabsPage() {
                 onClick={() => setShowTasksModal(false)}
                 className="w-full py-3 rounded-xl bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition-colors font-medium"
               >
-                Close
+                Tutup
               </button>
             </div>
           </div>
