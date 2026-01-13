@@ -222,7 +222,15 @@ end`,
         };
     }
 
-    // Ping
+    // Ping - accept both 'ping' alone and 'ping <destination>'
+    if (cmd === 'ping') {
+        return {
+            success: false,
+            output: '',
+            error: `% Incomplete command. Usage: ping <destination-ip>`,
+        };
+    }
+
     if (cmd.startsWith('ping ')) {
         const dest = cmd.split(' ')[1] || '10.2.1.2';
         return {
@@ -234,17 +242,93 @@ Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms`,
         };
     }
 
+    // Traceroute
+    if (cmd.startsWith('traceroute ') || cmd.startsWith('tracert ')) {
+        const dest = cmd.split(' ')[1] || '10.2.1.2';
+        return {
+            success: true,
+            output: `Tracing route to ${dest} over a maximum of 30 hops:
+
+  1    1 ms    1 ms    1 ms  10.1.1.1
+  2    2 ms    2 ms    2 ms  192.168.1.1
+  3    3 ms    3 ms    3 ms  ${dest}
+
+Trace complete.`,
+        };
+    }
+
+    // ipconfig (PC command)
+    if (cmd === 'ipconfig' || cmd === 'ifconfig' || cmd === 'ip addr') {
+        return {
+            success: true,
+            output: `Ethernet adapter eth0:
+
+   Connection-specific DNS Suffix  . : localdomain
+   IPv4 Address. . . . . . . . . . . : 10.1.1.2
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 10.1.1.1`,
+        };
+    }
+
+    // arp (PC command)
+    if (cmd === 'arp -a' || cmd === 'arp') {
+        return {
+            success: true,
+            output: `Interface: 10.1.1.2 --- 0x1
+  Internet Address      Physical Address      Type
+  10.1.1.1              00-0c-29-ab-cd-ef     dynamic
+  10.1.1.254            00-0c-29-12-34-56     dynamic
+  10.2.1.2              00-0c-29-98-76-54     dynamic`,
+        };
+    }
+
+    // Capture commands (for Lab 2)
+    if (cmd === 'capture start') {
+        return {
+            success: true,
+            output: `Packet capture started on interface eth0.
+Output file: capture.pcap
+Filter: none
+Promiscuous mode: enabled`,
+        };
+    }
+
+    if (cmd === 'capture stop') {
+        return {
+            success: true,
+            output: `Packet capture stopped.
+Packets captured: 42
+File saved: capture.pcap`,
+        };
+    }
+
+    // netstat (PC command)
+    if (cmd === 'netstat' || cmd === 'netstat -an') {
+        return {
+            success: true,
+            output: `Active Connections
+
+  Proto  Local Address          Foreign Address        State
+  TCP    10.1.1.2:445           10.1.1.1:49152        ESTABLISHED
+  TCP    10.1.1.2:80            0.0.0.0:0             LISTENING
+  UDP    10.1.1.2:53            *:*                   `,
+        };
+    }
+
     // Help
     if (cmd === '?' || cmd === 'help') {
         return {
             success: true,
             output: `Available commands:
-  enable              Enter privileged mode
-  configure terminal  Enter config mode
+  enable              Enter privileged mode (Router)
+  disable             Exit privileged mode (Router)
+  configure terminal  Enter config mode (Router)
   show                Display system information
-  crypto              Crypto configuration
-  interface           Interface configuration
-  ping                Send ICMP echo
+  ping <ip>           Send ICMP echo
+  traceroute <ip>     Trace route to destination
+  ipconfig            Display IP configuration (PC)
+  arp -a              Display ARP table (PC)
+  netstat             Display network statistics (PC)
   exit                Exit current mode
   help                Show this help`,
         };

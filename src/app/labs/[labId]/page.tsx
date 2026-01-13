@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, use } from 'react';
+import React, { useState, use, useEffect } from 'react';
 import {
   ArrowLeft,
   Play,
@@ -27,98 +27,354 @@ import {
   Monitor,
   ChevronDown,
   ChevronUp,
-  Lock
+  Lock,
+  ShieldAlert
 } from 'lucide-react';
 
-// Sample lab data - in production this would come from API
-const labData = {
-  id: 1,
-  title: 'Review Dasar Keamanan Jaringan',
-  description: 'Pelajari konsep keamanan jaringan, siapkan lingkungan lab, dan konfigurasi perangkat dasar. Pelajari navigasi CLI, konfigurasi IP, dan pengujian konektivitas.',
-  difficulty: 'Pemula',
-  duration: '30 menit',
-  xp: 100,
-  objectives: [
-    'Navigasi antarmuka lab dan terminal CLI',
-    'Konfigurasi alamat IP pada perangkat jaringan',
-    'Memahami konsep dasar routing',
-    'Uji konektivitas jaringan menggunakan ping dan traceroute'
-  ],
-  tasks: [
-    {
-      id: 't1-1',
-      title: 'Akses CLI Router',
-      description: 'Buka terminal untuk Router1 dan masuk ke mode privileged menggunakan perintah "enable"',
-      points: 10,
-      completed: true,
-      hint: 'Klik pada Router1 di topologi, lalu ketik "enable" di terminal'
-    },
-    {
-      id: 't1-2',
-      title: 'Lihat Status Interface',
-      description: 'Gunakan perintah "show ip interface brief" untuk melihat semua interface',
-      points: 15,
-      completed: true,
-      hint: 'Setelah masuk mode privileged, ketik "show ip interface brief"'
-    },
-    {
-      id: 't1-3',
-      title: 'Konfigurasi Alamat IP PC1',
-      description: 'Atur alamat IP PC1 ke 10.1.1.2 dengan mask 255.255.255.0 dan gateway 10.1.1.1',
-      points: 20,
-      completed: false,
-      hint: 'Gunakan perintah "ip address" diikuti IP dan mask'
-    },
-    {
-      id: 't1-4',
-      title: 'Uji Konektivitas',
-      description: 'Ping dari PC1 ke PC2 untuk memverifikasi konektivitas jaringan',
-      points: 25,
-      completed: false,
-      hint: 'Gunakan "ping 10.2.1.2" dari terminal PC1'
-    }
-  ],
-  topology: {
-    devices: [
-      { id: 'pc1', type: 'pc', name: 'PC1', x: 100, y: 200 },
-      { id: 'router1', type: 'router', name: 'Router1', x: 400, y: 200 },
-      { id: 'pc2', type: 'pc', name: 'PC2', x: 700, y: 200 }
-    ],
-    links: [
-      { source: 'pc1', target: 'router1' },
-      { source: 'router1', target: 'pc2' }
-    ]
-  }
-};
+// Import labs data
+import labsData from '@/data/labs.json';
+import { useToast } from '@/components/ui/toast';
 
 interface PageProps {
   params: Promise<{ labId: string }>;
 }
 
+// Helper to get completed labs from localStorage
+function getCompletedLabs(): string[] {
+  if (typeof window === 'undefined') return ['lab-1', 'lab-2']; // SSR default
+  const saved = localStorage.getItem('completedLabs');
+  return saved ? JSON.parse(saved) : ['lab-1', 'lab-2']; // Default: Lab 1 & 2 selesai untuk demo
+}
+
+// Check if a lab is accessible
+function isLabAccessible(labId: string): boolean {
+  const lab = labsData.find(l => l.id === labId);
+  if (!lab) return false;
+
+  // Lab 1 is always accessible
+  if (!lab.prerequisite) return true;
+
+  // Check if prerequisite is completed
+  const completedLabs = getCompletedLabs();
+  return completedLabs.includes(lab.prerequisite);
+}
+
 export default function LabDetailPage({ params }: PageProps) {
   const resolvedParams = use(params);
+  const labId = resolvedParams.labId.startsWith('lab-') ? resolvedParams.labId : `lab-${resolvedParams.labId}`;
+
+  // Find lab data from labs.json
+  const rawLabData = labsData.find(l => l.id === labId || l.number.toString() === resolvedParams.labId);
+
+  const [isAccessible, setIsAccessible] = useState(true);
+  const [completedLabs, setCompletedLabs] = useState<string[]>([]);
+
+  useEffect(() => {
+    const completed = getCompletedLabs();
+    setCompletedLabs(completed);
+    setIsAccessible(isLabAccessible(rawLabData?.id || labId));
+  }, [rawLabData?.id, labId]);
+
+  // Convert labs.json format to component format
+  const labData = rawLabData ? {
+    id: rawLabData.number,
+    title: rawLabData.title,
+    description: rawLabData.description,
+    difficulty: rawLabData.difficulty === 'BEGINNER' ? 'Pemula' : rawLabData.difficulty === 'INTERMEDIATE' ? 'Menengah' : 'Lanjutan',
+    duration: `${rawLabData.durationMinutes} menit`,
+    xp: rawLabData.maxScore,
+    objectives: rawLabData.objectives,
+    tasks: rawLabData.tasks.map(t => ({
+      id: t.id,
+      title: t.title,
+      description: t.description,
+      points: t.points,
+      completed: false, // Would come from user progress
+      hint: rawLabData.hints.find(h => h.taskId === t.id)?.content || 'Tidak ada petunjuk tersedia',
+      hintCost: rawLabData.hints.find(h => h.taskId === t.id)?.pointCost || 0,
+      hintId: rawLabData.hints.find(h => h.taskId === t.id)?.id
+    })),
+    topology: {
+      devices: rawLabData.topology.devices.map(d => ({
+        id: d.id,
+        type: d.type,
+        name: d.name,
+        x: d.x,
+        y: d.y
+      })),
+      links: rawLabData.topology.links.map(l => ({
+        source: l.source.device,
+        target: l.destination.device
+      }))
+    },
+    prerequisite: rawLabData.prerequisite,
+    isLocked: rawLabData.isLocked
+  } : null;
+
   const [activeTab, setActiveTab] = useState<'tasks' | 'topology' | 'terminal'>('tasks');
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
   const [terminalInput, setTerminalInput] = useState('');
-  const [terminalHistory, setTerminalHistory] = useState<string[]>([
-    '> Selamat datang di Terminal Lab Keamanan Jaringan',
-    '> Ketik "help" untuk perintah yang tersedia',
-    ''
-  ]);
+
+  // Separate terminal history for each device
+  const [deviceTerminals, setDeviceTerminals] = useState<Record<string, string[]>>({});
+
+  // Get current device's terminal history
+  const getCurrentTerminalHistory = () => {
+    const deviceId = selectedDevice || labData?.topology.devices[0]?.id || 'router1';
+    if (!deviceTerminals[deviceId]) {
+      // Initialize with device-specific welcome message
+      const device = labData?.topology.devices.find(d => d.id === deviceId);
+      const isRouter = device?.type === 'router';
+      const deviceName = device?.name || deviceId;
+
+      return isRouter
+        ? [
+          ``,
+          `╔══════════════════════════════════════════════╗`,
+          `║  Network Security Virtual Lab - ${deviceName.padEnd(12)}║`,
+          `║  Cisco IOS Simulator                         ║`,
+          `║  Type 'enable' to enter privileged mode      ║`,
+          `╚══════════════════════════════════════════════╝`,
+          ``,
+          `${deviceName}>`,
+        ]
+        : [
+          ``,
+          `╔══════════════════════════════════════════════╗`,
+          `║  Virtual PC Console - ${deviceName.padEnd(21)}║`,
+          `║  Type 'help' for available commands          ║`,
+          `╚══════════════════════════════════════════════╝`,
+          ``,
+          `${deviceName}:~$`,
+        ];
+    }
+    return deviceTerminals[deviceId];
+  };
+
+  // Get prompt based on device type
+  const getPrompt = () => {
+    const deviceId = selectedDevice || labData?.topology.devices[0]?.id || 'router1';
+    const device = labData?.topology.devices.find(d => d.id === deviceId);
+    const isRouter = device?.type === 'router';
+    const deviceName = device?.name || deviceId;
+    return isRouter ? `${deviceName}>` : `${deviceName}:~$`;
+  };
+
   const [expandedTask, setExpandedTask] = useState<string | null>(null);
   const [showHint, setShowHint] = useState<string | null>(null);
 
-  const completedTasks = labData.tasks.filter(t => t.completed).length;
-  const totalPoints = labData.tasks.reduce((sum, t) => sum + t.points, 0);
-  const earnedPoints = labData.tasks.filter(t => t.completed).reduce((sum, t) => sum + t.points, 0);
-  const progress = Math.round((completedTasks / labData.tasks.length) * 100);
+  // Task completion state
+  const [completedTaskIds, setCompletedTaskIds] = useState<Set<string>>(new Set());
+  const [totalEarnedPoints, setTotalEarnedPoints] = useState(0);
+  const [unlockedHints, setUnlockedHints] = useState<Set<string>>(new Set());
 
-  const handleTerminalSubmit = (e: React.FormEvent) => {
+  // Toast hook
+  const toast = useToast();
+
+  // Load saved progress from localStorage
+  useEffect(() => {
+    if (rawLabData) {
+      const savedProgress = localStorage.getItem(`lab-progress-${rawLabData.id}`);
+      if (savedProgress) {
+        try {
+          const parsed = JSON.parse(savedProgress);
+          setCompletedTaskIds(new Set(parsed.completedTasks || []));
+          setTotalEarnedPoints(parsed.earnedPoints || 0);
+          setUnlockedHints(new Set(parsed.unlockedHints || []));
+        } catch (e) {
+          console.error('Failed to parse saved progress:', e);
+        }
+      }
+    }
+  }, [rawLabData]);
+
+  // Save progress to localStorage whenever it changes
+  useEffect(() => {
+    if (rawLabData) {
+      localStorage.setItem(`lab-progress-${rawLabData.id}`, JSON.stringify({
+        completedTasks: Array.from(completedTaskIds),
+        earnedPoints: totalEarnedPoints,
+        unlockedHints: Array.from(unlockedHints)
+      }));
+    }
+  }, [completedTaskIds, totalEarnedPoints, unlockedHints, rawLabData]);
+
+
+  // Handle hint unlocking
+  const handleUnlockHint = (taskId: string, hintId: string | undefined, cost: number) => {
+    if (!hintId) return;
+
+    // If already unlocked, just toggle visibility
+    if (unlockedHints.has(hintId)) {
+      setShowHint(showHint === taskId ? null : taskId);
+      return;
+    }
+
+    // Confirm unlock (in a real app, maybe a modal, here we just do it)
+    // Deduct points
+    setTotalEarnedPoints(prev => Math.max(0, prev - cost));
+    setUnlockedHints(prev => new Set([...prev, hintId]));
+    setShowHint(taskId);
+
+    toast.info(
+      'Petunjuk Dibuka',
+      `-${cost} poin telah digunakan.`
+    );
+  };
+
+  // Show loading/not found state
+  if (!labData) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="text-center">
+          <ShieldAlert className="w-16 h-16 text-zinc-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-white mb-2">Lab Tidak Ditemukan</h1>
+          <p className="text-zinc-400 mb-6">Lab yang Anda cari tidak tersedia.</p>
+          <a href="/labs" className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-zinc-900 font-semibold rounded-xl transition-colors">
+            Kembali ke Daftar Lab
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Show locked state if lab is not accessible
+  if (!isAccessible) {
+    const prerequisiteLab = labsData.find(l => l.id === labData.prerequisite);
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="relative mb-6">
+            <div className="w-24 h-24 mx-auto rounded-full bg-zinc-800 border-2 border-zinc-700 flex items-center justify-center">
+              <Lock className="w-10 h-10 text-zinc-500" />
+            </div>
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full">
+              <span className="text-xs font-medium text-amber-400">Terkunci</span>
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold text-white mb-2">Lab {labData.id}: {labData.title}</h1>
+          <p className="text-zinc-400 mb-6">
+            Selesaikan <span className="text-cyan-400 font-medium">{prerequisiteLab?.title || 'lab sebelumnya'}</span> terlebih dahulu untuk membuka lab ini.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <a
+              href={`/labs/${labData.prerequisite?.replace('lab-', '')}`}
+              className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-zinc-900 font-semibold rounded-xl transition-colors"
+            >
+              Buka {prerequisiteLab?.title || 'Lab Sebelumnya'}
+            </a>
+            <a href="/labs" className="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold rounded-xl transition-colors border border-zinc-700">
+              Kembali ke Daftar
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate progress based on completed tasks from state (not hardcoded)
+  const completedTasksCount = labData.tasks.filter(t => completedTaskIds.has(t.id)).length;
+  const totalPoints = labData.tasks.reduce((sum, t) => sum + t.points, 0);
+  const earnedPoints = totalEarnedPoints;
+  const progress = labData.tasks.length > 0
+    ? Math.round((completedTasksCount / labData.tasks.length) * 100)
+    : 0;
+
+  // Check if a task is completed
+  const isTaskCompleted = (taskId: string) => completedTaskIds.has(taskId);
+
+
+  // Helper to update terminal history for specific device
+  const updateTerminalHistory = (deviceId: string, newLines: string[]) => {
+    setDeviceTerminals(prev => ({
+      ...prev,
+      [deviceId]: [...(prev[deviceId] || getCurrentTerminalHistory()), ...newLines]
+    }));
+  };
+
+  const handleTerminalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!terminalInput.trim()) return;
 
-    setTerminalHistory(prev => [...prev, `$ ${terminalInput}`, 'Perintah berhasil dijalankan.', '']);
+    const deviceId = selectedDevice || labData.topology.devices[0]?.id || 'router1';
+    const device = labData.topology.devices.find(d => d.id === deviceId);
+    const isRouter = device?.type === 'router';
+    const deviceName = device?.name || deviceId;
+
+    const command = terminalInput.trim();
+    const prompt = isRouter ? `${deviceName}>` : `${deviceName}:~$`;
+
+    // Add command to history
+    updateTerminalHistory(deviceId, [`${prompt} ${command}`]);
     setTerminalInput('');
+
+    let commandOutput = '';
+
+    try {
+      // Execute command
+      const response = await fetch('/api/device/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          deviceId: deviceId,
+          command: command,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.error) {
+        // Error message - prefix with % for red styling
+        updateTerminalHistory(deviceId, [`% ${result.error}`, '']);
+        commandOutput = result.error;
+      } else if (result.output) {
+        // Split output by newlines and add each line
+        const outputLines = result.output.split('\n').map((line: string) =>
+          line.replace(/\u001b\[[0-9;]*m/g, '')
+        );
+        updateTerminalHistory(deviceId, [...outputLines, '']);
+        commandOutput = result.output;
+      } else {
+        updateTerminalHistory(deviceId, ['']);
+      }
+
+      // Validate task completion
+      try {
+        const validationResponse = await fetch('/api/task/validate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            labId: rawLabData?.id || labId,
+            deviceId: deviceId,
+            command: command,
+            commandOutput: commandOutput,
+          }),
+        });
+
+        const validation = await validationResponse.json();
+
+        if (validation.taskCompleted && validation.taskId) {
+          // Check if task was already completed
+          if (!completedTaskIds.has(validation.taskId)) {
+            // Mark task as completed
+            setCompletedTaskIds(prev => new Set([...prev, validation.taskId]));
+            setTotalEarnedPoints(prev => prev + (validation.pointsAwarded || 0));
+
+            // Show success toast with points
+            toast.points(
+              `✅ ${validation.taskTitle || 'Task'} selesai!`,
+              validation.pointsAwarded || 0
+            );
+          }
+        }
+      } catch (validationError) {
+        console.error('Task validation failed:', validationError);
+      }
+
+    } catch (error) {
+      updateTerminalHistory(deviceId, [`% Error: Tidak dapat menghubungi server`, '']);
+      toast.error('Koneksi Gagal', 'Tidak dapat menghubungi server');
+    }
   };
 
   const getDeviceIcon = (type: string) => {
@@ -136,6 +392,7 @@ export default function LabDetailPage({ params }: PageProps) {
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
       </div>
+
 
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-zinc-950/80 border-b border-zinc-800/50">
@@ -191,7 +448,7 @@ export default function LabDetailPage({ params }: PageProps) {
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-white">Progres Lab</h2>
-                    <p className="text-sm text-zinc-500">{completedTasks} dari {labData.tasks.length} tugas selesai</p>
+                    <p className="text-sm text-zinc-500">{completedTasksCount} dari {labData.tasks.length} tugas selesai</p>
                   </div>
                 </div>
 
@@ -274,7 +531,7 @@ export default function LabDetailPage({ params }: PageProps) {
                   {labData.tasks.map((task, index) => (
                     <div
                       key={task.id}
-                      className={`group rounded-2xl border transition-all duration-300 ${task.completed
+                      className={`group rounded-2xl border transition-all duration-300 ${isTaskCompleted(task.id)
                         ? 'bg-emerald-500/5 border-emerald-500/20'
                         : 'bg-zinc-900/80 border-zinc-800/50 hover:border-zinc-700/50'
                         }`}
@@ -285,11 +542,11 @@ export default function LabDetailPage({ params }: PageProps) {
                       >
                         <div className="flex items-start gap-4">
                           {/* Status Icon */}
-                          <div className={`p-2 rounded-xl ${task.completed
+                          <div className={`p-2 rounded-xl ${isTaskCompleted(task.id)
                             ? 'bg-emerald-500/20 border border-emerald-500/30'
                             : 'bg-zinc-800/50 border border-zinc-700/50'
                             }`}>
-                            {task.completed ? (
+                            {isTaskCompleted(task.id) ? (
                               <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                             ) : (
                               <Circle className="w-5 h-5 text-zinc-500" />
@@ -311,7 +568,7 @@ export default function LabDetailPage({ params }: PageProps) {
                                 <ChevronDown className="w-4 h-4 text-zinc-500" />
                               )}
                             </div>
-                            <h4 className={`font-semibold ${task.completed ? 'text-emerald-400' : 'text-white'}`}>
+                            <h4 className={`font-semibold ${isTaskCompleted(task.id) ? 'text-emerald-400' : 'text-white'}`}>
                               {task.title}
                             </h4>
                             <p className="text-sm text-zinc-400 mt-1">{task.description}</p>
@@ -325,12 +582,18 @@ export default function LabDetailPage({ params }: PageProps) {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setShowHint(showHint === task.id ? null : task.id);
+                                  handleUnlockHint(task.id, task.hintId, task.hintCost);
                                 }}
-                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors"
+                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${unlockedHints.has(task.hintId || '')
+                                  ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20'
+                                  : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:bg-zinc-700 hover:text-white'
+                                  }`}
                               >
                                 <Lightbulb className="w-4 h-4" />
-                                {showHint === task.id ? 'Sembunyikan Petunjuk' : 'Tampilkan Petunjuk'}
+                                {unlockedHints.has(task.hintId || '')
+                                  ? (showHint === task.id ? 'Sembunyikan Petunjuk' : 'Lihat Petunjuk')
+                                  : `Buka Petunjuk (-${task.hintCost} poin)`
+                                }
                               </button>
                               {!task.completed && (
                                 <button
@@ -473,9 +736,18 @@ export default function LabDetailPage({ params }: PageProps) {
                       <div className="w-3 h-3 rounded-full bg-yellow-500" />
                       <div className="w-3 h-3 rounded-full bg-green-500" />
                     </div>
-                    <span className="text-sm font-medium text-zinc-400">
-                      {selectedDevice ? labData.topology.devices.find(d => d.id === selectedDevice)?.name : 'Router1'} - Terminal
-                    </span>
+                    <select
+                      value={selectedDevice || 'router1'}
+                      onChange={(e) => setSelectedDevice(e.target.value)}
+                      className="bg-zinc-800 text-sm font-medium text-zinc-300 px-2 py-1 rounded-lg border border-zinc-700 focus:outline-none focus:border-cyan-500"
+                    >
+                      {labData.topology.devices.map((device) => (
+                        <option key={device.id} value={device.id}>
+                          {device.name} ({device.type})
+                        </option>
+                      ))}
+                    </select>
+                    <span className="text-sm text-zinc-500">- Terminal</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <button title="Toggle Code View" className="p-1.5 rounded-lg hover:bg-zinc-700/50 text-zinc-500 hover:text-white transition-colors">
@@ -486,15 +758,33 @@ export default function LabDetailPage({ params }: PageProps) {
 
                 {/* Terminal Output */}
                 <div className="p-4 font-mono text-sm bg-zinc-950 min-h-[400px] max-h-[500px] overflow-y-auto">
-                  {terminalHistory.map((line, i) => (
-                    <div key={i} className={`${line.startsWith('$') ? 'text-cyan-400' : line.startsWith('>') ? 'text-emerald-400' : 'text-zinc-400'}`}>
-                      {line || '\u00A0'}
-                    </div>
-                  ))}
+                  {getCurrentTerminalHistory().map((line: string, i: number) => {
+                    // Determine line styling
+                    let lineClass = 'text-zinc-300'; // default
+                    if (line.includes('>') && !line.includes('╔') && !line.includes('║')) {
+                      lineClass = 'text-cyan-400 font-semibold'; // Router prompt
+                    } else if (line.includes(':~$')) {
+                      lineClass = 'text-emerald-400 font-semibold'; // PC prompt
+                    } else if (line.startsWith('%') || line.includes('Error') || line.includes('error')) {
+                      lineClass = 'text-red-400';
+                    } else if (line.includes('✓') || line.includes('success') || line.includes('Success')) {
+                      lineClass = 'text-emerald-400';
+                    } else if (line.includes('╔') || line.includes('║') || line.includes('╚')) {
+                      lineClass = 'text-cyan-500'; // Box drawing
+                    } else if (line.startsWith('Interface') || line.startsWith('Codes:') || line.includes('---')) {
+                      lineClass = 'text-zinc-500';
+                    }
+
+                    return (
+                      <div key={i} className={lineClass} style={{ whiteSpace: 'pre-wrap' }}>
+                        {line || '\u00A0'}
+                      </div>
+                    );
+                  })}
 
                   {/* Input */}
                   <form onSubmit={handleTerminalSubmit} className="flex items-center mt-2">
-                    <span className="text-cyan-400 mr-2">$</span>
+                    <span className="text-cyan-400 mr-2">{getPrompt()}</span>
                     <input
                       type="text"
                       value={terminalInput}
@@ -543,7 +833,7 @@ export default function LabDetailPage({ params }: PageProps) {
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                     <span className="text-sm text-zinc-300">Tugas Selesai</span>
                   </div>
-                  <span className="text-sm font-bold text-white">{completedTasks}/{labData.tasks.length}</span>
+                  <span className="text-sm font-bold text-white">{completedTasksCount}/{labData.tasks.length}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
