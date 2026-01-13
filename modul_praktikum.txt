@@ -1,0 +1,52 @@
+MODUL PRAKTIKUM
+Praktikum Advanced Network Security and Protocols
+Kode Mata Kuliah: CW6552021557
+Semester V
+Program Studi Informatika
+Fakultas Teknik
+Universitas Muhammadiyah Makassar
+2025
+Informasi Mata Kuliah
+Deskripsi Mata Kuliah
+Penyelaman mendalam ke dalam desain jaringan yang aman. Mata kuliah ini mencakup konfigurasi dan manajemen VPN, firewall generasi berikutnya, sistem deteksi/pencegahan intrusi (IDS/IPS), dan analisis keamanan protokol jaringan modern yang menjadi tulang punggung internet.
+Capaian Pembelajaran
+Setelah menyelesaikan mata kuliah ini, mahasiswa diharapkan mampu:
+Memahami advanced network security concepts
+Menguasai konfigurasi VPN dan secure tunneling
+Mampu mengimplementasikan firewall rules dan policies
+Mengoperasikan IDS/IPS untuk threat detection
+Melakukan network protocol analysis dan security assessment
+Jadwal Praktikum
+Sistem Penilaian
+Kriteria Kelulusan
+Nilai akhir minimal: 60 (D)
+Kehadiran minimal: 75% dari total pertemuan
+Mengumpulkan minimal 75% dari total tugas
+Mengikuti UTS dan UAS
+Nama Mata Kuliah | Praktikum Advanced Network Security and Protocols
+Kode Mata Kuliah | CW6552021557
+Semester | V (Lima)
+SKS | 3 SKS
+Minggu | Topik Praktikum | Tugas/Deliverables
+1 | Network Security Fundamentals Review | Setup lab environment (GNS3/EVE-NG)
+2 | TCP/IP Protocol Security Analysis | Wireshark packet analysis
+3 | VPN Technologies: IPSec & SSL VPN | Configure site-to-site VPN
+4 | Next-Generation Firewall (NGFW) | Configure firewall policies
+5 | Access Control Lists (ACL) Advanced | Implement complex ACL rules
+6 | Network Address Translation (NAT) Security | NAT configuration & troubleshooting
+7 | Intrusion Detection System: Snort | Deploy dan configure Snort IDS
+8 | UTS: Network Security Implementation | Secure network topology design
+9 | Intrusion Prevention System (IPS) | IPS rule creation & tuning
+10 | Network Segmentation & VLAN Security | Implement secure VLANs
+11 | Wireless Network Security: WPA3 & 802.1X | Secure wireless configuration
+12 | DDoS Attack Mitigation | Configure DDoS protection
+13 | Security Information Event Management (SIEM) | Setup Splunk for log analysis
+14 | Zero Trust Network Architecture | Implement zero trust principles
+15 | Network Forensics & Incident Response | Analyze security incidents
+16 | UAS: Comprehensive Network Security Project | Design & implement secure enterprise network
+Komponen Penilaian | Bobot | Nilai
+Kehadiran & Partisipasi | 10% | 0-100
+Tugas Mingguan (Weekly Labs) | 30% | 0-100
+UTS (Mid-term Project) | 25% | 0-100
+UAS (Final Project & Presentation) | 35% | 0-100
+TOTAL | 100% | 0-100

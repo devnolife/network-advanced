@@ -56,6 +56,13 @@ interface LabProgress {
     lastUpdated: number;
 }
 
+interface TerminalSession {
+    id: string;
+    deviceId: string;
+    deviceName: string;
+    deviceType: 'router' | 'pc' | 'firewall' | 'ids';
+}
+
 interface SimulationStore {
     // Simulation Status
     status: 'stopped' | 'running' | 'paused';
@@ -80,6 +87,11 @@ interface SimulationStore {
 
     // Events
     events: SimulationEvent[];
+
+    // Terminal Sessions
+    terminals: TerminalSession[];
+    activeTerminalId: string | null;
+    isTerminalMinimized: boolean;
 
     // Simulation Actions
     start: () => void;
@@ -112,6 +124,13 @@ interface SimulationStore {
     useHint: (labId: string, hintId: string, cost: number) => void;
     getLabProgress: (labId: string) => LabProgress | undefined;
 
+    // Terminal Actions
+    openTerminal: (deviceId: string, deviceName: string, deviceType: 'router' | 'pc' | 'firewall' | 'ids') => void;
+    closeTerminal: (terminalId: string) => void;
+    closeAllTerminals: () => void;
+    setActiveTerminal: (terminalId: string | null) => void;
+    toggleTerminalMinimized: () => void;
+
     // Utility Actions
     loadTopology: (devices: Device[], connections: Connection[]) => void;
     saveState: () => SimulationState;
@@ -143,6 +162,11 @@ export const useSimulationStore = create<SimulationStore>()(
             currentLabId: null,
             labProgress: {},
             events: [],
+
+            // Terminal State
+            terminals: [],
+            activeTerminalId: null,
+            isTerminalMinimized: false,
 
             // Simulation Actions
             start: () => {
@@ -334,6 +358,64 @@ export const useSimulationStore = create<SimulationStore>()(
                 return get().labProgress[labId];
             },
 
+            // Terminal Actions
+            openTerminal: (deviceId, deviceName, deviceType) => {
+                set((state) => {
+                    // Check if terminal already exists for this device
+                    const existing = state.terminals.find((t) => t.deviceId === deviceId);
+                    if (existing) {
+                        return {
+                            activeTerminalId: existing.id,
+                            isTerminalMinimized: false,
+                        };
+                    }
+
+                    const newTerminal: TerminalSession = {
+                        id: `term-${Date.now()}`,
+                        deviceId,
+                        deviceName,
+                        deviceType,
+                    };
+
+                    return {
+                        terminals: [...state.terminals, newTerminal],
+                        activeTerminalId: newTerminal.id,
+                        isTerminalMinimized: false,
+                    };
+                });
+            },
+
+            closeTerminal: (terminalId) => {
+                set((state) => {
+                    const newTerminals = state.terminals.filter((t) => t.id !== terminalId);
+                    let newActiveId = state.activeTerminalId;
+
+                    if (state.activeTerminalId === terminalId) {
+                        newActiveId = newTerminals.length > 0 ? newTerminals[0].id : null;
+                    }
+
+                    return {
+                        terminals: newTerminals,
+                        activeTerminalId: newActiveId,
+                    };
+                });
+            },
+
+            closeAllTerminals: () => {
+                set({
+                    terminals: [],
+                    activeTerminalId: null,
+                });
+            },
+
+            setActiveTerminal: (terminalId) => {
+                set({ activeTerminalId: terminalId });
+            },
+
+            toggleTerminalMinimized: () => {
+                set((state) => ({ isTerminalMinimized: !state.isTerminalMinimized }));
+            },
+
             // Utility Actions
             loadTopology: (devices, connections) => {
                 set({ devices, connections });
@@ -434,3 +516,12 @@ export const useCapturedPackets = () => useSimulationStore((state) => state.capt
 export const useStatistics = () => useSimulationStore((state) => state.statistics);
 export const useLabProgress = (labId: string) =>
     useSimulationStore((state) => state.labProgress[labId]);
+
+// Terminal Selectors
+export const useTerminals = () => useSimulationStore((state) => state.terminals);
+export const useActiveTerminal = () => {
+    const terminals = useSimulationStore((state) => state.terminals);
+    const activeId = useSimulationStore((state) => state.activeTerminalId);
+    return terminals.find((t) => t.id === activeId);
+};
+export const useIsTerminalMinimized = () => useSimulationStore((state) => state.isTerminalMinimized);

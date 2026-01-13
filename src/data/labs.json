@@ -68,12 +68,24 @@
             ],
             "links": [
                 {
-                    "source": { "device": "pc1", "interface": "Ethernet0" },
-                    "destination": { "device": "router1", "interface": "GigabitEthernet0/0" }
+                    "source": {
+                        "device": "pc1",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "router1",
+                        "interface": "GigabitEthernet0/0"
+                    }
                 },
                 {
-                    "source": { "device": "router1", "interface": "GigabitEthernet0/1" },
-                    "destination": { "device": "pc2", "interface": "Ethernet0" }
+                    "source": {
+                        "device": "router1",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "pc2",
+                        "interface": "Ethernet0"
+                    }
                 }
             ]
         },
@@ -84,7 +96,11 @@
                 "description": "Buka terminal untuk Router1 dan masuk ke mode privileged menggunakan perintah 'enable'",
                 "points": 10,
                 "order": 1,
-                "validation": { "type": "command-executed", "device": "router1", "command": "enable" }
+                "validation": {
+                    "type": "command-executed",
+                    "device": "router1",
+                    "command": "enable"
+                }
             },
             {
                 "id": "t1-2",
@@ -92,7 +108,11 @@
                 "description": "Gunakan perintah 'show ip interface brief' untuk melihat semua interface",
                 "points": 15,
                 "order": 2,
-                "validation": { "type": "command-executed", "device": "router1", "command": "show ip interface brief" }
+                "validation": {
+                    "type": "command-executed",
+                    "device": "router1",
+                    "command": "show ip interface brief"
+                }
             },
             {
                 "id": "t1-3",
@@ -100,7 +120,14 @@
                 "description": "Atur alamat IP PC1 ke 10.1.1.2 dengan mask 255.255.255.0 dan gateway 10.1.1.1",
                 "points": 20,
                 "order": 3,
-                "validation": { "type": "config-check", "device": "pc1", "expected": { "ip": "10.1.1.2", "gateway": "10.1.1.1" } }
+                "validation": {
+                    "type": "config-check",
+                    "device": "pc1",
+                    "expected": {
+                        "ip": "10.1.1.2",
+                        "gateway": "10.1.1.1"
+                    }
+                }
             },
             {
                 "id": "t1-4",
@@ -108,7 +135,11 @@
                 "description": "Ping dari PC1 ke interface GigabitEthernet0/0 router (10.1.1.1)",
                 "points": 15,
                 "order": 4,
-                "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.1.1.1" }
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "pc1",
+                    "to": "10.1.1.1"
+                }
             },
             {
                 "id": "t1-5",
@@ -116,7 +147,11 @@
                 "description": "Tampilkan tabel routing pada Router1 menggunakan 'show ip route'",
                 "points": 15,
                 "order": 5,
-                "validation": { "type": "command-executed", "device": "router1", "command": "show ip route" }
+                "validation": {
+                    "type": "command-executed",
+                    "device": "router1",
+                    "command": "show ip route"
+                }
             },
             {
                 "id": "t1-6",
@@ -124,19 +159,41 @@
                 "description": "Ping dari PC1 ke PC2 (10.2.1.2) melalui router",
                 "points": 25,
                 "order": 6,
-                "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.2.1.2" }
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "pc1",
+                    "to": "10.2.1.2"
+                }
             }
         ],
         "hints": [
-            { "id": "h1-1", "taskId": "t1-1", "content": "Double-click pada Router1 untuk membuka terminal, lalu ketik 'enable' dan tekan Enter", "pointCost": 2, "order": 1 },
-            { "id": "h1-2", "taskId": "t1-3", "content": "Gunakan perintah: set ip 10.1.1.2 255.255.255.0 10.1.1.1", "pointCost": 3, "order": 1 },
-            { "id": "h1-3", "taskId": "t1-4", "content": "Gunakan perintah: ping 10.1.1.1", "pointCost": 2, "order": 1 }
+            {
+                "id": "h1-1",
+                "taskId": "t1-1",
+                "content": "Double-click pada Router1 untuk membuka terminal, lalu ketik 'enable' dan tekan Enter",
+                "pointCost": 2,
+                "order": 1
+            },
+            {
+                "id": "h1-2",
+                "taskId": "t1-3",
+                "content": "Gunakan perintah: set ip 10.1.1.2 255.255.255.0 10.1.1.1",
+                "pointCost": 3,
+                "order": 1
+            },
+            {
+                "id": "h1-3",
+                "taskId": "t1-4",
+                "content": "Gunakan perintah: ping 10.1.1.1",
+                "pointCost": 2,
+                "order": 1
+            }
         ]
     },
     {
         "id": "lab-2",
         "number": 2,
-        "title": "TCP/IP Protocol Analysis",
+        "title": "TCP/IP Protocol Security Analysis",
         "description": "Pelajari mendalam protokol TCP/IP menggunakan penangkapan dan analisis paket. Pelajari untuk memahami header, three-way handshake, dan protokol umum.",
         "objectives": [
             "Menangkap paket jaringan menggunakan tools bawaan",
@@ -151,32 +208,175 @@
         "prerequisite": "lab-1",
         "topology": {
             "devices": [
-                { "id": "pc1", "type": "pc", "name": "Client", "hostname": "Client", "x": 100, "y": 200, "initialConfig": { "ip": "192.168.1.10", "mask": "255.255.255.0", "gateway": "192.168.1.1" } },
-                { "id": "router1", "type": "router", "name": "Gateway", "hostname": "GW", "x": 400, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "192.168.1.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "10.0.0.1", "mask": "255.255.255.0" }] } },
-                { "id": "server", "type": "pc", "name": "Server", "hostname": "Server", "x": 700, "y": 200, "initialConfig": { "ip": "10.0.0.100", "mask": "255.255.255.0", "gateway": "10.0.0.1" } }
+                {
+                    "id": "pc1",
+                    "type": "pc",
+                    "name": "Client",
+                    "hostname": "Client",
+                    "x": 100,
+                    "y": 200,
+                    "initialConfig": {
+                        "ip": "192.168.1.10",
+                        "mask": "255.255.255.0",
+                        "gateway": "192.168.1.1"
+                    }
+                },
+                {
+                    "id": "router1",
+                    "type": "router",
+                    "name": "Gateway",
+                    "hostname": "GW",
+                    "x": 400,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "192.168.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "10.0.0.1",
+                                "mask": "255.255.255.0"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "server",
+                    "type": "pc",
+                    "name": "Server",
+                    "hostname": "Server",
+                    "x": 700,
+                    "y": 200,
+                    "initialConfig": {
+                        "ip": "10.0.0.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.0.0.1"
+                    }
+                }
             ],
             "links": [
-                { "source": { "device": "pc1", "interface": "Ethernet0" }, "destination": { "device": "router1", "interface": "GigabitEthernet0/0" } },
-                { "source": { "device": "router1", "interface": "GigabitEthernet0/1" }, "destination": { "device": "server", "interface": "Ethernet0" } }
+                {
+                    "source": {
+                        "device": "pc1",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "router1",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "router1",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "server",
+                        "interface": "Ethernet0"
+                    }
+                }
             ]
         },
         "tasks": [
-            { "id": "t2-1", "title": "Mulai Penangkapan Paket", "description": "Aktifkan penangkapan paket pada PC Client", "points": 10, "order": 1, "validation": { "type": "command-executed", "device": "pc1", "command": "capture start" } },
-            { "id": "t2-2", "title": "Generate Lalu Lintas ICMP", "description": "Ping server untuk menghasilkan paket ICMP", "points": 15, "order": 2, "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.0.0.100" } },
-            { "id": "t2-3", "title": "Analisis Paket ICMP", "description": "Lihat paket ICMP yang ditangkap dan identifikasi echo request/reply", "points": 20, "order": 3, "validation": { "type": "packet-capture", "protocol": "ICMP" } },
-            { "id": "t2-4", "title": "Generate Lalu Lintas TCP", "description": "Mulai koneksi TCP ke server pada port 80", "points": 20, "order": 4, "validation": { "type": "command-executed", "device": "pc1", "command": "telnet 10.0.0.100 80" } },
-            { "id": "t2-5", "title": "Identifikasi TCP Handshake", "description": "Temukan paket SYN, SYN-ACK, dan ACK dalam tangkapan", "points": 25, "order": 5, "validation": { "type": "packet-analysis", "expected": ["SYN", "SYN-ACK", "ACK"] } },
-            { "id": "t2-6", "title": "Ekspor Laporan Analisis", "description": "Simpan laporan analisis penangkapan paket", "points": 10, "order": 6, "validation": { "type": "command-executed", "device": "pc1", "command": "capture export" } }
+            {
+                "id": "t2-1",
+                "title": "Mulai Penangkapan Paket",
+                "description": "Aktifkan penangkapan paket pada PC Client",
+                "points": 10,
+                "order": 1,
+                "validation": {
+                    "type": "command-executed",
+                    "device": "pc1",
+                    "command": "capture start"
+                }
+            },
+            {
+                "id": "t2-2",
+                "title": "Generate Lalu Lintas ICMP",
+                "description": "Ping server untuk menghasilkan paket ICMP",
+                "points": 15,
+                "order": 2,
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "pc1",
+                    "to": "10.0.0.100"
+                }
+            },
+            {
+                "id": "t2-3",
+                "title": "Analisis Paket ICMP",
+                "description": "Lihat paket ICMP yang ditangkap dan identifikasi echo request/reply",
+                "points": 20,
+                "order": 3,
+                "validation": {
+                    "type": "packet-capture",
+                    "protocol": "ICMP"
+                }
+            },
+            {
+                "id": "t2-4",
+                "title": "Generate Lalu Lintas TCP",
+                "description": "Mulai koneksi TCP ke server pada port 80",
+                "points": 20,
+                "order": 4,
+                "validation": {
+                    "type": "command-executed",
+                    "device": "pc1",
+                    "command": "telnet 10.0.0.100 80"
+                }
+            },
+            {
+                "id": "t2-5",
+                "title": "Identifikasi TCP Handshake",
+                "description": "Temukan paket SYN, SYN-ACK, dan ACK dalam tangkapan",
+                "points": 25,
+                "order": 5,
+                "validation": {
+                    "type": "packet-analysis",
+                    "expected": [
+                        "SYN",
+                        "SYN-ACK",
+                        "ACK"
+                    ]
+                }
+            },
+            {
+                "id": "t2-6",
+                "title": "Ekspor Laporan Analisis",
+                "description": "Simpan laporan analisis penangkapan paket",
+                "points": 10,
+                "order": 6,
+                "validation": {
+                    "type": "command-executed",
+                    "device": "pc1",
+                    "command": "capture export"
+                }
+            }
         ],
         "hints": [
-            { "id": "h2-1", "taskId": "t2-1", "content": "Gunakan perintah 'capture start' untuk memulai penangkapan paket", "pointCost": 2, "order": 1 },
-            { "id": "h2-2", "taskId": "t2-5", "content": "Cari flag TCP: SYN=0x02, SYN-ACK=0x12, ACK=0x10", "pointCost": 4, "order": 1 }
+            {
+                "id": "h2-1",
+                "taskId": "t2-1",
+                "content": "Gunakan perintah 'capture start' untuk memulai penangkapan paket",
+                "pointCost": 2,
+                "order": 1
+            },
+            {
+                "id": "h2-2",
+                "taskId": "t2-5",
+                "content": "Cari flag TCP: SYN=0x02, SYN-ACK=0x12, ACK=0x10",
+                "pointCost": 4,
+                "order": 1
+            }
         ]
     },
     {
         "id": "lab-3",
         "number": 3,
-        "title": "VPN Technologies - IPSec Configuration",
+        "title": "VPN Technologies - IPSec & SSL VPN",
         "description": "Konfigurasi VPN IPSec site-to-site antara dua router dengan negosiasi IKE Phase 1 dan Phase 2, crypto maps, dan enkripsi ESP.",
         "objectives": [
             "Memahami negosiasi IKE Phase 1 dan Phase 2",
@@ -192,42 +392,234 @@
         "prerequisite": "lab-2",
         "topology": {
             "devices": [
-                { "id": "pc1", "type": "pc", "name": "PC1", "hostname": "PC1", "x": 80, "y": 200, "initialConfig": { "ip": "10.1.1.2", "mask": "255.255.255.0", "gateway": "10.1.1.1" } },
-                { "id": "r1", "type": "router", "name": "Router1", "hostname": "R1", "x": 250, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "10.1.1.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "192.168.1.1", "mask": "255.255.255.0" }] } },
-                { "id": "r2", "type": "router", "name": "Router2", "hostname": "R2", "x": 550, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "10.2.1.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "192.168.1.2", "mask": "255.255.255.0" }] } },
-                { "id": "pc2", "type": "pc", "name": "PC2", "hostname": "PC2", "x": 720, "y": 200, "initialConfig": { "ip": "10.2.1.2", "mask": "255.255.255.0", "gateway": "10.2.1.1" } }
+                {
+                    "id": "pc1",
+                    "type": "pc",
+                    "name": "PC1",
+                    "hostname": "PC1",
+                    "x": 80,
+                    "y": 200,
+                    "initialConfig": {
+                        "ip": "10.1.1.2",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.1.1.1"
+                    }
+                },
+                {
+                    "id": "r1",
+                    "type": "router",
+                    "name": "Router1",
+                    "hostname": "R1",
+                    "x": 250,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.1.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "192.168.1.1",
+                                "mask": "255.255.255.0"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "r2",
+                    "type": "router",
+                    "name": "Router2",
+                    "hostname": "R2",
+                    "x": 550,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.2.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "192.168.1.2",
+                                "mask": "255.255.255.0"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "pc2",
+                    "type": "pc",
+                    "name": "PC2",
+                    "hostname": "PC2",
+                    "x": 720,
+                    "y": 200,
+                    "initialConfig": {
+                        "ip": "10.2.1.2",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.2.1.1"
+                    }
+                }
             ],
             "links": [
-                { "source": { "device": "pc1", "interface": "Ethernet0" }, "destination": { "device": "r1", "interface": "GigabitEthernet0/0" } },
-                { "source": { "device": "r1", "interface": "GigabitEthernet0/1" }, "destination": { "device": "r2", "interface": "GigabitEthernet0/1" } },
-                { "source": { "device": "r2", "interface": "GigabitEthernet0/0" }, "destination": { "device": "pc2", "interface": "Ethernet0" } }
+                {
+                    "source": {
+                        "device": "pc1",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "r1",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "r1",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "r2",
+                        "interface": "GigabitEthernet0/1"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "r2",
+                        "interface": "GigabitEthernet0/0"
+                    },
+                    "destination": {
+                        "device": "pc2",
+                        "interface": "Ethernet0"
+                    }
+                }
             ]
         },
         "tasks": [
-            { "id": "t3-1", "title": "Konfigurasi Kebijakan ISAKMP", "description": "Buat kebijakan ISAKMP dengan enkripsi AES-256 dan hash SHA-256", "points": 15, "order": 1, "validation": { "type": "config-check", "device": "r1", "expected": { "crypto-policy": "10" } } },
-            { "id": "t3-2", "title": "Atur Pre-Shared Key", "description": "Konfigurasi pre-shared key untuk autentikasi peer", "points": 10, "order": 2, "validation": { "type": "config-check", "device": "r1", "expected": { "psk": "configured" } } },
-            { "id": "t3-3", "title": "Buat Transform Set", "description": "Definisikan transform set IPSec dengan enkripsi ESP", "points": 15, "order": 3, "validation": { "type": "config-check", "device": "r1", "expected": { "transform-set": "MYSET" } } },
-            { "id": "t3-4", "title": "Konfigurasi Crypto Map", "description": "Buat dan konfigurasi crypto map dengan peer dan transform set", "points": 20, "order": 4, "validation": { "type": "config-check", "device": "r1", "expected": { "crypto-map": "MYMAP" } } },
-            { "id": "t3-5", "title": "Terapkan Crypto Map", "description": "Terapkan crypto map ke interface WAN", "points": 10, "order": 5, "validation": { "type": "interface-check", "device": "r1", "interface": "GigabitEthernet0/1", "expected": { "crypto-map": "applied" } } },
-            { "id": "t3-6", "title": "Verifikasi Tunnel IPSec", "description": "Periksa status IKE dan IPSec SA", "points": 20, "order": 6, "validation": { "type": "tunnel-status", "status": "up" } },
-            { "id": "t3-7", "title": "Uji Konektivitas VPN", "description": "Ping dari PC1 ke PC2 melalui tunnel VPN", "points": 10, "order": 7, "validation": { "type": "connectivity-test", "from": "pc1", "to": "10.2.1.2" } }
+            {
+                "id": "t3-1",
+                "title": "Konfigurasi Kebijakan ISAKMP",
+                "description": "Buat kebijakan ISAKMP dengan enkripsi AES-256 dan hash SHA-256",
+                "points": 15,
+                "order": 1,
+                "validation": {
+                    "type": "config-check",
+                    "device": "r1",
+                    "expected": {
+                        "crypto-policy": "10"
+                    }
+                }
+            },
+            {
+                "id": "t3-2",
+                "title": "Atur Pre-Shared Key",
+                "description": "Konfigurasi pre-shared key untuk autentikasi peer",
+                "points": 10,
+                "order": 2,
+                "validation": {
+                    "type": "config-check",
+                    "device": "r1",
+                    "expected": {
+                        "psk": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t3-3",
+                "title": "Buat Transform Set",
+                "description": "Definisikan transform set IPSec dengan enkripsi ESP",
+                "points": 15,
+                "order": 3,
+                "validation": {
+                    "type": "config-check",
+                    "device": "r1",
+                    "expected": {
+                        "transform-set": "MYSET"
+                    }
+                }
+            },
+            {
+                "id": "t3-4",
+                "title": "Konfigurasi Crypto Map",
+                "description": "Buat dan konfigurasi crypto map dengan peer dan transform set",
+                "points": 20,
+                "order": 4,
+                "validation": {
+                    "type": "config-check",
+                    "device": "r1",
+                    "expected": {
+                        "crypto-map": "MYMAP"
+                    }
+                }
+            },
+            {
+                "id": "t3-5",
+                "title": "Terapkan Crypto Map",
+                "description": "Terapkan crypto map ke interface WAN",
+                "points": 10,
+                "order": 5,
+                "validation": {
+                    "type": "interface-check",
+                    "device": "r1",
+                    "interface": "GigabitEthernet0/1",
+                    "expected": {
+                        "crypto-map": "applied"
+                    }
+                }
+            },
+            {
+                "id": "t3-6",
+                "title": "Verifikasi Tunnel IPSec",
+                "description": "Periksa status IKE dan IPSec SA",
+                "points": 20,
+                "order": 6,
+                "validation": {
+                    "type": "tunnel-status",
+                    "status": "up"
+                }
+            },
+            {
+                "id": "t3-7",
+                "title": "Uji Konektivitas VPN",
+                "description": "Ping dari PC1 ke PC2 melalui tunnel VPN",
+                "points": 10,
+                "order": 7,
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "pc1",
+                    "to": "10.2.1.2"
+                }
+            }
         ],
         "hints": [
-            { "id": "h3-1", "taskId": "t3-1", "content": "Gunakan: crypto isakmp policy 10, lalu encryption aes 256, hash sha256", "pointCost": 3, "order": 1 },
-            { "id": "h3-2", "taskId": "t3-4", "content": "Gunakan: crypto map MYMAP 10 ipsec-isakmp, lalu set peer dan transform-set", "pointCost": 4, "order": 1 }
+            {
+                "id": "h3-1",
+                "taskId": "t3-1",
+                "content": "Gunakan: crypto isakmp policy 10, lalu encryption aes 256, hash sha256",
+                "pointCost": 3,
+                "order": 1
+            },
+            {
+                "id": "h3-2",
+                "taskId": "t3-4",
+                "content": "Gunakan: crypto map MYMAP 10 ipsec-isakmp, lalu set peer dan transform-set",
+                "pointCost": 4,
+                "order": 1
+            }
         ]
     },
     {
         "id": "lab-4",
         "number": 4,
-        "title": "Firewall Configuration & ACLs",
-        "description": "Konfigurasi access control lists dan aturan firewall untuk mengontrol lalu lintas jaringan. Pelajari untuk mengizinkan dan menolak lalu lintas berdasarkan sumber, tujuan, dan protokol.",
+        "title": "Next-Generation Firewall (NGFW)",
+        "description": "Konfigurasi Next-Generation Firewall dengan fitur stateful inspection, application-layer filtering, dan deep packet inspection untuk perlindungan jaringan yang komprehensif.",
         "objectives": [
-            "Memahami sintaks dan penomoran ACL",
-            "Mengkonfigurasi ACL standar dan extended",
-            "Menerapkan ACL ke interface",
-            "Menguji dan memverifikasi aturan firewall",
-            "Mengimplementasikan konsep firewall berbasis zona"
+            "Memahami arsitektur dan fitur NGFW",
+            "Mengkonfigurasi stateful packet inspection",
+            "Mengimplementasikan application-layer filtering",
+            "Menyiapkan deep packet inspection (DPI)",
+            "Mengelola security zones dan policies"
         ],
         "difficulty": "INTERMEDIATE",
         "durationMinutes": 50,
@@ -236,39 +628,222 @@
         "prerequisite": "lab-3",
         "topology": {
             "devices": [
-                { "id": "inside-pc", "type": "pc", "name": "Inside PC", "hostname": "InsidePC", "x": 80, "y": 150, "initialConfig": { "ip": "10.1.1.10", "mask": "255.255.255.0", "gateway": "10.1.1.1" } },
-                { "id": "firewall", "type": "router", "name": "Firewall", "hostname": "FW", "x": 400, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "10.1.1.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "203.0.113.1", "mask": "255.255.255.0" }] } },
-                { "id": "outside-server", "type": "pc", "name": "Web Server", "hostname": "WebSrv", "x": 720, "y": 200, "initialConfig": { "ip": "203.0.113.100", "mask": "255.255.255.0", "gateway": "203.0.113.1" } }
+                {
+                    "id": "inside-pc",
+                    "type": "pc",
+                    "name": "Inside PC",
+                    "hostname": "InsidePC",
+                    "x": 80,
+                    "y": 150,
+                    "initialConfig": {
+                        "ip": "10.1.1.10",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.1.1.1"
+                    }
+                },
+                {
+                    "id": "dmz-server",
+                    "type": "pc",
+                    "name": "DMZ Server",
+                    "hostname": "DMZSrv",
+                    "x": 400,
+                    "y": 80,
+                    "initialConfig": {
+                        "ip": "172.16.1.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "172.16.1.1"
+                    }
+                },
+                {
+                    "id": "firewall",
+                    "type": "router",
+                    "name": "NGFW",
+                    "hostname": "NGFW",
+                    "x": 400,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.1.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "172.16.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/2",
+                                "ip": "203.0.113.1",
+                                "mask": "255.255.255.0"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "outside-server",
+                    "type": "pc",
+                    "name": "Internet Server",
+                    "hostname": "ExtSrv",
+                    "x": 720,
+                    "y": 200,
+                    "initialConfig": {
+                        "ip": "203.0.113.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "203.0.113.1"
+                    }
+                }
             ],
             "links": [
-                { "source": { "device": "inside-pc", "interface": "Ethernet0" }, "destination": { "device": "firewall", "interface": "GigabitEthernet0/0" } },
-                { "source": { "device": "firewall", "interface": "GigabitEthernet0/1" }, "destination": { "device": "outside-server", "interface": "Ethernet0" } }
+                {
+                    "source": {
+                        "device": "inside-pc",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "firewall",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "dmz-server",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "firewall",
+                        "interface": "GigabitEthernet0/1"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "firewall",
+                        "interface": "GigabitEthernet0/2"
+                    },
+                    "destination": {
+                        "device": "outside-server",
+                        "interface": "Ethernet0"
+                    }
+                }
             ]
         },
         "tasks": [
-            { "id": "t4-1", "title": "Buat ACL Standar", "description": "Buat ACL standar untuk mengizinkan jaringan inside", "points": 15, "order": 1, "validation": { "type": "config-check", "device": "firewall", "expected": { "acl": "10" } } },
-            { "id": "t4-2", "title": "Buat ACL Extended", "description": "Buat ACL extended untuk mengizinkan HTTP dan HTTPS saja", "points": 20, "order": 2, "validation": { "type": "config-check", "device": "firewall", "expected": { "acl": "100" } } },
-            { "id": "t4-3", "title": "Terapkan ACL Inbound", "description": "Terapkan ACL ke interface inside untuk filtering masuk", "points": 15, "order": 3, "validation": { "type": "interface-check", "device": "firewall", "interface": "GigabitEthernet0/0", "expected": { "acl-in": "applied" } } },
-            { "id": "t4-4", "title": "Terapkan ACL Outbound", "description": "Terapkan ACL ke interface outside untuk filtering keluar", "points": 15, "order": 4, "validation": { "type": "interface-check", "device": "firewall", "interface": "GigabitEthernet0/1", "expected": { "acl-out": "applied" } } },
-            { "id": "t4-5", "title": "Uji Lalu Lintas Diizinkan", "description": "Verifikasi lalu lintas HTTP diizinkan melalui firewall", "points": 15, "order": 5, "validation": { "type": "connectivity-test", "from": "inside-pc", "to": "203.0.113.100", "port": 80 } },
-            { "id": "t4-6", "title": "Uji Lalu Lintas Ditolak", "description": "Verifikasi lalu lintas SSH diblokir oleh firewall", "points": 20, "order": 6, "validation": { "type": "connectivity-blocked", "from": "inside-pc", "to": "203.0.113.100", "port": 22 } }
+            {
+                "id": "t4-1",
+                "title": "Definisikan Security Zones",
+                "description": "Buat security zones: INSIDE, DMZ, dan OUTSIDE pada firewall",
+                "points": 15,
+                "order": 1,
+                "validation": {
+                    "type": "config-check",
+                    "device": "firewall",
+                    "expected": {
+                        "zones": [
+                            "INSIDE",
+                            "DMZ",
+                            "OUTSIDE"
+                        ]
+                    }
+                }
+            },
+            {
+                "id": "t4-2",
+                "title": "Assign Interface ke Zones",
+                "description": "Tetapkan setiap interface ke security zone yang sesuai",
+                "points": 10,
+                "order": 2,
+                "validation": {
+                    "type": "interface-check",
+                    "device": "firewall",
+                    "expected": {
+                        "zone-assignment": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t4-3",
+                "title": "Aktifkan Stateful Inspection",
+                "description": "Konfigurasi stateful packet inspection pada firewall",
+                "points": 15,
+                "order": 3,
+                "validation": {
+                    "type": "config-check",
+                    "device": "firewall",
+                    "expected": {
+                        "stateful-inspection": "enabled"
+                    }
+                }
+            },
+            {
+                "id": "t4-4",
+                "title": "Buat Zone-Based Policy",
+                "description": "Buat policy untuk mengizinkan traffic dari INSIDE ke OUTSIDE",
+                "points": 20,
+                "order": 4,
+                "validation": {
+                    "type": "config-check",
+                    "device": "firewall",
+                    "expected": {
+                        "policy": "INSIDE-to-OUTSIDE"
+                    }
+                }
+            },
+            {
+                "id": "t4-5",
+                "title": "Konfigurasi Application Filtering",
+                "description": "Blokir aplikasi social media dan streaming",
+                "points": 20,
+                "order": 5,
+                "validation": {
+                    "type": "config-check",
+                    "device": "firewall",
+                    "expected": {
+                        "app-filter": "social-media-blocked"
+                    }
+                }
+            },
+            {
+                "id": "t4-6",
+                "title": "Uji Stateful Inspection",
+                "description": "Verifikasi traffic return diizinkan secara otomatis",
+                "points": 20,
+                "order": 6,
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "inside-pc",
+                    "to": "203.0.113.100"
+                }
+            }
         ],
         "hints": [
-            { "id": "h4-1", "taskId": "t4-1", "content": "Gunakan: access-list 10 permit 10.1.1.0 0.0.0.255", "pointCost": 2, "order": 1 },
-            { "id": "h4-2", "taskId": "t4-2", "content": "Gunakan: access-list 100 permit tcp any host 203.0.113.100 eq 80", "pointCost": 3, "order": 1 }
+            {
+                "id": "h4-1",
+                "taskId": "t4-1",
+                "content": "Gunakan: zone security INSIDE, zone security DMZ, zone security OUTSIDE",
+                "pointCost": 2,
+                "order": 1
+            },
+            {
+                "id": "h4-4",
+                "taskId": "t4-4",
+                "content": "Gunakan: zone-pair security INSIDE-OUTSIDE source INSIDE destination OUTSIDE",
+                "pointCost": 3,
+                "order": 1
+            }
         ]
     },
     {
         "id": "lab-5",
         "number": 5,
-        "title": "Intrusion Detection System (IDS)",
-        "description": "Konfigurasi dan monitor Intrusion Detection System untuk mengidentifikasi aktivitas jaringan mencurigakan dan potensi ancaman keamanan.",
+        "title": "Access Control Lists (ACL) Advanced",
+        "description": "Implementasi Access Control Lists tingkat lanjut termasuk extended ACL, named ACL, time-based ACL, dan reflexive ACL untuk kontrol traffic yang granular.",
         "objectives": [
-            "Memahami konsep IDS vs IPS",
-            "Mengkonfigurasi deteksi berbasis signature",
-            "Menyiapkan aturan deteksi berbasis anomali",
-            "Memantau dan menganalisis alert keamanan",
-            "Merespons intrusi yang terdeteksi"
+            "Memahami perbedaan standard dan extended ACL",
+            "Mengkonfigurasi named ACL untuk readability",
+            "Mengimplementasikan time-based ACL",
+            "Menyiapkan reflexive ACL untuk dynamic filtering",
+            "Troubleshoot dan debug ACL"
         ],
         "difficulty": "INTERMEDIATE",
         "durationMinutes": 55,
@@ -277,39 +852,246 @@
         "prerequisite": "lab-4",
         "topology": {
             "devices": [
-                { "id": "attacker", "type": "pc", "name": "Attacker", "hostname": "Attacker", "x": 80, "y": 100, "initialConfig": { "ip": "192.168.100.50", "mask": "255.255.255.0", "gateway": "192.168.100.1" } },
-                { "id": "ids-sensor", "type": "router", "name": "IDS Sensor", "hostname": "IDS", "x": 400, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "192.168.100.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "10.0.0.1", "mask": "255.255.255.0" }] } },
-                { "id": "target", "type": "pc", "name": "Target Server", "hostname": "Target", "x": 720, "y": 200, "initialConfig": { "ip": "10.0.0.100", "mask": "255.255.255.0", "gateway": "10.0.0.1" } }
+                {
+                    "id": "admin-pc",
+                    "type": "pc",
+                    "name": "Admin PC",
+                    "hostname": "AdminPC",
+                    "x": 80,
+                    "y": 120,
+                    "initialConfig": {
+                        "ip": "10.1.1.10",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.1.1.1"
+                    }
+                },
+                {
+                    "id": "user-pc",
+                    "type": "pc",
+                    "name": "User PC",
+                    "hostname": "UserPC",
+                    "x": 80,
+                    "y": 280,
+                    "initialConfig": {
+                        "ip": "10.1.1.20",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.1.1.1"
+                    }
+                },
+                {
+                    "id": "core-router",
+                    "type": "router",
+                    "name": "Core Router",
+                    "hostname": "CoreR",
+                    "x": 400,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.1.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "192.168.1.1",
+                                "mask": "255.255.255.0"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "web-server",
+                    "type": "pc",
+                    "name": "Web Server",
+                    "hostname": "WebSrv",
+                    "x": 720,
+                    "y": 150,
+                    "initialConfig": {
+                        "ip": "192.168.1.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "192.168.1.1"
+                    }
+                },
+                {
+                    "id": "db-server",
+                    "type": "pc",
+                    "name": "Database Server",
+                    "hostname": "DBSrv",
+                    "x": 720,
+                    "y": 280,
+                    "initialConfig": {
+                        "ip": "192.168.1.200",
+                        "mask": "255.255.255.0",
+                        "gateway": "192.168.1.1"
+                    }
+                }
             ],
             "links": [
-                { "source": { "device": "attacker", "interface": "Ethernet0" }, "destination": { "device": "ids-sensor", "interface": "GigabitEthernet0/0" } },
-                { "source": { "device": "ids-sensor", "interface": "GigabitEthernet0/1" }, "destination": { "device": "target", "interface": "Ethernet0" } }
+                {
+                    "source": {
+                        "device": "admin-pc",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "core-router",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "user-pc",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "core-router",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "core-router",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "web-server",
+                        "interface": "Ethernet0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "db-server",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "core-router",
+                        "interface": "GigabitEthernet0/1"
+                    }
+                }
             ]
         },
         "tasks": [
-            { "id": "t5-1", "title": "Aktifkan Mode IDS", "description": "Aktifkan deteksi intrusi pada sensor IDS", "points": 10, "order": 1, "validation": { "type": "config-check", "device": "ids-sensor", "expected": { "ids-mode": "enabled" } } },
-            { "id": "t5-2", "title": "Muat Database Signature", "description": "Muat database signature ancaman", "points": 15, "order": 2, "validation": { "type": "config-check", "device": "ids-sensor", "expected": { "signatures": "loaded" } } },
-            { "id": "t5-3", "title": "Konfigurasi Ambang Alert", "description": "Atur ambang tingkat keparahan alert ke medium", "points": 10, "order": 3, "validation": { "type": "config-check", "device": "ids-sensor", "expected": { "threshold": "medium" } } },
-            { "id": "t5-4", "title": "Simulasi Port Scan", "description": "Jalankan port scan dari attacker ke target", "points": 20, "order": 4, "validation": { "type": "command-executed", "device": "attacker", "command": "nmap -sS 10.0.0.100" } },
-            { "id": "t5-5", "title": "Lihat Alert IDS", "description": "Periksa alert IDS untuk port scan yang terdeteksi", "points": 20, "order": 5, "validation": { "type": "alert-check", "device": "ids-sensor", "expected": { "alert-type": "port-scan" } } },
-            { "id": "t5-6", "title": "Generate Laporan", "description": "Ekspor laporan insiden keamanan", "points": 25, "order": 6, "validation": { "type": "command-executed", "device": "ids-sensor", "command": "export report" } }
+            {
+                "id": "t5-1",
+                "title": "Buat Named Extended ACL",
+                "description": "Buat named extended ACL 'WEB-FILTER' untuk filtering HTTP/HTTPS",
+                "points": 15,
+                "order": 1,
+                "validation": {
+                    "type": "config-check",
+                    "device": "core-router",
+                    "expected": {
+                        "named-acl": "WEB-FILTER"
+                    }
+                }
+            },
+            {
+                "id": "t5-2",
+                "title": "Izinkan Admin Full Access",
+                "description": "Buat ACL entry untuk mengizinkan Admin PC akses penuh ke semua server",
+                "points": 15,
+                "order": 2,
+                "validation": {
+                    "type": "config-check",
+                    "device": "core-router",
+                    "expected": {
+                        "acl-entry": "permit-admin"
+                    }
+                }
+            },
+            {
+                "id": "t5-3",
+                "title": "Batasi User Ke Web Only",
+                "description": "Buat ACL entry untuk membatasi User PC hanya akses HTTP/HTTPS ke Web Server",
+                "points": 20,
+                "order": 3,
+                "validation": {
+                    "type": "config-check",
+                    "device": "core-router",
+                    "expected": {
+                        "acl-entry": "permit-web-only"
+                    }
+                }
+            },
+            {
+                "id": "t5-4",
+                "title": "Blokir Akses Database",
+                "description": "Blokir User PC dari mengakses Database Server",
+                "points": 15,
+                "order": 4,
+                "validation": {
+                    "type": "config-check",
+                    "device": "core-router",
+                    "expected": {
+                        "acl-entry": "deny-db"
+                    }
+                }
+            },
+            {
+                "id": "t5-5",
+                "title": "Konfigurasi Time-Based ACL",
+                "description": "Buat time-range untuk membatasi akses hanya jam kerja (08:00-17:00)",
+                "points": 20,
+                "order": 5,
+                "validation": {
+                    "type": "config-check",
+                    "device": "core-router",
+                    "expected": {
+                        "time-range": "WORK-HOURS"
+                    }
+                }
+            },
+            {
+                "id": "t5-6",
+                "title": "Terapkan ACL ke Interface",
+                "description": "Terapkan ACL ke interface yang sesuai dengan direction yang benar",
+                "points": 15,
+                "order": 6,
+                "validation": {
+                    "type": "interface-check",
+                    "device": "core-router",
+                    "interface": "GigabitEthernet0/0",
+                    "expected": {
+                        "acl-applied": "WEB-FILTER"
+                    }
+                }
+            }
         ],
         "hints": [
-            { "id": "h5-1", "taskId": "t5-1", "content": "Gunakan: ids enable pada perangkat sensor", "pointCost": 2, "order": 1 },
-            { "id": "h5-4", "taskId": "t5-4", "content": "nmap -sS melakukan SYN stealth scan", "pointCost": 3, "order": 1 }
+            {
+                "id": "h5-1",
+                "taskId": "t5-1",
+                "content": "Gunakan: ip access-list extended WEB-FILTER",
+                "pointCost": 2,
+                "order": 1
+            },
+            {
+                "id": "h5-3",
+                "taskId": "t5-3",
+                "content": "Gunakan: permit tcp host 10.1.1.20 host 192.168.1.100 eq 80",
+                "pointCost": 3,
+                "order": 1
+            },
+            {
+                "id": "h5-5",
+                "taskId": "t5-5",
+                "content": "Gunakan: time-range WORK-HOURS, periodic weekdays 08:00 to 17:00",
+                "pointCost": 4,
+                "order": 1
+            }
         ]
     },
     {
         "id": "lab-6",
         "number": 6,
-        "title": "Network Address Translation (NAT)",
-        "description": "Konfigurasi berbagai jenis NAT termasuk static NAT, dynamic NAT, dan PAT (Port Address Translation) untuk translasi alamat jaringan.",
+        "title": "Network Address Translation (NAT) Security",
+        "description": "Konfigurasi berbagai jenis NAT termasuk static NAT, dynamic NAT, dan PAT (Port Address Translation) untuk translasi alamat jaringan dan keamanan.",
         "objectives": [
             "Memahami jenis NAT dan kasus penggunaan",
             "Mengkonfigurasi static NAT untuk server",
             "Menyiapkan dynamic NAT dengan address pools",
             "Mengimplementasikan PAT untuk multiple hosts",
-            "Memverifikasi translasi NAT"
+            "Memverifikasi dan troubleshoot translasi NAT"
         ],
         "difficulty": "INTERMEDIATE",
         "durationMinutes": 45,
@@ -318,115 +1100,733 @@
         "prerequisite": "lab-5",
         "topology": {
             "devices": [
-                { "id": "internal-pc", "type": "pc", "name": "Internal PC", "hostname": "IntPC", "x": 80, "y": 150, "initialConfig": { "ip": "192.168.1.10", "mask": "255.255.255.0", "gateway": "192.168.1.1" } },
-                { "id": "internal-server", "type": "pc", "name": "Web Server", "hostname": "WebSrv", "x": 80, "y": 280, "initialConfig": { "ip": "192.168.1.100", "mask": "255.255.255.0", "gateway": "192.168.1.1" } },
-                { "id": "nat-router", "type": "router", "name": "NAT Router", "hostname": "NAT", "x": 400, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "192.168.1.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "203.0.113.1", "mask": "255.255.255.0" }] } },
-                { "id": "external-pc", "type": "pc", "name": "External Client", "hostname": "ExtClient", "x": 720, "y": 200, "initialConfig": { "ip": "203.0.113.50", "mask": "255.255.255.0", "gateway": "203.0.113.1" } }
+                {
+                    "id": "internal-pc",
+                    "type": "pc",
+                    "name": "Internal PC",
+                    "hostname": "IntPC",
+                    "x": 80,
+                    "y": 150,
+                    "initialConfig": {
+                        "ip": "192.168.1.10",
+                        "mask": "255.255.255.0",
+                        "gateway": "192.168.1.1"
+                    }
+                },
+                {
+                    "id": "internal-server",
+                    "type": "pc",
+                    "name": "Web Server",
+                    "hostname": "WebSrv",
+                    "x": 80,
+                    "y": 280,
+                    "initialConfig": {
+                        "ip": "192.168.1.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "192.168.1.1"
+                    }
+                },
+                {
+                    "id": "nat-router",
+                    "type": "router",
+                    "name": "NAT Router",
+                    "hostname": "NAT",
+                    "x": 400,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "192.168.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "203.0.113.1",
+                                "mask": "255.255.255.0"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "external-pc",
+                    "type": "pc",
+                    "name": "External Client",
+                    "hostname": "ExtClient",
+                    "x": 720,
+                    "y": 200,
+                    "initialConfig": {
+                        "ip": "203.0.113.50",
+                        "mask": "255.255.255.0",
+                        "gateway": "203.0.113.1"
+                    }
+                }
             ],
             "links": [
-                { "source": { "device": "internal-pc", "interface": "Ethernet0" }, "destination": { "device": "nat-router", "interface": "GigabitEthernet0/0" } },
-                { "source": { "device": "internal-server", "interface": "Ethernet0" }, "destination": { "device": "nat-router", "interface": "GigabitEthernet0/0" } },
-                { "source": { "device": "nat-router", "interface": "GigabitEthernet0/1" }, "destination": { "device": "external-pc", "interface": "Ethernet0" } }
+                {
+                    "source": {
+                        "device": "internal-pc",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "nat-router",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "internal-server",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "nat-router",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "nat-router",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "external-pc",
+                        "interface": "Ethernet0"
+                    }
+                }
             ]
         },
         "tasks": [
-            { "id": "t6-1", "title": "Definisikan Interface Inside/Outside", "description": "Tandai interface NAT inside dan outside", "points": 10, "order": 1, "validation": { "type": "interface-check", "device": "nat-router", "expected": { "nat-inside": "Gi0/0", "nat-outside": "Gi0/1" } } },
-            { "id": "t6-2", "title": "Konfigurasi Static NAT", "description": "Buat static NAT untuk web server", "points": 20, "order": 2, "validation": { "type": "config-check", "device": "nat-router", "expected": { "static-nat": "192.168.1.100 to 203.0.113.100" } } },
-            { "id": "t6-3", "title": "Konfigurasi PAT", "description": "Siapkan PAT untuk jaringan internal menggunakan overload", "points": 25, "order": 3, "validation": { "type": "config-check", "device": "nat-router", "expected": { "pat": "configured" } } },
-            { "id": "t6-4", "title": "Uji NAT Outbound", "description": "Ping host eksternal dari PC internal", "points": 15, "order": 4, "validation": { "type": "connectivity-test", "from": "internal-pc", "to": "203.0.113.50" } },
-            { "id": "t6-5", "title": "Uji Static NAT", "description": "Akses web server dari client eksternal", "points": 15, "order": 5, "validation": { "type": "connectivity-test", "from": "external-pc", "to": "203.0.113.100" } },
-            { "id": "t6-6", "title": "Lihat Translasi NAT", "description": "Tampilkan tabel translasi NAT aktif", "points": 15, "order": 6, "validation": { "type": "command-executed", "device": "nat-router", "command": "show ip nat translations" } }
+            {
+                "id": "t6-1",
+                "title": "Definisikan Interface Inside/Outside",
+                "description": "Tandai interface NAT inside dan outside",
+                "points": 10,
+                "order": 1,
+                "validation": {
+                    "type": "interface-check",
+                    "device": "nat-router",
+                    "expected": {
+                        "nat-inside": "Gi0/0",
+                        "nat-outside": "Gi0/1"
+                    }
+                }
+            },
+            {
+                "id": "t6-2",
+                "title": "Konfigurasi Static NAT",
+                "description": "Buat static NAT untuk web server (192.168.1.100 -> 203.0.113.100)",
+                "points": 20,
+                "order": 2,
+                "validation": {
+                    "type": "config-check",
+                    "device": "nat-router",
+                    "expected": {
+                        "static-nat": "192.168.1.100 to 203.0.113.100"
+                    }
+                }
+            },
+            {
+                "id": "t6-3",
+                "title": "Konfigurasi PAT",
+                "description": "Siapkan PAT untuk jaringan internal menggunakan overload",
+                "points": 25,
+                "order": 3,
+                "validation": {
+                    "type": "config-check",
+                    "device": "nat-router",
+                    "expected": {
+                        "pat": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t6-4",
+                "title": "Uji NAT Outbound",
+                "description": "Ping host eksternal dari PC internal",
+                "points": 15,
+                "order": 4,
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "internal-pc",
+                    "to": "203.0.113.50"
+                }
+            },
+            {
+                "id": "t6-5",
+                "title": "Uji Static NAT",
+                "description": "Akses web server dari client eksternal melalui public IP",
+                "points": 15,
+                "order": 5,
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "external-pc",
+                    "to": "203.0.113.100"
+                }
+            },
+            {
+                "id": "t6-6",
+                "title": "Lihat Translasi NAT",
+                "description": "Tampilkan tabel translasi NAT aktif",
+                "points": 15,
+                "order": 6,
+                "validation": {
+                    "type": "command-executed",
+                    "device": "nat-router",
+                    "command": "show ip nat translations"
+                }
+            }
         ],
         "hints": [
-            { "id": "h6-1", "taskId": "t6-1", "content": "Gunakan: ip nat inside pada Gi0/0, ip nat outside pada Gi0/1", "pointCost": 2, "order": 1 },
-            { "id": "h6-3", "taskId": "t6-3", "content": "Gunakan: ip nat inside source list 1 interface Gi0/1 overload", "pointCost": 3, "order": 1 }
+            {
+                "id": "h6-1",
+                "taskId": "t6-1",
+                "content": "Gunakan: ip nat inside pada Gi0/0, ip nat outside pada Gi0/1",
+                "pointCost": 2,
+                "order": 1
+            },
+            {
+                "id": "h6-2",
+                "taskId": "t6-2",
+                "content": "Gunakan: ip nat inside source static 192.168.1.100 203.0.113.100",
+                "pointCost": 3,
+                "order": 1
+            },
+            {
+                "id": "h6-3",
+                "taskId": "t6-3",
+                "content": "Gunakan: ip nat inside source list 1 interface Gi0/1 overload",
+                "pointCost": 3,
+                "order": 1
+            }
         ]
     },
     {
         "id": "lab-7",
         "number": 7,
-        "title": "Wireless Security - WPA2/WPA3",
-        "description": "Konfigurasi jaringan wireless yang aman dengan WPA2-Enterprise dan WPA3. Pahami metode autentikasi dan protokol enkripsi.",
+        "title": "Intrusion Detection System - Snort",
+        "description": "Deploy dan konfigurasi Snort IDS untuk mendeteksi aktivitas jaringan mencurigakan, membuat custom rules, dan menganalisis alerts keamanan.",
         "objectives": [
-            "Memahami protokol keamanan wireless",
-            "Mengkonfigurasi WPA2-Enterprise dengan RADIUS",
-            "Menyiapkan WPA3-Personal dengan SAE",
-            "Mengimplementasikan autentikasi 802.1X",
-            "Menganalisis kerentanan keamanan wireless"
+            "Memahami konsep IDS vs IPS",
+            "Deploy dan konfigurasi Snort IDS",
+            "Membuat dan mengoptimasi Snort rules",
+            "Menganalisis Snort alerts",
+            "Merespons ancaman yang terdeteksi"
         ],
-        "difficulty": "ADVANCED",
-        "durationMinutes": 70,
+        "difficulty": "INTERMEDIATE",
+        "durationMinutes": 60,
         "maxScore": 100,
         "isLocked": true,
         "prerequisite": "lab-6",
         "topology": {
             "devices": [
-                { "id": "wireless-client", "type": "pc", "name": "Wireless Client", "hostname": "WClient", "x": 80, "y": 200, "initialConfig": { "ip": "dhcp", "mask": "", "gateway": "" } },
-                { "id": "access-point", "type": "router", "name": "Access Point", "hostname": "AP", "x": 300, "y": 200, "initialConfig": { "interfaces": [{ "name": "Wireless0", "ip": "192.168.10.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/0", "ip": "10.0.0.2", "mask": "255.255.255.0" }] } },
-                { "id": "radius-server", "type": "pc", "name": "RADIUS Server", "hostname": "RADIUS", "x": 550, "y": 100, "initialConfig": { "ip": "10.0.0.10", "mask": "255.255.255.0", "gateway": "10.0.0.1" } },
-                { "id": "core-router", "type": "router", "name": "Core Router", "hostname": "Core", "x": 550, "y": 280, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "10.0.0.1", "mask": "255.255.255.0" }] } }
+                {
+                    "id": "attacker",
+                    "type": "pc",
+                    "name": "Attacker",
+                    "hostname": "Attacker",
+                    "x": 80,
+                    "y": 100,
+                    "initialConfig": {
+                        "ip": "192.168.100.50",
+                        "mask": "255.255.255.0",
+                        "gateway": "192.168.100.1"
+                    }
+                },
+                {
+                    "id": "legitimate-user",
+                    "type": "pc",
+                    "name": "Legitimate User",
+                    "hostname": "User",
+                    "x": 80,
+                    "y": 300,
+                    "initialConfig": {
+                        "ip": "192.168.100.10",
+                        "mask": "255.255.255.0",
+                        "gateway": "192.168.100.1"
+                    }
+                },
+                {
+                    "id": "ids-sensor",
+                    "type": "router",
+                    "name": "Snort IDS",
+                    "hostname": "SnortIDS",
+                    "x": 400,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "192.168.100.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "10.0.0.1",
+                                "mask": "255.255.255.0"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "target",
+                    "type": "pc",
+                    "name": "Target Server",
+                    "hostname": "Target",
+                    "x": 720,
+                    "y": 200,
+                    "initialConfig": {
+                        "ip": "10.0.0.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.0.0.1"
+                    }
+                }
             ],
             "links": [
-                { "source": { "device": "wireless-client", "interface": "Wireless0" }, "destination": { "device": "access-point", "interface": "Wireless0" } },
-                { "source": { "device": "access-point", "interface": "GigabitEthernet0/0" }, "destination": { "device": "core-router", "interface": "GigabitEthernet0/0" } },
-                { "source": { "device": "radius-server", "interface": "Ethernet0" }, "destination": { "device": "core-router", "interface": "GigabitEthernet0/0" } }
+                {
+                    "source": {
+                        "device": "attacker",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "ids-sensor",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "legitimate-user",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "ids-sensor",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "ids-sensor",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "target",
+                        "interface": "Ethernet0"
+                    }
+                }
             ]
         },
         "tasks": [
-            { "id": "t7-1", "title": "Konfigurasi SSID", "description": "Siapkan SSID wireless pada access point", "points": 10, "order": 1, "validation": { "type": "config-check", "device": "access-point", "expected": { "ssid": "SecureWiFi" } } },
-            { "id": "t7-2", "title": "Aktifkan WPA2-Enterprise", "description": "Konfigurasi mode keamanan WPA2-Enterprise", "points": 15, "order": 2, "validation": { "type": "config-check", "device": "access-point", "expected": { "security": "WPA2-Enterprise" } } },
-            { "id": "t7-3", "title": "Konfigurasi Server RADIUS", "description": "Siapkan autentikasi server RADIUS", "points": 20, "order": 3, "validation": { "type": "config-check", "device": "access-point", "expected": { "radius": "10.0.0.10" } } },
-            { "id": "t7-4", "title": "Buat Akun Pengguna", "description": "Tambahkan akun pengguna pada server RADIUS", "points": 15, "order": 4, "validation": { "type": "config-check", "device": "radius-server", "expected": { "user": "testuser" } } },
-            { "id": "t7-5", "title": "Hubungkan Client", "description": "Hubungkan wireless client menggunakan EAP-TLS", "points": 20, "order": 5, "validation": { "type": "wireless-connect", "device": "wireless-client", "expected": { "connected": true, "auth": "EAP-TLS" } } },
-            { "id": "t7-6", "title": "Verifikasi Enkripsi", "description": "Konfirmasi enkripsi AES aktif", "points": 20, "order": 6, "validation": { "type": "wireless-check", "expected": { "encryption": "AES" } } }
+            {
+                "id": "t7-1",
+                "title": "Start Snort Service",
+                "description": "Aktifkan Snort IDS service pada sensor",
+                "points": 10,
+                "order": 1,
+                "validation": {
+                    "type": "config-check",
+                    "device": "ids-sensor",
+                    "expected": {
+                        "snort-service": "running"
+                    }
+                }
+            },
+            {
+                "id": "t7-2",
+                "title": "Load Rule Sets",
+                "description": "Muat Snort community rules dan local rules",
+                "points": 15,
+                "order": 2,
+                "validation": {
+                    "type": "config-check",
+                    "device": "ids-sensor",
+                    "expected": {
+                        "rules-loaded": true
+                    }
+                }
+            },
+            {
+                "id": "t7-3",
+                "title": "Buat Custom Rule",
+                "description": "Buat custom Snort rule untuk mendeteksi ICMP flood",
+                "points": 20,
+                "order": 3,
+                "validation": {
+                    "type": "config-check",
+                    "device": "ids-sensor",
+                    "expected": {
+                        "custom-rule": "icmp-flood"
+                    }
+                }
+            },
+            {
+                "id": "t7-4",
+                "title": "Simulasi Port Scan",
+                "description": "Jalankan Nmap SYN scan dari Attacker ke Target",
+                "points": 15,
+                "order": 4,
+                "validation": {
+                    "type": "command-executed",
+                    "device": "attacker",
+                    "command": "nmap -sS 10.0.0.100"
+                }
+            },
+            {
+                "id": "t7-5",
+                "title": "Analisis Snort Alerts",
+                "description": "Lihat dan analisis Snort alerts untuk port scan",
+                "points": 20,
+                "order": 5,
+                "validation": {
+                    "type": "alert-check",
+                    "device": "ids-sensor",
+                    "expected": {
+                        "alert-type": "portscan"
+                    }
+                }
+            },
+            {
+                "id": "t7-6",
+                "title": "Generate Alert Report",
+                "description": "Ekspor laporan detail alerts dalam format yang dapat dibaca",
+                "points": 20,
+                "order": 6,
+                "validation": {
+                    "type": "command-executed",
+                    "device": "ids-sensor",
+                    "command": "snort-stat --report"
+                }
+            }
         ],
         "hints": [
-            { "id": "h7-1", "taskId": "t7-2", "content": "Gunakan: security wpa2 enterprise mode", "pointCost": 3, "order": 1 },
-            { "id": "h7-3", "taskId": "t7-3", "content": "Gunakan: radius-server host 10.0.0.10 key SharedSecret", "pointCost": 4, "order": 1 }
+            {
+                "id": "h7-1",
+                "taskId": "t7-1",
+                "content": "Gunakan: snort -c /etc/snort/snort.conf -i eth0",
+                "pointCost": 2,
+                "order": 1
+            },
+            {
+                "id": "h7-3",
+                "taskId": "t7-3",
+                "content": "Rule format: alert icmp any any -> $HOME_NET any (msg:\"ICMP Flood\"; threshold:type threshold, track by_src, count 100, seconds 1; sid:1000001;)",
+                "pointCost": 5,
+                "order": 1
+            },
+            {
+                "id": "h7-4",
+                "taskId": "t7-4",
+                "content": "Nmap dengan -sS melakukan TCP SYN stealth scan",
+                "pointCost": 2,
+                "order": 1
+            }
         ]
     },
     {
         "id": "lab-8",
         "number": 8,
-        "title": "Advanced Threat Analysis & Response",
-        "description": "Analisis advanced persistent threats, lakukan analisis forensik, dan implementasikan prosedur incident response untuk serangan canggih.",
+        "title": "UTS: Secure Network Topology Design",
+        "description": "Ujian Tengah Semester - Desain dan implementasi topologi jaringan enterprise yang aman dengan menggabungkan semua konsep dari Lab 1-7: VPN, Firewall, ACL, NAT, dan IDS.",
         "objectives": [
-            "Mengidentifikasi pola advanced persistent threat",
-            "Melakukan analisis forensik jaringan",
-            "Mengimplementasikan prosedur incident response",
-            "Menganalisis pola komunikasi malware",
-            "Mendokumentasikan dan melaporkan insiden keamanan"
+            "Mendesain topologi jaringan enterprise yang aman",
+            "Mengimplementasikan VPN site-to-site",
+            "Mengkonfigurasi firewall dengan security zones",
+            "Menerapkan ACL untuk access control",
+            "Menyiapkan NAT untuk konektivitas internet",
+            "Deploy IDS untuk monitoring keamanan"
         ],
         "difficulty": "ADVANCED",
-        "durationMinutes": 90,
+        "durationMinutes": 120,
         "maxScore": 100,
         "isLocked": true,
         "prerequisite": "lab-7",
         "topology": {
             "devices": [
-                { "id": "compromised-host", "type": "pc", "name": "Compromised Host", "hostname": "Victim", "x": 80, "y": 200, "initialConfig": { "ip": "10.1.1.50", "mask": "255.255.255.0", "gateway": "10.1.1.1" } },
-                { "id": "edge-firewall", "type": "router", "name": "Edge Firewall", "hostname": "EdgeFW", "x": 300, "y": 200, "initialConfig": { "interfaces": [{ "name": "GigabitEthernet0/0", "ip": "10.1.1.1", "mask": "255.255.255.0" }, { "name": "GigabitEthernet0/1", "ip": "203.0.113.1", "mask": "255.255.255.0" }] } },
-                { "id": "siem-server", "type": "pc", "name": "SIEM Server", "hostname": "SIEM", "x": 300, "y": 80, "initialConfig": { "ip": "10.1.1.200", "mask": "255.255.255.0", "gateway": "10.1.1.1" } },
-                { "id": "c2-server", "type": "pc", "name": "C2 Server", "hostname": "C2", "x": 550, "y": 200, "initialConfig": { "ip": "203.0.113.66", "mask": "255.255.255.0", "gateway": "203.0.113.1" } }
+                {
+                    "id": "hq-pc",
+                    "type": "pc",
+                    "name": "HQ Workstation",
+                    "hostname": "HQ-PC",
+                    "x": 80,
+                    "y": 150,
+                    "initialConfig": {
+                        "ip": "10.1.1.10",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.1.1.1"
+                    }
+                },
+                {
+                    "id": "hq-server",
+                    "type": "pc",
+                    "name": "HQ Server",
+                    "hostname": "HQ-Srv",
+                    "x": 80,
+                    "y": 280,
+                    "initialConfig": {
+                        "ip": "10.1.1.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.1.1.1"
+                    }
+                },
+                {
+                    "id": "hq-router",
+                    "type": "router",
+                    "name": "HQ Router",
+                    "hostname": "HQ-R",
+                    "x": 250,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.1.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "100.1.1.1",
+                                "mask": "255.255.255.252"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "internet",
+                    "type": "router",
+                    "name": "Internet",
+                    "hostname": "ISP",
+                    "x": 400,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "100.1.1.2",
+                                "mask": "255.255.255.252"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "100.2.2.2",
+                                "mask": "255.255.255.252"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "branch-router",
+                    "type": "router",
+                    "name": "Branch Router",
+                    "hostname": "BR-R",
+                    "x": 550,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.2.2.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "100.2.2.1",
+                                "mask": "255.255.255.252"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "branch-pc",
+                    "type": "pc",
+                    "name": "Branch Workstation",
+                    "hostname": "BR-PC",
+                    "x": 720,
+                    "y": 150,
+                    "initialConfig": {
+                        "ip": "10.2.2.10",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.2.2.1"
+                    }
+                },
+                {
+                    "id": "ids-monitor",
+                    "type": "pc",
+                    "name": "IDS Monitor",
+                    "hostname": "IDS-Mon",
+                    "x": 400,
+                    "y": 80,
+                    "initialConfig": {
+                        "ip": "10.1.1.200",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.1.1.1"
+                    }
+                }
             ],
             "links": [
-                { "source": { "device": "compromised-host", "interface": "Ethernet0" }, "destination": { "device": "edge-firewall", "interface": "GigabitEthernet0/0" } },
-                { "source": { "device": "siem-server", "interface": "Ethernet0" }, "destination": { "device": "edge-firewall", "interface": "GigabitEthernet0/0" } },
-                { "source": { "device": "edge-firewall", "interface": "GigabitEthernet0/1" }, "destination": { "device": "c2-server", "interface": "Ethernet0" } }
+                {
+                    "source": {
+                        "device": "hq-pc",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "hq-router",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "hq-server",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "hq-router",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "ids-monitor",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "hq-router",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "hq-router",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "internet",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "internet",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "branch-router",
+                        "interface": "GigabitEthernet0/1"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "branch-router",
+                        "interface": "GigabitEthernet0/0"
+                    },
+                    "destination": {
+                        "device": "branch-pc",
+                        "interface": "Ethernet0"
+                    }
+                }
             ]
         },
         "tasks": [
-            { "id": "t8-1", "title": "Analisis Alert SIEM", "description": "Tinjau alert SIEM untuk aktivitas mencurigakan", "points": 10, "order": 1, "validation": { "type": "command-executed", "device": "siem-server", "command": "show alerts" } },
-            { "id": "t8-2", "title": "Identifikasi Komunikasi C2", "description": "Temukan pola lalu lintas command and control", "points": 20, "order": 2, "validation": { "type": "analysis-check", "expected": { "c2-detected": true } } },
-            { "id": "t8-3", "title": "Tangkap Lalu Lintas Malware", "description": "Tangkap lalu lintas jaringan dari host terkompromi", "points": 15, "order": 3, "validation": { "type": "packet-capture", "device": "edge-firewall", "protocol": "any" } },
-            { "id": "t8-4", "title": "Blokir Domain C2", "description": "Tambahkan aturan firewall untuk memblokir server C2", "points": 15, "order": 4, "validation": { "type": "config-check", "device": "edge-firewall", "expected": { "blocked": "203.0.113.66" } } },
-            { "id": "t8-5", "title": "Isolasi Host Terkompromi", "description": "Karantina sistem yang terinfeksi", "points": 15, "order": 5, "validation": { "type": "network-isolation", "device": "compromised-host", "expected": { "isolated": true } } },
-            { "id": "t8-6", "title": "Dokumentasi IOC", "description": "Catat indikator kompromi", "points": 10, "order": 6, "validation": { "type": "command-executed", "device": "siem-server", "command": "export ioc" } },
-            { "id": "t8-7", "title": "Generate Laporan Insiden", "description": "Buat laporan insiden komprehensif", "points": 15, "order": 7, "validation": { "type": "command-executed", "device": "siem-server", "command": "generate report" } }
+            {
+                "id": "t8-1",
+                "title": "Konfigurasi Dasar Routing",
+                "description": "Setup routing antar semua network segments",
+                "points": 10,
+                "order": 1,
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "hq-pc",
+                    "to": "100.1.1.2"
+                }
+            },
+            {
+                "id": "t8-2",
+                "title": "Implementasi IPSec VPN",
+                "description": "Konfigurasi site-to-site VPN antara HQ dan Branch",
+                "points": 20,
+                "order": 2,
+                "validation": {
+                    "type": "tunnel-status",
+                    "status": "up"
+                }
+            },
+            {
+                "id": "t8-3",
+                "title": "Konfigurasi Firewall Rules",
+                "description": "Implementasi stateful firewall pada HQ Router",
+                "points": 15,
+                "order": 3,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-router",
+                    "expected": {
+                        "firewall": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t8-4",
+                "title": "Setup ACL Protection",
+                "description": "Buat ACL untuk melindungi HQ Server dari akses unauthorized",
+                "points": 15,
+                "order": 4,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-router",
+                    "expected": {
+                        "acl": "server-protection"
+                    }
+                }
+            },
+            {
+                "id": "t8-5",
+                "title": "Konfigurasi NAT untuk Internet",
+                "description": "Setup NAT/PAT untuk akses internet dari kedua sites",
+                "points": 10,
+                "order": 5,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-router",
+                    "expected": {
+                        "nat": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t8-6",
+                "title": "Deploy IDS Monitoring",
+                "description": "Aktifkan IDS monitoring pada network HQ",
+                "points": 10,
+                "order": 6,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-router",
+                    "expected": {
+                        "ids": "enabled"
+                    }
+                }
+            },
+            {
+                "id": "t8-7",
+                "title": "Uji Konektivitas VPN",
+                "description": "Verifikasi konektivitas end-to-end melalui VPN tunnel",
+                "points": 10,
+                "order": 7,
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "hq-pc",
+                    "to": "10.2.2.10"
+                }
+            },
+            {
+                "id": "t8-8",
+                "title": "Dokumentasi Topologi",
+                "description": "Export konfigurasi dan dokumentasi jaringan",
+                "points": 10,
+                "order": 8,
+                "validation": {
+                    "type": "command-executed",
+                    "device": "hq-router",
+                    "command": "show running-config"
+                }
+            }
         ],
-        "hints": [
-            { "id": "h8-1", "taskId": "t8-2", "content": "Cari pola beaconing - koneksi interval reguler ke IP eksternal", "pointCost": 4, "order": 1 },
-            { "id": "h8-4", "taskId": "t8-4", "content": "Gunakan: access-list 100 deny ip any host 203.0.113.66", "pointCost": 3, "order": 1 }
-        ]
+        "hints": []
     }
 ]
