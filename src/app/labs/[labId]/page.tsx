@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, use, useEffect } from 'react';
+import React, { useState, use, useEffect, lazy, Suspense } from 'react';
 import {
   ArrowLeft,
   Play,
@@ -28,12 +28,112 @@ import {
   ChevronDown,
   ChevronUp,
   Lock,
-  ShieldAlert
+  ShieldAlert,
+  Radio,
+  Shield,
+  Filter,
+  Key,
 } from 'lucide-react';
 
 // Import labs data
 import labsData from '@/data/labs.json';
 import { useToast } from '@/components/ui/toast';
+
+// Lazy load the packet capture panel
+const PacketCapturePanel = lazy(() => import('@/components/capture/PacketCapturePanel').then(m => ({ default: m.PacketCapturePanel })));
+
+// Lazy load the IDS panel
+const IDSPanel = lazy(() => import('@/components/ids/IDSPanel').then(m => ({ default: m.IDSPanel })));
+
+// Lazy load the Firewall panel
+const FirewallPanel = lazy(() => import('@/components/firewall/FirewallPanel').then(m => ({ default: m.FirewallPanel })));
+
+// Lazy load the VPN panel
+const VPNPanel = lazy(() => import('@/components/vpn/VPNPanel').then(m => ({ default: m.VPNPanel })));
+
+// Loading fallback for PacketCapturePanel
+function PacketCapturePanelFallback() {
+  return (
+    <div className="flex items-center justify-center h-full bg-zinc-950">
+      <div className="text-center">
+        <Radio className="w-12 h-12 text-cyan-500 mx-auto mb-3 animate-pulse" />
+        <p className="text-zinc-400 text-sm">Loading Packet Capture...</p>
+      </div>
+    </div>
+  );
+}
+
+// Loading fallback for IDSPanel
+function IDSPanelFallback() {
+  return (
+    <div className="flex items-center justify-center h-full bg-zinc-950">
+      <div className="text-center">
+        <Shield className="w-12 h-12 text-cyan-500 mx-auto mb-3 animate-pulse" />
+        <p className="text-zinc-400 text-sm">Loading IDS/IPS Monitor...</p>
+      </div>
+    </div>
+  );
+}
+
+// Wrapped component for lazy loading PacketCapturePanel
+function PacketCapturePanelLazy() {
+  return (
+    <Suspense fallback={<PacketCapturePanelFallback />}>
+      <PacketCapturePanel className="h-full" />
+    </Suspense>
+  );
+}
+
+// Wrapped component for lazy loading IDSPanel
+function IDSPanelLazy() {
+  return (
+    <Suspense fallback={<IDSPanelFallback />}>
+      <IDSPanel className="h-full" />
+    </Suspense>
+  );
+}
+
+// Loading fallback for FirewallPanel
+function FirewallPanelFallback() {
+  return (
+    <div className="flex items-center justify-center h-full bg-zinc-950">
+      <div className="text-center">
+        <Filter className="w-12 h-12 text-cyan-500 mx-auto mb-3 animate-pulse" />
+        <p className="text-zinc-400 text-sm">Loading Firewall/ACL...</p>
+      </div>
+    </div>
+  );
+}
+
+// Wrapped component for lazy loading FirewallPanel
+function FirewallPanelLazy() {
+  return (
+    <Suspense fallback={<FirewallPanelFallback />}>
+      <FirewallPanel className="h-full" />
+    </Suspense>
+  );
+}
+
+// Loading fallback for VPNPanel
+function VPNPanelFallback() {
+  return (
+    <div className="flex items-center justify-center h-full bg-zinc-950">
+      <div className="text-center">
+        <Key className="w-12 h-12 text-cyan-500 mx-auto mb-3 animate-pulse" />
+        <p className="text-zinc-400 text-sm">Loading VPN/IPSec...</p>
+      </div>
+    </div>
+  );
+}
+
+// Wrapped component for lazy loading VPNPanel
+function VPNPanelLazy() {
+  return (
+    <Suspense fallback={<VPNPanelFallback />}>
+      <VPNPanel className="h-full" />
+    </Suspense>
+  );
+}
 
 interface PageProps {
   params: Promise<{ labId: string }>;
@@ -111,7 +211,7 @@ export default function LabDetailPage({ params }: PageProps) {
     isLocked: rawLabData.isLocked
   } : null;
 
-  const [activeTab, setActiveTab] = useState<'tasks' | 'topology' | 'terminal'>('tasks');
+  const [activeTab, setActiveTab] = useState<'tasks' | 'topology' | 'terminal' | 'capture' | 'security' | 'firewall' | 'vpn'>('tasks');
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
   const [terminalInput, setTerminalInput] = useState('');
 
@@ -482,11 +582,15 @@ export default function LabDetailPage({ params }: PageProps) {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex gap-1 p-1 mb-6 bg-zinc-800/50 rounded-xl border border-zinc-700/50 w-fit">
+        <div className="flex gap-1 p-1 mb-6 bg-zinc-800/50 rounded-xl border border-zinc-700/50 w-fit flex-wrap">
           {[
             { id: 'tasks', label: 'Tugas', icon: CheckCircle2 },
             { id: 'topology', label: 'Topologi', icon: Network },
-            { id: 'terminal', label: 'Terminal', icon: Terminal }
+            { id: 'terminal', label: 'Terminal', icon: Terminal },
+            { id: 'capture', label: 'Capture', icon: Radio },
+            { id: 'security', label: 'IDS/IPS', icon: Shield },
+            { id: 'firewall', label: 'Firewall', icon: Filter },
+            { id: 'vpn', label: 'VPN', icon: Key }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -817,6 +921,74 @@ export default function LabDetailPage({ params }: PageProps) {
                       </button>
                     ))}
                   </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'capture' && (
+              <div className="rounded-2xl bg-zinc-900/80 border border-zinc-800/50 overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-zinc-800/50 border-b border-zinc-700/50">
+                  <div className="flex items-center gap-3">
+                    <Radio className="w-5 h-5 text-cyan-400" />
+                    <span className="text-sm font-medium text-white">Packet Capture</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-zinc-500">Analisis lalu lintas jaringan secara real-time</span>
+                  </div>
+                </div>
+                <div className="h-[600px]">
+                  <PacketCapturePanelLazy />
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'security' && (
+              <div className="rounded-2xl bg-zinc-900/80 border border-zinc-800/50 overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-zinc-800/50 border-b border-zinc-700/50">
+                  <div className="flex items-center gap-3">
+                    <Shield className="w-5 h-5 text-cyan-400" />
+                    <span className="text-sm font-medium text-white">IDS/IPS Security Monitor</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-zinc-500">Deteksi & Pencegahan Intrusi</span>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <IDSPanelLazy />
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'firewall' && (
+              <div className="rounded-2xl bg-zinc-900/80 border border-zinc-800/50 overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-zinc-800/50 border-b border-zinc-700/50">
+                  <div className="flex items-center gap-3">
+                    <Filter className="w-5 h-5 text-cyan-400" />
+                    <span className="text-sm font-medium text-white">Firewall / ACL Manager</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-zinc-500">Access Control & Packet Filtering</span>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <FirewallPanelLazy />
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'vpn' && (
+              <div className="rounded-2xl bg-zinc-900/80 border border-zinc-800/50 overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-zinc-800/50 border-b border-zinc-700/50">
+                  <div className="flex items-center gap-3">
+                    <Key className="w-5 h-5 text-cyan-400" />
+                    <span className="text-sm font-medium text-white">VPN / IPSec</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-zinc-500">Virtual Private Network & Encryption</span>
+                  </div>
+                </div>
+                <div className="h-[600px]">
+                  <VPNPanelLazy />
                 </div>
               </div>
             )}
