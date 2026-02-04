@@ -17,6 +17,8 @@ import {
   ChevronRight,
   Loader2,
   Settings,
+  Layers,
+  X,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -78,13 +80,13 @@ export default function AdminLabsPage() {
   const getDifficultyBadge = (difficulty: string) => {
     switch (difficulty) {
       case 'BEGINNER':
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+        return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20';
       case 'INTERMEDIATE':
-        return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+        return 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20';
       case 'ADVANCED':
-        return 'bg-red-500/10 text-red-400 border-red-500/20';
+        return 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20';
       default:
-        return 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20';
+        return 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-500/20';
     }
   };
 
@@ -104,7 +106,7 @@ export default function AdminLabsPage() {
   if (loading) {
     return (
       <div className="p-6 flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-cyan-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#088395]" />
       </div>
     );
   }
@@ -114,57 +116,66 @@ export default function AdminLabsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">Manajemen Lab</h1>
-          <p className="text-zinc-400">Kelola lab, tugas, dan jawaban yang diharapkan</p>
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Manajemen Lab</h1>
+          <p className="text-zinc-600 dark:text-zinc-400">Kelola lab, tugas, dan jawaban yang diharapkan</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500 text-white font-medium hover:bg-cyan-400 transition-colors">
-          <Plus className="h-5 w-5" />
-          Tambah Lab
-        </button>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard/admin/labs/editor"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+          >
+            <Layers className="h-5 w-5" />
+            Lab Editor
+          </Link>
+          <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#088395] text-white font-medium hover:bg-[#09637E] transition-colors">
+            <Plus className="h-5 w-5" />
+            Tambah Lab
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4">
+        <div className="rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-cyan-500/10">
-              <BookOpen className="h-5 w-5 text-cyan-400" />
+            <div className="p-2 rounded-lg bg-[#088395]/10">
+              <BookOpen className="h-5 w-5 text-[#088395]" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{labs.length}</p>
+              <p className="text-2xl font-bold text-zinc-900 dark:text-white">{labs.length}</p>
               <p className="text-xs text-zinc-500">Total Lab</p>
             </div>
           </div>
         </div>
-        <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4">
+        <div className="rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-emerald-500/10">
-              <Unlock className="h-5 w-5 text-emerald-400" />
+              <Unlock className="h-5 w-5 text-emerald-500" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{labs.filter(l => l.isActive).length}</p>
+              <p className="text-2xl font-bold text-zinc-900 dark:text-white">{labs.filter(l => l.isActive).length}</p>
               <p className="text-xs text-zinc-500">Aktif</p>
             </div>
           </div>
         </div>
-        <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4">
+        <div className="rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-violet-500/10">
-              <Target className="h-5 w-5 text-violet-400" />
+            <div className="p-2 rounded-lg bg-sky-500/10">
+              <Target className="h-5 w-5 text-sky-500" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{labs.reduce((acc, l) => acc + (l._count?.tasks || 0), 0)}</p>
+              <p className="text-2xl font-bold text-zinc-900 dark:text-white">{labs.reduce((acc, l) => acc + (l._count?.tasks || 0), 0)}</p>
               <p className="text-xs text-zinc-500">Total Tugas</p>
             </div>
           </div>
         </div>
-        <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4">
+        <div className="rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-amber-500/10">
-              <Users className="h-5 w-5 text-amber-400" />
+              <Users className="h-5 w-5 text-amber-500" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{labs.reduce((acc, l) => acc + (l._count?.progress || 0), 0)}</p>
+              <p className="text-2xl font-bold text-zinc-900 dark:text-white">{labs.reduce((acc, l) => acc + (l._count?.progress || 0), 0)}</p>
               <p className="text-xs text-zinc-500">Pendaftaran</p>
             </div>
           </div>
@@ -179,7 +190,7 @@ export default function AdminLabsPage() {
           placeholder="Cari lab..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full max-w-md pl-10 pr-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
+          className="w-full max-w-md pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#088395]/50"
         />
       </div>
 
@@ -188,7 +199,7 @@ export default function AdminLabsPage() {
         {filteredLabs.map((lab) => (
           <div
             key={lab.id}
-            className="rounded-2xl border border-zinc-800 bg-zinc-900/50 overflow-hidden hover:border-cyan-500/30 transition-all"
+            className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 overflow-hidden hover:border-[#088395]/30 transition-all"
           >
             {/* Lab Header */}
             <div className="p-6 pb-4">
@@ -199,12 +210,12 @@ export default function AdminLabsPage() {
                     "text-xs font-medium px-2 py-0.5 rounded-full border",
                     getDifficultyBadge(lab.difficulty)
                   )}>
-                    {lab.difficulty}
+                    {lab.difficulty === 'BEGINNER' ? 'Pemula' : lab.difficulty === 'INTERMEDIATE' ? 'Menengah' : 'Lanjutan'}
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
                   {lab.isActive ? (
-                    <span className="text-xs text-emerald-400 flex items-center gap-1">
+                    <span className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                       <CheckCircle className="h-3.5 w-3.5" />
                       Aktif
                     </span>
@@ -217,8 +228,8 @@ export default function AdminLabsPage() {
                 </div>
               </div>
 
-              <h3 className="text-lg font-semibold text-white mb-2">{lab.title}</h3>
-              <p className="text-sm text-zinc-400 line-clamp-2 mb-4">{lab.description}</p>
+              <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-2">{lab.title}</h3>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2 mb-4">{lab.description}</p>
 
               {/* Meta Info */}
               <div className="flex items-center gap-4 text-sm text-zinc-500">
@@ -241,14 +252,18 @@ export default function AdminLabsPage() {
             <div className="px-6 pb-6 flex gap-2">
               <button
                 onClick={() => viewLabTasks(lab)}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition-colors text-sm font-medium"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors text-sm font-medium"
               >
                 <Eye className="h-4 w-4" />
                 Lihat Tugas & Jawaban
               </button>
-              <button title="Edit Lab" className="p-2.5 rounded-xl bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors">
+              <Link 
+                href={`/dashboard/admin/labs/editor?id=${lab.id}`}
+                title="Edit Lab" 
+                className="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-[#088395] transition-colors"
+              >
                 <Edit className="h-4 w-4" />
-              </button>
+              </Link>
             </div>
           </div>
         ))}
@@ -256,26 +271,26 @@ export default function AdminLabsPage() {
 
       {filteredLabs.length === 0 && (
         <div className="text-center py-16">
-          <BookOpen className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-          <p className="text-zinc-400">Lab tidak ditemukan</p>
+          <BookOpen className="h-12 w-12 text-zinc-300 dark:text-zinc-600 mx-auto mb-3" />
+          <p className="text-zinc-500 dark:text-zinc-400">Lab tidak ditemukan</p>
         </div>
       )}
 
       {/* Tasks Modal */}
       {showTasksModal && selectedLab && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 w-full max-w-3xl max-h-[80vh] overflow-hidden">
-            <div className="p-6 border-b border-zinc-800">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 w-full max-w-3xl max-h-[80vh] overflow-hidden shadow-xl">
+            <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-semibold text-white">{selectedLab.title}</h2>
-                  <p className="text-sm text-zinc-400">Tugas dan Jawaban yang Diharapkan</p>
+                  <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">{selectedLab.title}</h2>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400">Tugas dan Jawaban yang Diharapkan</p>
                 </div>
                 <button
                   onClick={() => setShowTasksModal(false)}
-                  className="p-2 rounded-lg hover:bg-zinc-800 text-zinc-400"
+                  className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 transition-colors"
                 >
-                  ×
+                  <X className="h-5 w-5" />
                 </button>
               </div>
             </div>
@@ -283,18 +298,18 @@ export default function AdminLabsPage() {
               {selectedLab.tasks && selectedLab.tasks.length > 0 ? (
                 <div className="space-y-4">
                   {selectedLab.tasks.map((task, index) => (
-                    <div key={task.id} className="rounded-xl border border-zinc-800 bg-zinc-800/50 p-4">
+                    <div key={task.id} className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 p-4">
                       <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-medium text-white">
+                        <h4 className="font-medium text-zinc-900 dark:text-white">
                           Tugas {index + 1}: {task.title}
                         </h4>
-                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-cyan-500/10 text-cyan-400">
+                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-[#088395]/10 text-[#088395]">
                           {task.points} pts
                         </span>
                       </div>
-                      <div className="mt-3 p-3 rounded-lg bg-zinc-900 border border-zinc-700">
+                      <div className="mt-3 p-3 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700">
                         <p className="text-xs text-zinc-500 mb-1">Jawaban yang Diharapkan:</p>
-                        <code className="text-sm text-emerald-400 font-mono">
+                        <code className="text-sm text-emerald-600 dark:text-emerald-400 font-mono">
                           {task.expectedAnswer}
                         </code>
                       </div>
@@ -303,15 +318,15 @@ export default function AdminLabsPage() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <Target className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-                  <p className="text-zinc-400">Tidak ada tugas yang dikonfigurasi untuk lab ini</p>
+                  <Target className="h-12 w-12 text-zinc-300 dark:text-zinc-600 mx-auto mb-3" />
+                  <p className="text-zinc-500 dark:text-zinc-400">Tidak ada tugas yang dikonfigurasi untuk lab ini</p>
                 </div>
               )}
             </div>
-            <div className="p-6 border-t border-zinc-800">
+            <div className="p-6 border-t border-zinc-200 dark:border-zinc-800">
               <button
                 onClick={() => setShowTasksModal(false)}
-                className="w-full py-3 rounded-xl bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition-colors font-medium"
+                className="w-full py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors font-medium"
               >
                 Tutup
               </button>

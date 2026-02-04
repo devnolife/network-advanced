@@ -6,7 +6,7 @@ import { ReactNode } from 'react';
 type BadgeVariant = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info';
 type BadgeSize = 'sm' | 'md' | 'lg';
 
-interface BadgeProps {
+export interface BadgeProps {
   children: ReactNode;
   variant?: BadgeVariant;
   size?: BadgeSize;

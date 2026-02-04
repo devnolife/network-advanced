@@ -157,7 +157,7 @@ export default function AdminStudentsPage() {
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <p className="text-red-400 mb-4">{error}</p>
           <Link href="/dashboard/admin" className="btn btn-primary">
-            Kembali ke Dasbor
+            Kembali ke Dashboard
           </Link>
         </div>
       </div>

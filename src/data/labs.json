@@ -1828,5 +1828,1081 @@
             }
         ],
         "hints": []
+    },
+    {
+        "id": "lab-9",
+        "number": 9,
+        "title": "VPN Fundamentals - IKE & IPSec",
+        "description": "Pelajari konsep dasar VPN, proses negosiasi IKE (Internet Key Exchange), dan protokol IPSec. Pahami bagaimana tunnel terenkripsi dibuat antara dua endpoint.",
+        "objectives": [
+            "Memahami konsep VPN dan jenis-jenisnya",
+            "Mempelajari proses negosiasi IKE Phase 1 dan Phase 2",
+            "Memahami protokol ESP dan AH",
+            "Mengkonfigurasi site-to-site VPN dasar",
+            "Memverifikasi status tunnel dan Security Associations"
+        ],
+        "difficulty": "INTERMEDIATE",
+        "durationMinutes": 60,
+        "maxScore": 100,
+        "isLocked": true,
+        "prerequisite": "lab-8",
+        "topology": {
+            "devices": [
+                {
+                    "id": "hq-pc",
+                    "type": "pc",
+                    "name": "HQ Workstation",
+                    "hostname": "HQ-PC",
+                    "x": 80,
+                    "y": 200,
+                    "initialConfig": {
+                        "ip": "192.168.1.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "192.168.1.1"
+                    }
+                },
+                {
+                    "id": "hq-vpn",
+                    "type": "router",
+                    "name": "HQ VPN Gateway",
+                    "hostname": "HQ-VPN",
+                    "x": 250,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "192.168.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "203.0.113.1",
+                                "mask": "255.255.255.252"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "internet",
+                    "type": "router",
+                    "name": "Internet",
+                    "hostname": "ISP",
+                    "x": 400,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "203.0.113.2",
+                                "mask": "255.255.255.252"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "198.51.100.2",
+                                "mask": "255.255.255.252"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "branch-vpn",
+                    "type": "router",
+                    "name": "Branch VPN Gateway",
+                    "hostname": "BR-VPN",
+                    "x": 550,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "192.168.2.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "198.51.100.1",
+                                "mask": "255.255.255.252"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "branch-pc",
+                    "type": "pc",
+                    "name": "Branch Workstation",
+                    "hostname": "BR-PC",
+                    "x": 720,
+                    "y": 200,
+                    "initialConfig": {
+                        "ip": "192.168.2.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "192.168.2.1"
+                    }
+                }
+            ],
+            "links": [
+                {
+                    "source": {
+                        "device": "hq-pc",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "hq-vpn",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "hq-vpn",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "internet",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "internet",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "branch-vpn",
+                        "interface": "GigabitEthernet0/1"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "branch-vpn",
+                        "interface": "GigabitEthernet0/0"
+                    },
+                    "destination": {
+                        "device": "branch-pc",
+                        "interface": "Ethernet0"
+                    }
+                }
+            ]
+        },
+        "tasks": [
+            {
+                "id": "t9-1",
+                "title": "Konfigurasi IKE Policy",
+                "description": "Buat ISAKMP policy dengan enkripsi AES-256, hash SHA-256, dan DH group 14",
+                "points": 15,
+                "order": 1,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-vpn",
+                    "expected": {
+                        "isakmp-policy": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t9-2",
+                "title": "Set Pre-Shared Key",
+                "description": "Konfigurasi pre-shared key untuk peer VPN (198.51.100.1)",
+                "points": 10,
+                "order": 2,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-vpn",
+                    "expected": {
+                        "psk": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t9-3",
+                "title": "Buat IPSec Transform Set",
+                "description": "Definisikan transform set dengan ESP-AES-256 dan ESP-SHA-HMAC",
+                "points": 15,
+                "order": 3,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-vpn",
+                    "expected": {
+                        "transform-set": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t9-4",
+                "title": "Buat ACL untuk VPN Traffic",
+                "description": "Buat access-list untuk mendefinisikan interesting traffic (192.168.1.0/24 ke 192.168.2.0/24)",
+                "points": 10,
+                "order": 4,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-vpn",
+                    "expected": {
+                        "vpn-acl": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t9-5",
+                "title": "Konfigurasi Crypto Map",
+                "description": "Buat crypto map dan terapkan ke interface outside",
+                "points": 15,
+                "order": 5,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-vpn",
+                    "expected": {
+                        "crypto-map": "applied"
+                    }
+                }
+            },
+            {
+                "id": "t9-6",
+                "title": "Verifikasi IKE SA",
+                "description": "Tampilkan status IKE Security Association",
+                "points": 10,
+                "order": 6,
+                "validation": {
+                    "type": "command-executed",
+                    "device": "hq-vpn",
+                    "command": "show crypto isakmp sa"
+                }
+            },
+            {
+                "id": "t9-7",
+                "title": "Verifikasi IPSec SA",
+                "description": "Tampilkan detail IPSec Security Association",
+                "points": 10,
+                "order": 7,
+                "validation": {
+                    "type": "command-executed",
+                    "device": "hq-vpn",
+                    "command": "show crypto ipsec sa"
+                }
+            },
+            {
+                "id": "t9-8",
+                "title": "Test Konektivitas VPN",
+                "description": "Ping dari HQ-PC ke Branch-PC melalui VPN tunnel",
+                "points": 15,
+                "order": 8,
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "hq-pc",
+                    "to": "192.168.2.100"
+                }
+            }
+        ],
+        "hints": [
+            {
+                "id": "h9-1",
+                "taskId": "t9-1",
+                "content": "Gunakan: crypto isakmp policy 10 / encryption aes 256 / hash sha256 / authentication pre-share / group 14 / lifetime 86400",
+                "pointCost": 3,
+                "order": 1
+            },
+            {
+                "id": "h9-2",
+                "taskId": "t9-2",
+                "content": "Gunakan: crypto isakmp key [KEY] address 198.51.100.1",
+                "pointCost": 2,
+                "order": 1
+            },
+            {
+                "id": "h9-3",
+                "taskId": "t9-3",
+                "content": "Gunakan: crypto ipsec transform-set VPN-TS esp-aes 256 esp-sha-hmac / mode tunnel",
+                "pointCost": 3,
+                "order": 1
+            },
+            {
+                "id": "h9-5",
+                "taskId": "t9-5",
+                "content": "Gunakan: crypto map VPN-MAP 10 ipsec-isakmp / set peer 198.51.100.1 / set transform-set VPN-TS / match address VPN-ACL",
+                "pointCost": 4,
+                "order": 1
+            }
+        ]
+    },
+    {
+        "id": "lab-10",
+        "number": 10,
+        "title": "Advanced VPN - GRE over IPSec & Troubleshooting",
+        "description": "Implementasi GRE over IPSec untuk mendukung routing protocol melalui VPN, teknik troubleshooting VPN, dan analisis packet terenkripsi.",
+        "objectives": [
+            "Memahami perbedaan pure IPSec vs GRE over IPSec",
+            "Mengkonfigurasi GRE tunnel dengan IPSec protection",
+            "Menjalankan routing protocol (EIGRP/OSPF) melalui GRE tunnel",
+            "Troubleshoot masalah VPN umum",
+            "Menganalisis ESP packets dengan VPN panel"
+        ],
+        "difficulty": "ADVANCED",
+        "durationMinutes": 75,
+        "maxScore": 100,
+        "isLocked": true,
+        "prerequisite": "lab-9",
+        "topology": {
+            "devices": [
+                {
+                    "id": "hq-lan1",
+                    "type": "pc",
+                    "name": "HQ Server 1",
+                    "hostname": "HQ-S1",
+                    "x": 50,
+                    "y": 120,
+                    "initialConfig": {
+                        "ip": "10.1.1.10",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.1.1.1"
+                    }
+                },
+                {
+                    "id": "hq-lan2",
+                    "type": "pc",
+                    "name": "HQ Server 2",
+                    "hostname": "HQ-S2",
+                    "x": 50,
+                    "y": 280,
+                    "initialConfig": {
+                        "ip": "10.1.2.10",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.1.2.1"
+                    }
+                },
+                {
+                    "id": "hq-router",
+                    "type": "router",
+                    "name": "HQ Core Router",
+                    "hostname": "HQ-R",
+                    "x": 200,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.1.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "10.1.2.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/2",
+                                "ip": "203.0.113.1",
+                                "mask": "255.255.255.252"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "internet",
+                    "type": "router",
+                    "name": "Internet/ISP",
+                    "hostname": "ISP",
+                    "x": 400,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "203.0.113.2",
+                                "mask": "255.255.255.252"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "198.51.100.2",
+                                "mask": "255.255.255.252"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "dc-router",
+                    "type": "router",
+                    "name": "Data Center Router",
+                    "hostname": "DC-R",
+                    "x": 600,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.10.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "10.10.2.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/2",
+                                "ip": "198.51.100.1",
+                                "mask": "255.255.255.252"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "dc-server1",
+                    "type": "pc",
+                    "name": "DC App Server",
+                    "hostname": "DC-App",
+                    "x": 750,
+                    "y": 120,
+                    "initialConfig": {
+                        "ip": "10.10.1.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.10.1.1"
+                    }
+                },
+                {
+                    "id": "dc-server2",
+                    "type": "pc",
+                    "name": "DC Database",
+                    "hostname": "DC-DB",
+                    "x": 750,
+                    "y": 280,
+                    "initialConfig": {
+                        "ip": "10.10.2.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.10.2.1"
+                    }
+                }
+            ],
+            "links": [
+                {
+                    "source": {
+                        "device": "hq-lan1",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "hq-router",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "hq-lan2",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "hq-router",
+                        "interface": "GigabitEthernet0/1"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "hq-router",
+                        "interface": "GigabitEthernet0/2"
+                    },
+                    "destination": {
+                        "device": "internet",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "internet",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "dc-router",
+                        "interface": "GigabitEthernet0/2"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "dc-router",
+                        "interface": "GigabitEthernet0/0"
+                    },
+                    "destination": {
+                        "device": "dc-server1",
+                        "interface": "Ethernet0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "dc-router",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "dc-server2",
+                        "interface": "Ethernet0"
+                    }
+                }
+            ]
+        },
+        "tasks": [
+            {
+                "id": "t10-1",
+                "title": "Konfigurasi GRE Tunnel",
+                "description": "Buat GRE tunnel interface dengan tunnel source dan destination",
+                "points": 15,
+                "order": 1,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-router",
+                    "expected": {
+                        "gre-tunnel": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t10-2",
+                "title": "Proteksi GRE dengan IPSec",
+                "description": "Konfigurasi IPSec profile dan terapkan ke GRE tunnel",
+                "points": 20,
+                "order": 2,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-router",
+                    "expected": {
+                        "tunnel-protection": "ipsec"
+                    }
+                }
+            },
+            {
+                "id": "t10-3",
+                "title": "Setup EIGRP over GRE",
+                "description": "Konfigurasi EIGRP untuk advertise semua network melalui GRE tunnel",
+                "points": 15,
+                "order": 3,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-router",
+                    "expected": {
+                        "eigrp": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t10-4",
+                "title": "Verifikasi EIGRP Neighbor",
+                "description": "Pastikan EIGRP neighbor terbentuk melalui tunnel",
+                "points": 10,
+                "order": 4,
+                "validation": {
+                    "type": "command-executed",
+                    "device": "hq-router",
+                    "command": "show ip eigrp neighbors"
+                }
+            },
+            {
+                "id": "t10-5",
+                "title": "Analisis VPN Traffic",
+                "description": "Gunakan VPN panel untuk melihat ESP packet encapsulation",
+                "points": 15,
+                "order": 5,
+                "validation": {
+                    "type": "vpn-packet-captured",
+                    "expected": {
+                        "esp-packets": true
+                    }
+                }
+            },
+            {
+                "id": "t10-6",
+                "title": "Troubleshoot: IKE Mismatch",
+                "description": "Identifikasi dan perbaiki IKE policy mismatch (skenario simulasi)",
+                "points": 15,
+                "order": 6,
+                "validation": {
+                    "type": "troubleshoot-complete",
+                    "issue": "ike-mismatch"
+                }
+            },
+            {
+                "id": "t10-7",
+                "title": "Test Multi-Subnet Connectivity",
+                "description": "Verifikasi konektivitas dari semua HQ subnets ke semua DC subnets",
+                "points": 10,
+                "order": 7,
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "hq-lan1",
+                    "to": "10.10.2.100"
+                }
+            }
+        ],
+        "hints": [
+            {
+                "id": "h10-1",
+                "taskId": "t10-1",
+                "content": "GRE Tunnel: interface Tunnel0 / ip address 172.16.0.1 255.255.255.252 / tunnel source Gi0/2 / tunnel destination 198.51.100.1",
+                "pointCost": 3,
+                "order": 1
+            },
+            {
+                "id": "h10-2",
+                "taskId": "t10-2",
+                "content": "IPSec Profile: crypto ipsec profile GRE-PROTECT / set transform-set VPN-TS. Lalu pada tunnel: tunnel protection ipsec profile GRE-PROTECT",
+                "pointCost": 4,
+                "order": 1
+            },
+            {
+                "id": "h10-3",
+                "taskId": "t10-3",
+                "content": "EIGRP: router eigrp 100 / network 10.1.0.0 0.0.255.255 / network 172.16.0.0 0.0.0.3 / no auto-summary",
+                "pointCost": 3,
+                "order": 1
+            },
+            {
+                "id": "h10-6",
+                "taskId": "t10-6",
+                "content": "Debug IKE: debug crypto isakmp. Cek apakah encryption, hash, DH group, dan lifetime match di kedua sisi.",
+                "pointCost": 3,
+                "order": 1
+            }
+        ]
+    },
+    {
+        "id": "lab-11",
+        "number": 11,
+        "title": "UAS: Enterprise Network Security Implementation",
+        "description": "Ujian Akhir Semester - Implementasi lengkap infrastruktur keamanan jaringan enterprise dengan VPN multi-site, firewall zones, IDS/IPS, dan secure routing.",
+        "objectives": [
+            "Desain dan implementasi arsitektur keamanan enterprise",
+            "Konfigurasi VPN hub-and-spoke topology",
+            "Implementasi defense-in-depth dengan multiple security layers",
+            "Deploy zona DMZ untuk layanan publik",
+            "Integrasi IDS/IPS dengan alerting",
+            "Dokumentasi dan presentasi desain keamanan"
+        ],
+        "difficulty": "ADVANCED",
+        "durationMinutes": 150,
+        "maxScore": 100,
+        "isLocked": true,
+        "prerequisite": "lab-10",
+        "topology": {
+            "devices": [
+                {
+                    "id": "hq-internal",
+                    "type": "pc",
+                    "name": "HQ Internal Network",
+                    "hostname": "HQ-INT",
+                    "x": 50,
+                    "y": 150,
+                    "initialConfig": {
+                        "ip": "10.0.1.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.0.1.1"
+                    }
+                },
+                {
+                    "id": "hq-firewall",
+                    "type": "router",
+                    "name": "HQ Firewall",
+                    "hostname": "HQ-FW",
+                    "x": 180,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.0.1.1",
+                                "mask": "255.255.255.0",
+                                "zone": "inside"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "172.16.0.1",
+                                "mask": "255.255.255.0",
+                                "zone": "dmz"
+                            },
+                            {
+                                "name": "GigabitEthernet0/2",
+                                "ip": "203.0.113.1",
+                                "mask": "255.255.255.252",
+                                "zone": "outside"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "dmz-web",
+                    "type": "pc",
+                    "name": "DMZ Web Server",
+                    "hostname": "DMZ-WEB",
+                    "x": 180,
+                    "y": 80,
+                    "initialConfig": {
+                        "ip": "172.16.0.10",
+                        "mask": "255.255.255.0",
+                        "gateway": "172.16.0.1"
+                    }
+                },
+                {
+                    "id": "dmz-mail",
+                    "type": "pc",
+                    "name": "DMZ Mail Server",
+                    "hostname": "DMZ-MAIL",
+                    "x": 180,
+                    "y": 320,
+                    "initialConfig": {
+                        "ip": "172.16.0.20",
+                        "mask": "255.255.255.0",
+                        "gateway": "172.16.0.1"
+                    }
+                },
+                {
+                    "id": "internet-edge",
+                    "type": "router",
+                    "name": "Internet Edge",
+                    "hostname": "ISP",
+                    "x": 400,
+                    "y": 200,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "203.0.113.2",
+                                "mask": "255.255.255.252"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "198.51.100.2",
+                                "mask": "255.255.255.252"
+                            },
+                            {
+                                "name": "GigabitEthernet0/2",
+                                "ip": "192.0.2.2",
+                                "mask": "255.255.255.252"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "branch1-router",
+                    "type": "router",
+                    "name": "Branch 1 Router",
+                    "hostname": "BR1-R",
+                    "x": 550,
+                    "y": 100,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.1.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "198.51.100.1",
+                                "mask": "255.255.255.252"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "branch1-pc",
+                    "type": "pc",
+                    "name": "Branch 1 PC",
+                    "hostname": "BR1-PC",
+                    "x": 700,
+                    "y": 100,
+                    "initialConfig": {
+                        "ip": "10.1.1.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.1.1.1"
+                    }
+                },
+                {
+                    "id": "branch2-router",
+                    "type": "router",
+                    "name": "Branch 2 Router",
+                    "hostname": "BR2-R",
+                    "x": 550,
+                    "y": 300,
+                    "initialConfig": {
+                        "interfaces": [
+                            {
+                                "name": "GigabitEthernet0/0",
+                                "ip": "10.2.1.1",
+                                "mask": "255.255.255.0"
+                            },
+                            {
+                                "name": "GigabitEthernet0/1",
+                                "ip": "192.0.2.1",
+                                "mask": "255.255.255.252"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "branch2-pc",
+                    "type": "pc",
+                    "name": "Branch 2 PC",
+                    "hostname": "BR2-PC",
+                    "x": 700,
+                    "y": 300,
+                    "initialConfig": {
+                        "ip": "10.2.1.100",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.2.1.1"
+                    }
+                },
+                {
+                    "id": "ids-sensor",
+                    "type": "pc",
+                    "name": "IDS Sensor",
+                    "hostname": "IDS",
+                    "x": 300,
+                    "y": 320,
+                    "initialConfig": {
+                        "ip": "10.0.1.200",
+                        "mask": "255.255.255.0",
+                        "gateway": "10.0.1.1"
+                    }
+                }
+            ],
+            "links": [
+                {
+                    "source": {
+                        "device": "hq-internal",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "hq-firewall",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "ids-sensor",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "hq-firewall",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "dmz-web",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "hq-firewall",
+                        "interface": "GigabitEthernet0/1"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "dmz-mail",
+                        "interface": "Ethernet0"
+                    },
+                    "destination": {
+                        "device": "hq-firewall",
+                        "interface": "GigabitEthernet0/1"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "hq-firewall",
+                        "interface": "GigabitEthernet0/2"
+                    },
+                    "destination": {
+                        "device": "internet-edge",
+                        "interface": "GigabitEthernet0/0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "internet-edge",
+                        "interface": "GigabitEthernet0/1"
+                    },
+                    "destination": {
+                        "device": "branch1-router",
+                        "interface": "GigabitEthernet0/1"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "branch1-router",
+                        "interface": "GigabitEthernet0/0"
+                    },
+                    "destination": {
+                        "device": "branch1-pc",
+                        "interface": "Ethernet0"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "internet-edge",
+                        "interface": "GigabitEthernet0/2"
+                    },
+                    "destination": {
+                        "device": "branch2-router",
+                        "interface": "GigabitEthernet0/1"
+                    }
+                },
+                {
+                    "source": {
+                        "device": "branch2-router",
+                        "interface": "GigabitEthernet0/0"
+                    },
+                    "destination": {
+                        "device": "branch2-pc",
+                        "interface": "Ethernet0"
+                    }
+                }
+            ]
+        },
+        "tasks": [
+            {
+                "id": "t11-1",
+                "title": "Konfigurasi Security Zones",
+                "description": "Setup zona Inside, Outside, dan DMZ pada HQ Firewall",
+                "points": 10,
+                "order": 1,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-firewall",
+                    "expected": {
+                        "security-zones": ["inside", "dmz", "outside"]
+                    }
+                }
+            },
+            {
+                "id": "t11-2",
+                "title": "Implementasi Zone-Based Policy",
+                "description": "Buat kebijakan: Inside->Outside (allow), Inside->DMZ (allow limited), Outside->DMZ (allow web/mail only), DMZ->Inside (deny)",
+                "points": 15,
+                "order": 2,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-firewall",
+                    "expected": {
+                        "zone-policies": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t11-3",
+                "title": "Setup VPN Hub (HQ)",
+                "description": "Konfigurasi HQ sebagai VPN hub untuk koneksi dari kedua branches",
+                "points": 15,
+                "order": 3,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-firewall",
+                    "expected": {
+                        "vpn-hub": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t11-4",
+                "title": "Setup VPN Spoke - Branch 1",
+                "description": "Konfigurasi Branch 1 sebagai VPN spoke ke HQ",
+                "points": 10,
+                "order": 4,
+                "validation": {
+                    "type": "tunnel-status",
+                    "tunnel": "hq-to-branch1",
+                    "status": "up"
+                }
+            },
+            {
+                "id": "t11-5",
+                "title": "Setup VPN Spoke - Branch 2",
+                "description": "Konfigurasi Branch 2 sebagai VPN spoke ke HQ",
+                "points": 10,
+                "order": 5,
+                "validation": {
+                    "type": "tunnel-status",
+                    "tunnel": "hq-to-branch2",
+                    "status": "up"
+                }
+            },
+            {
+                "id": "t11-6",
+                "title": "Konfigurasi NAT untuk DMZ",
+                "description": "Setup static NAT untuk web server dan mail server di DMZ",
+                "points": 10,
+                "order": 6,
+                "validation": {
+                    "type": "config-check",
+                    "device": "hq-firewall",
+                    "expected": {
+                        "dmz-nat": "configured"
+                    }
+                }
+            },
+            {
+                "id": "t11-7",
+                "title": "Deploy IDS dengan Rules",
+                "description": "Aktifkan IDS sensor dan buat rules untuk mendeteksi VPN brute force dan port scan",
+                "points": 10,
+                "order": 7,
+                "validation": {
+                    "type": "config-check",
+                    "device": "ids-sensor",
+                    "expected": {
+                        "ids-rules": ["vpn-bruteforce", "portscan"]
+                    }
+                }
+            },
+            {
+                "id": "t11-8",
+                "title": "Test Branch-to-Branch via Hub",
+                "description": "Verifikasi konektivitas Branch1 ke Branch2 melalui HQ hub",
+                "points": 10,
+                "order": 8,
+                "validation": {
+                    "type": "connectivity-test",
+                    "from": "branch1-pc",
+                    "to": "10.2.1.100"
+                }
+            },
+            {
+                "id": "t11-9",
+                "title": "Test External Access ke DMZ",
+                "description": "Simulasi akses dari internet ke web server di DMZ",
+                "points": 5,
+                "order": 9,
+                "validation": {
+                    "type": "service-test",
+                    "service": "http",
+                    "target": "dmz-web"
+                }
+            },
+            {
+                "id": "t11-10",
+                "title": "Generate Security Report",
+                "description": "Buat laporan komprehensif termasuk topologi, konfigurasi, dan security posture",
+                "points": 5,
+                "order": 10,
+                "validation": {
+                    "type": "report-generated",
+                    "sections": ["topology", "vpn", "firewall", "ids"]
+                }
+            }
+        ],
+        "hints": [
+            {
+                "id": "h11-2",
+                "taskId": "t11-2",
+                "content": "Zone policy: zone-pair security INSIDE-OUTSIDE source inside destination outside / service-policy type inspect ALLOW-OUT",
+                "pointCost": 3,
+                "order": 1
+            },
+            {
+                "id": "h11-3",
+                "taskId": "t11-3",
+                "content": "VPN Hub: Buat multiple crypto map entries dengan sequence berbeda untuk setiap branch peer",
+                "pointCost": 4,
+                "order": 1
+            },
+            {
+                "id": "h11-7",
+                "taskId": "t11-7",
+                "content": "IDS Rule untuk VPN brute force: alert udp any any -> any 500 (msg:\"IKE Brute Force\"; threshold:type threshold, track by_src, count 10, seconds 60; sid:1000010;)",
+                "pointCost": 3,
+                "order": 1
+            }
+        ]
     }
 ]

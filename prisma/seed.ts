@@ -83,6 +83,7 @@ async function seedUsers() {
   // Create Student Users
   const studentPassword = await bcrypt.hash('student123', 12)
   const students = [
+    { username: 'student', name: 'Demo Student' },
     { username: 'ahmad', name: 'Ahmad Mahasiswa' },
     { username: 'budi', name: 'Budi Pelajar' },
     { username: 'citra', name: 'Citra Siswa' },

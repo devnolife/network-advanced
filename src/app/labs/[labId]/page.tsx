@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, use, useEffect, lazy, Suspense } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
   Play,
@@ -33,6 +34,7 @@ import {
   Shield,
   Filter,
   Key,
+  Loader2,
 } from 'lucide-react';
 
 // Import labs data
@@ -160,8 +162,34 @@ function isLabAccessible(labId: string): boolean {
 }
 
 export default function LabDetailPage({ params }: PageProps) {
+  const router = useRouter();
   const resolvedParams = use(params);
   const labId = resolvedParams.labId.startsWith('lab-') ? resolvedParams.labId : `lab-${resolvedParams.labId}`;
+
+  // Authentication state
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check authentication on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          setIsAuthenticated(true);
+        } else {
+          // Not authenticated, redirect to login
+          router.push(`/login?redirect=/labs/${resolvedParams.labId}`);
+        }
+      } catch {
+        router.push(`/login?redirect=/labs/${resolvedParams.labId}`);
+      } finally {
+        setIsAuthLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [router, resolvedParams.labId]);
 
   // Find lab data from labs.json
   const rawLabData = labsData.find(l => l.id === labId || l.number.toString() === resolvedParams.labId);
@@ -321,6 +349,23 @@ export default function LabDetailPage({ params }: PageProps) {
       `-${cost} poin telah digunakan.`
     );
   };
+
+  // Show auth loading state
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-[#088395] animate-spin mx-auto mb-4" />
+          <p className="text-zinc-400">Memverifikasi akses...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Not authenticated (should have redirected, but just in case)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // Show loading/not found state
   if (!labData) {
@@ -497,15 +542,15 @@ export default function LabDetailPage({ params }: PageProps) {
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-zinc-950/80 border-b border-zinc-800/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <a href="/labs" title="Back to Labs" className="p-2 rounded-xl bg-zinc-800/50 hover:bg-zinc-700/50 border border-zinc-700/50 transition-all duration-300 hover:scale-105">
+          <div className="flex items-center justify-between h-20 py-4">
+            <div className="flex items-center gap-4">
+              <a href="/labs" title="Back to Labs" className="p-2.5 rounded-xl bg-zinc-800/50 hover:bg-zinc-700/50 border border-zinc-700/50 transition-all duration-300 hover:scale-105">
                 <ArrowLeft className="w-5 h-5 text-zinc-300" />
               </a>
-              <div>
+              <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-zinc-500">Lab {resolvedParams.labId}</span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium border text-emerald-400 bg-emerald-500/10 border-emerald-500/30">
+                  <span className="text-xs font-medium text-zinc-500">Lab lab-{resolvedParams.labId}</span>
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-medium border text-emerald-400 bg-emerald-500/10 border-emerald-500/30">
                     {labData.difficulty}
                   </span>
                 </div>
@@ -517,15 +562,15 @@ export default function LabDetailPage({ params }: PageProps) {
 
             {/* Progress & Actions */}
             <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-800/50 border border-zinc-700/50">
+              <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-800/50 border border-zinc-700/50">
                 <Clock className="w-4 h-4 text-zinc-500" />
                 <span className="text-sm text-zinc-400">{labData.duration}</span>
               </div>
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
+              <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20">
                 <Sparkles className="w-4 h-4 text-amber-400" />
                 <span className="text-sm font-bold text-amber-400">{labData.xp} XP</span>
               </div>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-900 font-semibold transition-all duration-300 hover:scale-105">
+              <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#088395] hover:bg-[#09637E] text-white font-semibold transition-all duration-300 hover:scale-105">
                 <RotateCcw className="w-4 h-4" />
                 <span className="hidden sm:inline">Reset Lab</span>
               </button>

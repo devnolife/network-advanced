@@ -13,10 +13,41 @@ import {
   Target,
   Star,
   Shield,
-  Loader2,
+  TrendingUp,
+  Calendar,
+  Zap,
+  Award,
+  ChevronRight,
+  Network,
+  Server,
+  Settings,
+  Globe,
+  Layers,
+  Monitor,
+  Wifi,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  StatCard,
+  ProgressBar,
+  CircularProgress,
+  SkeletonDashboard,
+  EmptyState,
+  StatusBadge,
+} from '@/components/ui';
+
+// ============================================================================
+// Types & Constants
+// ============================================================================
+
+interface LabProgress {
+  startedAt: string | null;
+  completedAt: string | null;
+  currentScore: number;
+  tasksCompleted: number;
+}
 
 interface Lab {
   id: string;
@@ -27,13 +58,8 @@ interface Lab {
   durationMinutes: number;
   totalTasks: number;
   isLocked: boolean;
-  lockedReason: string | null;
-  progress: {
-    startedAt: string;
-    completedAt: string | null;
-    currentScore: number;
-    tasksCompleted: number;
-  } | null;
+  progress: LabProgress | null;
+  icon: string;
 }
 
 interface Achievement {
@@ -44,67 +70,620 @@ interface Achievement {
   unlockedAt: string | null;
 }
 
+// 8 Fixed labs matching the course structure
+const FIXED_LABS: Omit<Lab, 'progress' | 'isLocked'>[] = [
+  {
+    id: 'lab-1',
+    number: 1,
+    title: 'Pengenalan Jaringan Komputer',
+    description: 'Mempelajari konsep dasar jaringan komputer, model OSI, dan TCP/IP.',
+    difficulty: 'BEGINNER',
+    durationMinutes: 45,
+    totalTasks: 5,
+    icon: 'network',
+  },
+  {
+    id: 'lab-2',
+    number: 2,
+    title: 'Konfigurasi IP Address & Subnetting',
+    description: 'Belajar mengkonfigurasi IP Address dan menghitung subnetting.',
+    difficulty: 'BEGINNER',
+    durationMinutes: 60,
+    totalTasks: 6,
+    icon: 'settings',
+  },
+  {
+    id: 'lab-3',
+    number: 3,
+    title: 'Konfigurasi Router Dasar',
+    description: 'Mempelajari konfigurasi dasar router dan routing table.',
+    difficulty: 'INTERMEDIATE',
+    durationMinutes: 75,
+    totalTasks: 7,
+    icon: 'server',
+  },
+  {
+    id: 'lab-4',
+    number: 4,
+    title: 'Routing Static & Dynamic',
+    description: 'Implementasi routing static dan dynamic (RIP, OSPF).',
+    difficulty: 'INTERMEDIATE',
+    durationMinutes: 90,
+    totalTasks: 8,
+    icon: 'globe',
+  },
+  {
+    id: 'lab-5',
+    number: 5,
+    title: 'Konfigurasi Switch & VLAN',
+    description: 'Belajar konfigurasi switch dan membuat VLAN.',
+    difficulty: 'INTERMEDIATE',
+    durationMinutes: 90,
+    totalTasks: 8,
+    icon: 'layers',
+  },
+  {
+    id: 'lab-6',
+    number: 6,
+    title: 'Firewall & Network Security',
+    description: 'Implementasi firewall dan access control list.',
+    difficulty: 'ADVANCED',
+    durationMinutes: 120,
+    totalTasks: 10,
+    icon: 'shield',
+  },
+  {
+    id: 'lab-7',
+    number: 7,
+    title: 'Network Monitoring & Troubleshooting',
+    description: 'Teknik monitoring dan troubleshooting jaringan.',
+    difficulty: 'ADVANCED',
+    durationMinutes: 90,
+    totalTasks: 8,
+    icon: 'monitor',
+  },
+  {
+    id: 'lab-8',
+    number: 8,
+    title: 'Implementasi Jaringan Lengkap',
+    description: 'Project akhir implementasi jaringan enterprise.',
+    difficulty: 'ADVANCED',
+    durationMinutes: 150,
+    totalTasks: 12,
+    icon: 'wifi',
+  },
+];
+
+const labIcons: Record<string, typeof Network> = {
+  network: Network,
+  settings: Settings,
+  server: Server,
+  globe: Globe,
+  layers: Layers,
+  shield: Shield,
+  monitor: Monitor,
+  wifi: Wifi,
+};
+
 const achievementIcons: Record<string, typeof Star> = {
   star: Star,
   flame: Flame,
   shield: Shield,
   target: Target,
   trophy: Trophy,
+  award: Award,
+  zap: Zap,
 };
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+const getLabStatus = (lab: Lab): 'completed' | 'in-progress' | 'available' | 'locked' => {
+  if (lab.isLocked) return 'locked';
+  if (lab.progress?.completedAt) return 'completed';
+  if (lab.progress?.tasksCompleted && lab.progress.tasksCompleted > 0) return 'in-progress';
+  return 'available';
+};
+
+const getProgressPercent = (lab: Lab): number => {
+  if (!lab.progress || lab.totalTasks === 0) return 0;
+  return Math.round((lab.progress.tasksCompleted / lab.totalTasks) * 100);
+};
+
+const formatDifficulty = (difficulty: string): string => {
+  switch (difficulty) {
+    case 'BEGINNER': return 'Pemula';
+    case 'INTERMEDIATE': return 'Menengah';
+    case 'ADVANCED': return 'Lanjutan';
+    default: return difficulty.charAt(0) + difficulty.slice(1).toLowerCase();
+  }
+};
+
+const formatTime = (minutes: number): string => {
+  if (minutes < 60) return `${minutes} menit`;
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return mins > 0 ? `${hours}.${Math.round(mins / 6)} jam` : `${hours} jam`;
+};
+
+const getDifficultyColor = (difficulty: string): 'success' | 'warning' | 'error' => {
+  switch (difficulty) {
+    case 'BEGINNER': return 'success';
+    case 'INTERMEDIATE': return 'warning';
+    case 'ADVANCED': return 'error';
+    default: return 'success';
+  }
+};
+
+// ============================================================================
+// Components
+// ============================================================================
+
+function WelcomeBanner({ 
+  completedLabs, 
+  totalLabs, 
+  overallProgress,
+  userName,
+}: { 
+  completedLabs: number; 
+  totalLabs: number; 
+  overallProgress: number;
+  userName: string;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#088395]/20 via-[#09637E]/15 to-[#7AB2B2]/10 border border-[#088395]/30 p-6 mb-6"
+    >
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-[#088395]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#7AB2B2]/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+      
+      <div className="relative z-10">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+              Selamat datang, {userName}! 
+              <span className="text-3xl">👋</span>
+            </h2>
+            <p className="text-[var(--color-muted-foreground)] max-w-xl">
+              {completedLabs < totalLabs 
+                ? `Kamu sudah menyelesaikan ${completedLabs} dari ${totalLabs} lab. Terus lanjutkan untuk membuka lebih banyak pencapaian!`
+                : 'Luar biasa! Kamu sudah menyelesaikan semua lab! 🎉'
+              }
+            </p>
+          </div>
+          
+          {/* Circular Progress */}
+          <div className="hidden md:block">
+            <CircularProgress
+              value={overallProgress}
+              size={100}
+              strokeWidth={8}
+              color="primary"
+              showLabel
+            >
+              <div className="text-center">
+                <div className="text-2xl font-bold text-[#088395]">{overallProgress}%</div>
+                <div className="text-xs text-[var(--color-muted-foreground)]">Selesai</div>
+              </div>
+            </CircularProgress>
+          </div>
+        </div>
+        
+        {/* Progress Bar for mobile */}
+        <div className="mt-6 md:hidden">
+          <ProgressBar
+            value={overallProgress}
+            max={100}
+            color="primary"
+            showLabel
+            animate
+          />
+        </div>
+        
+        {/* Quick Actions */}
+        <div className="flex flex-wrap gap-3 mt-6">
+          <Link
+            href="/dashboard/student/labs"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#088395] hover:bg-[#09637E] text-white rounded-xl text-sm font-medium transition-colors shadow-lg shadow-[#088395]/20"
+          >
+            <Play className="w-4 h-4" />
+            Lanjutkan Belajar
+          </Link>
+          <Link
+            href="/dashboard/student/achievements"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[var(--color-surface-2)] hover:bg-[var(--color-surface-3)] text-white rounded-xl text-sm font-medium transition-colors border border-[var(--color-border)]"
+          >
+            <Trophy className="w-4 h-4" />
+            Lihat Pencapaian
+          </Link>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function LabCard({ lab }: { lab: Lab }) {
+  const status = getLabStatus(lab);
+  const progress = getProgressPercent(lab);
+  const IconComponent = labIcons[lab.icon] || Network;
+
+  return (
+    <motion.div
+      variants={item}
+      whileHover={{ y: -4 }}
+      className={cn(
+        "group rounded-2xl border p-5 transition-all duration-300",
+        status === 'locked'
+          ? "border-[var(--color-border)] bg-[var(--color-surface-1)]/30 opacity-60"
+          : "border-[var(--color-border)] bg-[var(--color-surface-1)] hover:border-[#088395]/50 hover:shadow-lg hover:shadow-[#088395]/5"
+      )}
+    >
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs font-mono text-[var(--color-muted-foreground)]">
+              Lab #{lab.number.toString().padStart(2, '0')}
+            </span>
+            <StatusBadge
+              status={getDifficultyColor(lab.difficulty)}
+              size="sm"
+              label={formatDifficulty(lab.difficulty)}
+            />
+          </div>
+          <h3 className="font-semibold text-white mb-1 truncate group-hover:text-[#088395] transition-colors">
+            {lab.title}
+          </h3>
+          <p className="text-xs text-[var(--color-muted-foreground)] line-clamp-2">
+            {lab.description}
+          </p>
+        </div>
+        
+        <div className="ml-3 flex-shrink-0">
+          <div className={cn(
+            "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
+            status === 'completed' 
+              ? "bg-emerald-500/10" 
+              : status === 'in-progress'
+                ? "bg-amber-500/10"
+                : status === 'locked'
+                  ? "bg-[var(--color-surface-2)]"
+                  : "bg-[#088395]/10 group-hover:bg-[#088395]/20"
+          )}>
+            {status === 'completed' ? (
+              <CheckCircle className="h-5 w-5 text-emerald-400" />
+            ) : status === 'in-progress' ? (
+              <Play className="h-5 w-5 text-amber-400" />
+            ) : status === 'locked' ? (
+              <Lock className="h-5 w-5 text-[var(--color-muted-foreground)]" />
+            ) : (
+              <IconComponent className="h-5 w-5 text-[#088395]" />
+            )}
+          </div>
+        </div>
+      </div>
+
+      {status !== 'locked' ? (
+        <>
+          {/* Progress */}
+          <div className="mb-4">
+            <div className="flex items-center justify-between text-xs mb-1.5">
+              <span className="text-[var(--color-muted-foreground)]">
+                {lab.progress?.tasksCompleted || 0} / {lab.totalTasks} tugas
+              </span>
+              <span className={cn(
+                "font-medium",
+                status === 'completed' ? "text-emerald-400" : "text-[#088395]"
+              )}>
+                {progress}%
+              </span>
+            </div>
+            <ProgressBar
+              value={progress}
+              max={100}
+              size="sm"
+              color={status === 'completed' ? 'success' : 'primary'}
+            />
+          </div>
+          
+          {/* Action Button */}
+          <Link
+            href={`/labs/${lab.id}`}
+            className={cn(
+              "flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-all",
+              status === 'completed'
+                ? "bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:bg-[var(--color-surface-3)]"
+                : "bg-[#088395] text-white hover:bg-[#09637E]"
+            )}
+          >
+            {status === 'completed' ? (
+              <>Tinjau Lab</>
+            ) : (
+              <>
+                <Play className="h-4 w-4" />
+                {progress > 0 ? 'Lanjutkan' : 'Mulai Lab'}
+              </>
+            )}
+          </Link>
+        </>
+      ) : (
+        <div className="flex items-center gap-2 mt-3 p-3 rounded-xl bg-[var(--color-surface-2)]">
+          <Lock className="h-4 w-4 text-[var(--color-muted-foreground)]" />
+          <p className="text-xs text-[var(--color-muted-foreground)]">
+            Selesaikan Lab {lab.number - 1} terlebih dahulu
+          </p>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+function AchievementCard({ 
+  achievement, 
+  isUnlocked 
+}: { 
+  achievement: Achievement | { title: string; description: string; icon: typeof Star }; 
+  isUnlocked: boolean;
+}) {
+  const IconComponent = 'icon' in achievement 
+    ? (typeof achievement.icon === 'string' ? achievementIcons[achievement.icon] : achievement.icon) || Star
+    : Star;
+
+  return (
+    <motion.div
+      variants={item}
+      whileHover={{ scale: 1.02 }}
+      className={cn(
+        "relative rounded-2xl border p-5 text-center transition-all",
+        isUnlocked
+          ? "border-[var(--color-border)] bg-[var(--color-surface-1)] hover:border-amber-500/30"
+          : "border-[var(--color-border)]/50 bg-[var(--color-surface-1)]/30 opacity-60"
+      )}
+    >
+      {isUnlocked && (
+        <div className="absolute top-2 right-2">
+          <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+        </div>
+      )}
+      
+      <div className={cn(
+        "mx-auto w-14 h-14 rounded-2xl flex items-center justify-center mb-3 transition-all",
+        isUnlocked
+          ? "bg-gradient-to-br from-amber-500/20 to-orange-600/20 shadow-lg shadow-amber-500/10"
+          : "bg-[var(--color-surface-2)]"
+      )}>
+        <IconComponent className={cn(
+          "h-7 w-7 transition-colors",
+          isUnlocked ? "text-amber-400" : "text-[var(--color-muted-foreground)]"
+        )} />
+      </div>
+      
+      <h3 className={cn(
+        "font-semibold mb-1 transition-colors",
+        isUnlocked ? "text-white" : "text-[var(--color-muted-foreground)]"
+      )}>
+        {achievement.title}
+      </h3>
+      <p className="text-xs text-[var(--color-muted-foreground)] line-clamp-2">
+        {achievement.description}
+      </p>
+    </motion.div>
+  );
+}
+
+function UpcomingDeadlines() {
+  const deadlines = [
+    { id: 1, title: 'Lab 3: Konfigurasi Router Dasar', dueDate: '2 hari lagi', urgent: true },
+    { id: 2, title: 'Lab 5: Konfigurasi Switch & VLAN', dueDate: '5 hari lagi', urgent: false },
+  ];
+
+  if (deadlines.length === 0) return null;
+
+  return (
+    <motion.div
+      variants={item}
+      className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-1)] p-5"
+    >
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-semibold text-white flex items-center gap-2">
+          <Calendar className="w-5 h-5 text-[#088395]" />
+          Deadline Mendatang
+        </h3>
+        <Link 
+          href="/dashboard/student/schedule" 
+          className="text-xs text-[#088395] hover:text-[#7AB2B2] transition-colors"
+        >
+          Lihat semua
+        </Link>
+      </div>
+      
+      <div className="space-y-3">
+        {deadlines.map((deadline) => (
+          <div 
+            key={deadline.id}
+            className={cn(
+              "flex items-center justify-between p-3 rounded-xl",
+              deadline.urgent 
+                ? "bg-rose-500/10 border border-rose-500/20" 
+                : "bg-[var(--color-surface-2)]"
+            )}
+          >
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white truncate">{deadline.title}</p>
+              <p className={cn(
+                "text-xs",
+                deadline.urgent ? "text-rose-400" : "text-[var(--color-muted-foreground)]"
+              )}>
+                {deadline.dueDate}
+              </p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-[var(--color-muted-foreground)]" />
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+function QuickStats({ stats }: { stats: { streak: number; rank: number; totalStudents: number; xp: number } }) {
+  return (
+    <motion.div
+      variants={item}
+      className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-1)] p-5"
+    >
+      <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+        <Zap className="w-5 h-5 text-amber-400" />
+        Statistik Cepat
+      </h3>
+      
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+              <Flame className="w-5 h-5 text-amber-400" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-white">Streak</p>
+              <p className="text-xs text-[var(--color-muted-foreground)]">Hari berturut-turut</p>
+            </div>
+          </div>
+          <span className="text-2xl font-bold text-amber-400">{stats.streak}</span>
+        </div>
+        
+        <div className="h-px bg-[var(--color-border)]" />
+        
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#088395]/10 flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-[#088395]" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-white">Peringkat</p>
+              <p className="text-xs text-[var(--color-muted-foreground)]">Dari {stats.totalStudents} siswa</p>
+            </div>
+          </div>
+          <span className="text-2xl font-bold text-[#088395]">#{stats.rank}</span>
+        </div>
+
+        <div className="h-px bg-[var(--color-border)]" />
+        
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+              <Zap className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-white">Total XP</p>
+              <p className="text-xs text-[var(--color-muted-foreground)]">Experience Points</p>
+            </div>
+          </div>
+          <span className="text-2xl font-bold text-emerald-400">{stats.xp.toLocaleString()}</span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================================
+// Main Component
+// ============================================================================
 
 export default function StudentDashboard() {
   const [labs, setLabs] = useState<Lab[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState('Siswa');
   const [stats, setStats] = useState({
     completedLabs: 0,
-    totalLabs: 0,
+    totalLabs: 8,
     unlockedAchievements: 0,
-    totalAchievements: 0,
+    totalAchievements: 10,
     totalTimeMinutes: 0,
-    streak: 0,
+    streak: 5,
+    rank: 12,
+    totalStudents: 45,
+    xp: 1250,
   });
 
   useEffect(() => {
     async function fetchData() {
       try {
-        // Fetch labs
-        const labsRes = await fetch('/api/labs');
-        const labsData = await labsRes.json();
-
-        if (labsData.success) {
-          setLabs(labsData.labs);
-
-          // Calculate stats from labs
-          const completed = labsData.labs.filter((l: Lab) => l.progress?.completedAt).length;
-          const totalTime = labsData.labs.reduce((acc: number, l: Lab) => {
-            if (l.progress) {
-              return acc + l.durationMinutes;
-            }
-            return acc;
-          }, 0);
-
-          setStats(prev => ({
-            ...prev,
-            completedLabs: completed,
-            totalLabs: labsData.labs.length,
-            totalTimeMinutes: totalTime,
-          }));
+        // Fetch user info
+        const userRes = await fetch('/api/auth/me');
+        const userData = await userRes.json();
+        if (userData.user) {
+          setUserName(userData.user.name.split(' ')[0]);
         }
 
-        // Fetch achievements
-        const achievementsRes = await fetch('/api/achievements');
-        const achievementsData = await achievementsRes.json();
+        // Mock progress data for demo
+        const mockProgress: Record<string, LabProgress> = {
+          'lab-1': { startedAt: '2026-01-15', completedAt: '2026-01-16', currentScore: 95, tasksCompleted: 5 },
+          'lab-2': { startedAt: '2026-01-18', completedAt: '2026-01-20', currentScore: 88, tasksCompleted: 6 },
+          'lab-3': { startedAt: '2026-01-22', completedAt: null, currentScore: 60, tasksCompleted: 4 },
+        };
 
-        if (achievementsData.success) {
-          setAchievements(achievementsData.achievements || []);
-          const unlocked = (achievementsData.achievements || []).filter((a: Achievement) => a.unlockedAt).length;
-          setStats(prev => ({
-            ...prev,
-            unlockedAchievements: unlocked,
-            totalAchievements: achievementsData.achievements?.length || 10,
-          }));
-        }
+        // Build labs with progress
+        const labsWithProgress: Lab[] = FIXED_LABS.map((lab, index) => {
+          const prevLab = index > 0 ? FIXED_LABS[index - 1] : null;
+          const prevProgress = prevLab ? mockProgress[prevLab.id] : null;
+          const isLocked = prevLab ? !prevProgress?.completedAt : false;
+
+          return {
+            ...lab,
+            isLocked,
+            progress: mockProgress[lab.id] || null,
+          };
+        });
+
+        setLabs(labsWithProgress);
+
+        // Calculate stats
+        const completed = labsWithProgress.filter(l => l.progress?.completedAt).length;
+        const totalTime = labsWithProgress.reduce((acc, l) => {
+          if (l.progress) {
+            return acc + l.durationMinutes;
+          }
+          return acc;
+        }, 0);
+
+        setStats(prev => ({
+          ...prev,
+          completedLabs: completed,
+          totalTimeMinutes: totalTime,
+        }));
+
+        // Mock achievements
+        const mockAchievements: Achievement[] = [
+          { id: '1', title: 'Langkah Pertama', description: 'Selesaikan lab pertamamu', icon: 'star', unlockedAt: '2026-01-16' },
+          { id: '2', title: 'Cepat Belajar', description: 'Selesaikan 2 lab dalam seminggu', icon: 'flame', unlockedAt: '2026-01-20' },
+          { id: '3', title: 'Ahli Keamanan', description: 'Selesaikan semua lab', icon: 'shield', unlockedAt: null },
+          { id: '4', title: 'Nilai Sempurna', description: 'Dapatkan 100% di lab manapun', icon: 'target', unlockedAt: null },
+        ];
+
+        setAchievements(mockAchievements);
+        const unlocked = mockAchievements.filter(a => a.unlockedAt).length;
+        setStats(prev => ({
+          ...prev,
+          unlockedAchievements: unlocked,
+          totalAchievements: mockAchievements.length,
+        }));
+
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -115,258 +694,215 @@ export default function StudentDashboard() {
     fetchData();
   }, []);
 
-  const getLabStatus = (lab: Lab): 'completed' | 'in-progress' | 'available' | 'locked' => {
-    if (lab.isLocked) return 'locked';
-    if (lab.progress?.completedAt) return 'completed';
-    if (lab.progress?.tasksCompleted && lab.progress.tasksCompleted > 0) return 'in-progress';
-    return 'available';
-  };
-
-  const getProgressPercent = (lab: Lab): number => {
-    if (!lab.progress || lab.totalTasks === 0) return 0;
-    return Math.round((lab.progress.tasksCompleted / lab.totalTasks) * 100);
-  };
-
-  const formatDifficulty = (difficulty: string): string => {
-    return difficulty.charAt(0) + difficulty.slice(1).toLowerCase();
-  };
-
   const overallProgress = stats.totalLabs > 0
     ? Math.round((stats.completedLabs / stats.totalLabs) * 100)
     : 0;
 
-  const formatTime = (minutes: number): string => {
-    if (minutes < 60) return `${minutes} menit`;
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return mins > 0 ? `${hours}.${Math.round(mins / 6)} jam` : `${hours} jam`;
-  };
-
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-cyan-500" />
+      <div className="p-6">
+        <SkeletonDashboard />
       </div>
     );
   }
 
   // Get first 4 labs for display
   const displayLabs = labs.slice(0, 4);
-  // Get first 4 achievements for display
   const displayAchievements = achievements.slice(0, 4);
 
+  const defaultAchievements = [
+    { title: 'Langkah Pertama', description: 'Selesaikan lab pertamamu', icon: Star },
+    { title: 'Cepat Belajar', description: 'Selesaikan 3 lab dalam seminggu', icon: Flame },
+    { title: 'Ahli Keamanan', description: 'Selesaikan semua lab', icon: Shield },
+    { title: 'Nilai Sempurna', description: 'Dapatkan 100% di lab manapun', icon: Target },
+  ];
+
   return (
-    <div className="p-6">
+    <div className="p-6 max-w-7xl mx-auto">
       {/* Welcome Banner */}
-      <div className="rounded-2xl bg-linear-to-r from-cyan-500/20 to-blue-600/20 border border-cyan-500/20 p-6 mb-8">
-        <h2 className="text-2xl font-bold text-white mb-2">
-          Selamat datang kembali! 👋
-        </h2>
-        <p className="text-zinc-300">
-          Kamu sudah menyelesaikan {stats.completedLabs} dari {stats.totalLabs} lab. {stats.completedLabs < stats.totalLabs ? 'Terus lanjutkan untuk membuka lebih banyak pencapaian!' : 'Luar biasa! Kamu sudah menyelesaikan semua lab!'}
-        </p>
-        <div className="mt-4 flex items-center gap-4">
-          <div className="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-linear-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-500"
-              style={{ width: `${overallProgress}%` }}
-            ></div>
+      <WelcomeBanner
+        completedLabs={stats.completedLabs}
+        totalLabs={stats.totalLabs}
+        overallProgress={overallProgress}
+        userName={userName}
+      />
+
+      {/* Stats Grid */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6"
+      >
+        <motion.div variants={item}>
+          <StatCard
+            title="Lab Selesai"
+            value={`${stats.completedLabs}/${stats.totalLabs}`}
+            icon={<BookOpen className="w-5 h-5" />}
+            color="primary"
+            trend={stats.completedLabs > 0 ? { value: stats.completedLabs, direction: 'up' } : undefined}
+          />
+        </motion.div>
+        <motion.div variants={item}>
+          <StatCard
+            title="Pencapaian"
+            value={`${stats.unlockedAchievements}/${stats.totalAchievements}`}
+            icon={<Trophy className="w-5 h-5" />}
+            color="success"
+            trend={stats.unlockedAchievements > 0 ? { value: stats.unlockedAchievements, direction: 'up' } : undefined}
+          />
+        </motion.div>
+        <motion.div variants={item}>
+          <StatCard
+            title="Waktu Belajar"
+            value={formatTime(stats.totalTimeMinutes)}
+            icon={<Clock className="w-5 h-5" />}
+            color="info"
+          />
+        </motion.div>
+        <motion.div variants={item}>
+          <StatCard
+            title="Streak Harian"
+            value={`${stats.streak} hari`}
+            icon={<Flame className="w-5 h-5" />}
+            color="warning"
+            trend={stats.streak > 0 ? { value: stats.streak, direction: 'up' } : undefined}
+          />
+        </motion.div>
+      </motion.div>
+
+      {/* Main Content Grid */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Labs Section - 2 columns */}
+        <div className="lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-[#088395]" />
+              Lanjutkan Belajar
+            </h2>
+            <Link 
+              href="/dashboard/student/labs" 
+              className="text-sm text-[#088395] hover:text-[#7AB2B2] flex items-center gap-1 transition-colors"
+            >
+              Lihat semua <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
-          <span className="text-sm text-zinc-400">{overallProgress}% selesai</span>
+          
+          {displayLabs.length > 0 ? (
+            <motion.div
+              variants={container}
+              initial="hidden"
+              animate="show"
+              className="grid gap-4 sm:grid-cols-2"
+            >
+              {displayLabs.map((lab) => (
+                <LabCard key={lab.id} lab={lab} />
+              ))}
+            </motion.div>
+          ) : (
+            <EmptyState
+              type="no-data"
+              title="Belum Ada Lab"
+              description="Lab praktikum akan segera tersedia. Tunggu pengumuman dari koordinator."
+            />
+          )}
         </div>
+
+        {/* Sidebar - 1 column */}
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="space-y-6"
+        >
+          <QuickStats stats={{ streak: stats.streak, rank: stats.rank, totalStudents: stats.totalStudents, xp: stats.xp }} />
+          <UpcomingDeadlines />
+        </motion.div>
       </div>
 
-      {/* Stats */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-cyan-500/10">
-              <BookOpen className="h-5 w-5 text-cyan-400" />
-            </div>
-            <span className="text-sm text-zinc-400">Lab Selesai</span>
-          </div>
-          <p className="text-3xl font-bold text-white">{stats.completedLabs} / {stats.totalLabs}</p>
-        </div>
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-emerald-500/10">
-              <Trophy className="h-5 w-5 text-emerald-400" />
-            </div>
-            <span className="text-sm text-zinc-400">Pencapaian</span>
-          </div>
-          <p className="text-3xl font-bold text-white">{stats.unlockedAchievements} / {stats.totalAchievements}</p>
-        </div>
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-violet-500/10">
-              <Clock className="h-5 w-5 text-violet-400" />
-            </div>
-            <span className="text-sm text-zinc-400">Waktu Belajar</span>
-          </div>
-          <p className="text-3xl font-bold text-white">{formatTime(stats.totalTimeMinutes)}</p>
-        </div>
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-amber-500/10">
-              <Flame className="h-5 w-5 text-amber-400" />
-            </div>
-            <span className="text-sm text-zinc-400">Beruntun</span>
-          </div>
-          <p className="text-3xl font-bold text-white">{stats.streak} hari</p>
-        </div>
-      </div>
-
-      {/* Continue Learning */}
-      <div className="mb-8">
+      {/* Achievements Section */}
+      <div className="mt-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-white">Lanjutkan Belajar</h2>
-          <Link href="/dashboard/student/labs" className="text-sm text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-amber-400" />
+            Pencapaian Terbaru
+          </h2>
+          <Link 
+            href="/dashboard/student/achievements" 
+            className="text-sm text-[#088395] hover:text-[#7AB2B2] flex items-center gap-1 transition-colors"
+          >
             Lihat semua <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {displayLabs.map((lab) => {
+        
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {displayAchievements.length > 0 ? (
+            displayAchievements.map((achievement) => (
+              <AchievementCard
+                key={achievement.id}
+                achievement={achievement}
+                isUnlocked={!!achievement.unlockedAt}
+              />
+            ))
+          ) : (
+            defaultAchievements.map((achievement, i) => (
+              <AchievementCard
+                key={i}
+                achievement={achievement}
+                isUnlocked={false}
+              />
+            ))
+          )}
+        </motion.div>
+      </div>
+
+      {/* Learning Path Progress */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="mt-8 p-5 rounded-2xl bg-gradient-to-br from-[#088395]/10 to-[#09637E]/10 border border-[#088395]/20"
+      >
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <Target className="w-5 h-5 text-[#088395]" />
+          Progress Learning Path
+        </h3>
+        <div className="flex items-center gap-2 flex-wrap">
+          {labs.map((lab, index) => {
             const status = getLabStatus(lab);
-            const progress = getProgressPercent(lab);
-
             return (
-              <div
-                key={lab.id}
-                className={cn(
-                  "rounded-2xl border p-5 transition-all",
-                  status === 'locked'
-                    ? "border-zinc-800 bg-zinc-900/30 opacity-60"
-                    : "border-zinc-800 bg-zinc-900/50 hover:border-cyan-500/30"
-                )}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="font-semibold text-white mb-1">{lab.title}</h3>
-                    <span className={cn(
-                      "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-                      lab.difficulty === 'BEGINNER' && "bg-emerald-500/10 text-emerald-400",
-                      lab.difficulty === 'INTERMEDIATE' && "bg-amber-500/10 text-amber-400",
-                      lab.difficulty === 'ADVANCED' && "bg-red-500/10 text-red-400"
-                    )}>
-                      {formatDifficulty(lab.difficulty)}
-                    </span>
-                  </div>
-                  {status === 'completed' && (
-                    <CheckCircle className="h-6 w-6 text-emerald-400" />
-                  )}
-                  {status === 'locked' && (
-                    <Lock className="h-6 w-6 text-zinc-600" />
-                  )}
+              <div key={lab.id} className="flex items-center">
+                <div className={cn(
+                  "w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all",
+                  status === 'completed' 
+                    ? "bg-emerald-500 text-white" 
+                    : status === 'in-progress'
+                      ? "bg-amber-500 text-white animate-pulse"
+                      : status === 'locked'
+                        ? "bg-zinc-700 text-zinc-500"
+                        : "bg-[#088395] text-white"
+                )}>
+                  {lab.number}
                 </div>
-
-                {status !== 'locked' ? (
-                  <>
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-linear-to-r from-cyan-500 to-blue-600 rounded-full"
-                          style={{ width: `${progress}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-xs text-zinc-400">{progress}%</span>
-                    </div>
-                    <Link
-                      href={`/labs/${lab.id}`}
-                      className={cn(
-                        "flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-all",
-                        status === 'completed'
-                          ? "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
-                          : "bg-cyan-500 text-white hover:bg-cyan-400"
-                      )}
-                    >
-                      {status === 'completed' ? (
-                        <>Tinjau Lab</>
-                      ) : (
-                        <>
-                          <Play className="h-4 w-4" />
-                          {progress > 0 ? 'Lanjutkan' : 'Mulai Lab'}
-                        </>
-                      )}
-                    </Link>
-                  </>
-                ) : (
-                  <p className="text-xs text-zinc-500 mt-2">{lab.lockedReason || 'Selesaikan lab sebelumnya untuk membuka'}</p>
+                {index < labs.length - 1 && (
+                  <div className={cn(
+                    "w-6 h-1 mx-1 rounded",
+                    status === 'completed' ? "bg-emerald-500" : "bg-zinc-700"
+                  )} />
                 )}
               </div>
             );
           })}
         </div>
-      </div>
-
-      {/* Achievements */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-white">Pencapaian Terbaru</h2>
-          <Link href="/dashboard/student/achievements" className="text-sm text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
-            Lihat semua <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-        {displayAchievements.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {displayAchievements.map((achievement) => {
-              const IconComponent = achievementIcons[achievement.icon] || Star;
-              const isUnlocked = !!achievement.unlockedAt;
-
-              return (
-                <div
-                  key={achievement.id}
-                  className={cn(
-                    "rounded-2xl border p-5 text-center",
-                    isUnlocked
-                      ? "border-zinc-800 bg-zinc-900/50"
-                      : "border-zinc-800/50 bg-zinc-900/20 opacity-50"
-                  )}
-                >
-                  <div className={cn(
-                    "mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-3",
-                    isUnlocked
-                      ? "bg-linear-to-br from-amber-500/20 to-orange-600/20"
-                      : "bg-zinc-800"
-                  )}>
-                    <IconComponent className={cn(
-                      "h-6 w-6",
-                      isUnlocked ? "text-amber-400" : "text-zinc-600"
-                    )} />
-                  </div>
-                  <h3 className={cn(
-                    "font-semibold mb-1",
-                    isUnlocked ? "text-white" : "text-zinc-500"
-                  )}>
-                    {achievement.title}
-                  </h3>
-                  <p className="text-xs text-zinc-500">{achievement.description}</p>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {/* Default achievements if no data */}
-            {[
-              { title: 'Langkah Pertama', description: 'Selesaikan lab pertamamu', icon: Star, unlocked: false },
-              { title: 'Cepat Belajar', description: 'Selesaikan 3 lab dalam seminggu', icon: Flame, unlocked: false },
-              { title: 'Ahli Keamanan', description: 'Selesaikan semua lab', icon: Shield, unlocked: false },
-              { title: 'Nilai Sempurna', description: 'Dapatkan 100% di lab manapun', icon: Target, unlocked: false },
-            ].map((achievement, i) => (
-              <div
-                key={i}
-                className="rounded-2xl border border-zinc-800/50 bg-zinc-900/20 opacity-50 p-5 text-center"
-              >
-                <div className="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-3 bg-zinc-800">
-                  <achievement.icon className="h-6 w-6 text-zinc-600" />
-                </div>
-                <h3 className="font-semibold mb-1 text-zinc-500">{achievement.title}</h3>
-                <p className="text-xs text-zinc-500">{achievement.description}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+        <p className="text-sm text-[var(--color-muted-foreground)] mt-4">
+          Selesaikan semua 8 lab untuk mendapatkan sertifikat &ldquo;Network Security Specialist&rdquo;
+        </p>
+      </motion.div>
     </div>
   );
 }

@@ -24,11 +24,16 @@ import {
   X,
   Sun,
   Moon,
+  CheckCircle,
+  Users,
+  GraduationCap,
+  Star,
+  Quote,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 
-// Lab data with unique colors
+// Lab data with varied soft colors (8 soft colors: brand, emerald, sky, amber, rose, teal, cyan, lime)
 const labs = [
   {
     id: 1,
@@ -37,9 +42,7 @@ const labs = [
     icon: Network,
     difficulty: 'Pemula',
     duration: '30 menit',
-    gradient: 'from-cyan-500 to-blue-600',
-    shadowColor: 'shadow-cyan-500/30',
-    iconBg: 'bg-linear-to-br from-cyan-500 to-blue-600',
+    color: 'brand', // #088395
   },
   {
     id: 2,
@@ -48,9 +51,7 @@ const labs = [
     icon: Activity,
     difficulty: 'Pemula',
     duration: '45 menit',
-    gradient: 'from-emerald-500 to-teal-600',
-    shadowColor: 'shadow-emerald-500/30',
-    iconBg: 'bg-linear-to-br from-emerald-500 to-teal-600',
+    color: 'emerald',
   },
   {
     id: 3,
@@ -59,9 +60,7 @@ const labs = [
     icon: Lock,
     difficulty: 'Menengah',
     duration: '60 menit',
-    gradient: 'from-violet-500 to-purple-600',
-    shadowColor: 'shadow-violet-500/30',
-    iconBg: 'bg-linear-to-br from-violet-500 to-purple-600',
+    color: 'sky',
   },
   {
     id: 4,
@@ -70,9 +69,7 @@ const labs = [
     icon: Shield,
     difficulty: 'Menengah',
     duration: '60 menit',
-    gradient: 'from-orange-500 to-red-600',
-    shadowColor: 'shadow-orange-500/30',
-    iconBg: 'bg-linear-to-br from-orange-500 to-red-600',
+    color: 'rose',
   },
   {
     id: 5,
@@ -81,9 +78,7 @@ const labs = [
     icon: FileCode,
     difficulty: 'Menengah',
     duration: '45 menit',
-    gradient: 'from-pink-500 to-rose-600',
-    shadowColor: 'shadow-pink-500/30',
-    iconBg: 'bg-linear-to-br from-pink-500 to-rose-600',
+    color: 'amber',
   },
   {
     id: 6,
@@ -92,9 +87,7 @@ const labs = [
     icon: Wifi,
     difficulty: 'Menengah',
     duration: '45 menit',
-    gradient: 'from-amber-500 to-orange-600',
-    shadowColor: 'shadow-amber-500/30',
-    iconBg: 'bg-linear-to-br from-amber-500 to-orange-600',
+    color: 'teal',
   },
   {
     id: 7,
@@ -103,9 +96,7 @@ const labs = [
     icon: Eye,
     difficulty: 'Lanjutan',
     duration: '60 menit',
-    gradient: 'from-sky-500 to-indigo-600',
-    shadowColor: 'shadow-sky-500/30',
-    iconBg: 'bg-linear-to-br from-sky-500 to-indigo-600',
+    color: 'cyan',
   },
   {
     id: 8,
@@ -114,73 +105,157 @@ const labs = [
     icon: Award,
     difficulty: 'Lanjutan',
     duration: '120 menit',
-    gradient: 'from-fuchsia-500 to-purple-600',
-    shadowColor: 'shadow-fuchsia-500/30',
-    iconBg: 'bg-linear-to-br from-fuchsia-500 to-purple-600',
+    color: 'lime',
   }
 ];
 
+// Features with varied soft colors
 const features = [
   {
     icon: Terminal,
     title: 'Terminal CLI Nyata',
-    description: 'Antarmuka command line seperti Cisco dengan auto-completion',
-    color: 'text-cyan-400',
-    bgColor: 'from-cyan-500/20 to-blue-500/20',
-    ringColor: 'ring-cyan-500/30',
+    description: 'Antarmuka command line seperti Cisco dengan auto-completion dan syntax highlighting',
+    color: 'brand',
   },
   {
     icon: Network,
     title: 'Topologi Interaktif',
     description: 'Canvas jaringan drag-and-drop dengan animasi paket real-time',
-    color: 'text-violet-400',
-    bgColor: 'from-violet-500/20 to-purple-500/20',
-    ringColor: 'ring-violet-500/30',
+    color: 'sky',
   },
   {
     icon: Activity,
     title: 'Penangkapan Paket Live',
     description: 'Pantau dan analisis lalu lintas jaringan secara real-time',
-    color: 'text-emerald-400',
-    bgColor: 'from-emerald-500/20 to-teal-500/20',
-    ringColor: 'ring-emerald-500/30',
+    color: 'emerald',
   },
   {
     icon: Zap,
     title: 'Umpan Balik Instan',
-    description: 'Validasi otomatis konfigurasi dengan sistem penilaian',
-    color: 'text-amber-400',
-    bgColor: 'from-amber-500/20 to-orange-500/20',
-    ringColor: 'ring-amber-500/30',
+    description: 'Validasi otomatis konfigurasi dengan sistem penilaian detail',
+    color: 'amber',
   }
 ];
 
+// Stats with varied soft colors
 const stats = [
-  { value: '8+', label: 'Modul Lab', icon: Layers, color: 'text-cyan-400', glowColor: 'group-hover:shadow-cyan-500/20' },
-  { value: '50+', label: 'Perintah CLI', icon: Code2, color: 'text-violet-400', glowColor: 'group-hover:shadow-violet-500/20' },
-  { value: '100%', label: 'Berbasis Browser', icon: Globe, color: 'text-emerald-400', glowColor: 'group-hover:shadow-emerald-500/20' },
-  { value: 'Gratis', label: 'Open Source', icon: Sparkles, color: 'text-amber-400', glowColor: 'group-hover:shadow-amber-500/20' }
+  { value: '8+', label: 'Modul Lab', icon: Layers, color: 'brand' },
+  { value: '50+', label: 'Perintah CLI', icon: Code2, color: 'sky' },
+  { value: '100%', label: 'Berbasis Browser', icon: Globe, color: 'emerald' },
+  { value: 'Gratis', label: 'Open Source', icon: Sparkles, color: 'amber' }
 ];
 
-// Badge component - modern soft style
+// Testimonials
+const testimonials = [
+  {
+    name: 'Ahmad Rizky',
+    role: 'Mahasiswa IT',
+    content: 'Platform yang luar biasa! Saya bisa belajar konfigurasi jaringan tanpa harus punya perangkat fisik.',
+    rating: 5,
+  },
+  {
+    name: 'Siti Nurhaliza',
+    role: 'Network Engineer',
+    content: 'Sangat membantu untuk persiapan sertifikasi. Lab-nya realistis dan feedback-nya sangat detail.',
+    rating: 5,
+  },
+  {
+    name: 'Budi Santoso',
+    role: 'Dosen Jaringan',
+    content: 'Saya gunakan untuk mengajar mahasiswa. Mereka jadi lebih mudah memahami konsep keamanan jaringan.',
+    rating: 5,
+  },
+];
+
+const benefits = [
+  'Simulasi jaringan realistis tanpa perangkat keras',
+  'Penilaian otomatis dan umpan balik instan',
+  'Jalur pembelajaran terstruktur dari pemula hingga mahir',
+  'Akses 24/7 dari browser manapun',
+];
+
+// Color utility function - 8 soft colors (no purple/violet)
+const getColorClasses = (color: string) => {
+  const colors: Record<string, { bg: string; bgHover: string; text: string; border: string; light: string }> = {
+    brand: {
+      bg: 'bg-[#088395]/10 dark:bg-[#088395]/20',
+      bgHover: 'group-hover:bg-[#088395]',
+      text: 'text-[#088395]',
+      border: 'border-[#088395]/20 hover:border-[#088395]/40',
+      light: 'bg-[#088395]/5',
+    },
+    emerald: {
+      bg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+      bgHover: 'group-hover:bg-emerald-500',
+      text: 'text-emerald-600 dark:text-emerald-400',
+      border: 'border-emerald-500/20 hover:border-emerald-500/40',
+      light: 'bg-emerald-500/5',
+    },
+    sky: {
+      bg: 'bg-sky-500/10 dark:bg-sky-500/20',
+      bgHover: 'group-hover:bg-sky-500',
+      text: 'text-sky-600 dark:text-sky-400',
+      border: 'border-sky-500/20 hover:border-sky-500/40',
+      light: 'bg-sky-500/5',
+    },
+    amber: {
+      bg: 'bg-amber-500/10 dark:bg-amber-500/20',
+      bgHover: 'group-hover:bg-amber-500',
+      text: 'text-amber-600 dark:text-amber-400',
+      border: 'border-amber-500/20 hover:border-amber-500/40',
+      light: 'bg-amber-500/5',
+    },
+    rose: {
+      bg: 'bg-rose-500/10 dark:bg-rose-500/20',
+      bgHover: 'group-hover:bg-rose-500',
+      text: 'text-rose-600 dark:text-rose-400',
+      border: 'border-rose-500/20 hover:border-rose-500/40',
+      light: 'bg-rose-500/5',
+    },
+    teal: {
+      bg: 'bg-teal-500/10 dark:bg-teal-500/20',
+      bgHover: 'group-hover:bg-teal-500',
+      text: 'text-teal-600 dark:text-teal-400',
+      border: 'border-teal-500/20 hover:border-teal-500/40',
+      light: 'bg-teal-500/5',
+    },
+    cyan: {
+      bg: 'bg-cyan-500/10 dark:bg-cyan-500/20',
+      bgHover: 'group-hover:bg-cyan-500',
+      text: 'text-cyan-600 dark:text-cyan-400',
+      border: 'border-cyan-500/20 hover:border-cyan-500/40',
+      light: 'bg-cyan-500/5',
+    },
+    lime: {
+      bg: 'bg-lime-500/10 dark:bg-lime-500/20',
+      bgHover: 'group-hover:bg-lime-500',
+      text: 'text-lime-600 dark:text-lime-400',
+      border: 'border-lime-500/20 hover:border-lime-500/40',
+      light: 'bg-lime-500/5',
+    },
+  };
+  return colors[color] || colors.brand;
+};
+
+// Badge component
 function Badge({
   children,
   variant = 'default',
   className,
 }: {
   children: React.ReactNode;
-  variant?: 'default' | 'beginner' | 'intermediate' | 'advanced' | 'pemula' | 'menengah' | 'lanjutan';
+  variant?: 'default' | 'beginner' | 'intermediate' | 'advanced';
   className?: string;
 }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm transition-all duration-200',
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-all',
         {
-          'bg-zinc-200/80 dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-300': variant === 'default',
-          'bg-emerald-100/80 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400': variant === 'beginner',
-          'bg-amber-100/80 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400': variant === 'intermediate',
-          'bg-red-100/80 dark:bg-red-500/15 text-red-700 dark:text-red-400': variant === 'advanced',
+          'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400': variant === 'default',
+          'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20': variant === 'beginner',
+          'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20': variant === 'intermediate',
+          'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20': variant === 'advanced',
         },
         className
       )}
@@ -190,21 +265,27 @@ function Badge({
   );
 }
 
-// Card component with theme support - modern glassmorphism style
+// Card component
 function Card({
   children,
   className,
   hover = false,
+  color,
 }: {
   children: React.ReactNode;
   className?: string;
   hover?: boolean;
+  color?: string;
 }) {
+  const colorClasses = color ? getColorClasses(color) : null;
+  
   return (
     <div
       className={cn(
-        'rounded-2xl border border-zinc-200/60 dark:border-zinc-700/60 bg-white/70 dark:bg-zinc-800/70 backdrop-blur-xl shadow-sm dark:shadow-lg dark:shadow-black/20 transition-all duration-300',
-        hover && 'hover:border-cyan-500/40 dark:hover:border-cyan-400/40 hover:bg-white/90 dark:hover:bg-zinc-800/90 hover:shadow-xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/20',
+        'rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-all duration-300',
+        hover && !color && 'hover:border-[#088395]/40 hover:shadow-lg hover:shadow-[#088395]/5',
+        hover && color && colorClasses?.border,
+        hover && 'hover:shadow-lg',
         className
       )}
     >
@@ -216,7 +297,7 @@ function Card({
 export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
@@ -224,49 +305,39 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased transition-colors duration-300">
-      {/* Background gradients - theme aware */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        {/* Light mode backgrounds - smooth gradients */}
-        <div className="dark:hidden absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(6,182,212,0.15),transparent)]" />
-        <div className="dark:hidden absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_100%_100%,rgba(139,92,246,0.1),transparent)]" />
-        <div className="dark:hidden absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_0%_50%,rgba(16,185,129,0.08),transparent)]" />
-        <div className="dark:hidden absolute inset-0 bg-linear-to-b from-zinc-50/80 to-white" />
-
-        {/* Dark mode backgrounds - enhanced visibility */}
-        <div className="hidden dark:block absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(6,182,212,0.25),transparent)]" />
-        <div className="hidden dark:block absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_100%_100%,rgba(139,92,246,0.2),transparent)]" />
-        <div className="hidden dark:block absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_0%_100%,rgba(16,185,129,0.15),transparent)]" />
-        <div className="hidden dark:block absolute inset-0 bg-[radial-gradient(ellipse_30%_30%_at_90%_10%,rgba(236,72,153,0.12),transparent)]" />
-
-        {/* Subtle noise texture for depth - very light */}
-        <div className="absolute inset-0 opacity-[0.015] dark:opacity-[0.02] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNhKSIvPjwvc3ZnPg==')]" />
+      {/* Subtle background accents */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        {/* Light mode - multi-color subtle gradients (soft colors, no purple) */}
+        <div className="dark:hidden absolute top-0 left-1/4 w-[600px] h-[600px] bg-[radial-gradient(ellipse_at_center,rgba(8,131,149,0.05),transparent_60%)]" />
+        <div className="dark:hidden absolute top-1/3 right-0 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_center,rgba(14,165,233,0.04),transparent_60%)]" />
+        <div className="dark:hidden absolute bottom-0 left-0 w-[400px] h-[400px] bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.04),transparent_60%)]" />
+        
+        {/* Dark mode - multi-color subtle gradients (soft colors, no purple) */}
+        <div className="hidden dark:block absolute top-0 left-1/4 w-[600px] h-[600px] bg-[radial-gradient(ellipse_at_center,rgba(8,131,149,0.1),transparent_60%)]" />
+        <div className="hidden dark:block absolute top-1/3 right-0 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_center,rgba(14,165,233,0.08),transparent_60%)]" />
+        <div className="hidden dark:block absolute bottom-0 left-0 w-[400px] h-[400px] bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.06),transparent_60%)]" />
       </div>
 
-      {/* Header - glassmorphism style */}
-      <header className="sticky top-0 z-50 border-b border-zinc-200/40 dark:border-zinc-700/50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl transition-all duration-300">
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-3 animate-fade-in">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/25">
+          <a href="/" className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#088395]">
               <Shield className="h-5 w-5 text-white" />
             </div>
             <span className="text-lg font-bold text-zinc-900 dark:text-white">
-              Cyber<span className="text-cyan-500 dark:text-cyan-400">Nexus</span>
+              Cyber<span className="text-[#088395]">Nexus</span>
             </span>
           </a>
 
           {/* Desktop Nav */}
           <nav className="hidden items-center gap-1 md:flex">
-            {['Fitur', 'Lab', 'Dokumentasi'].map((item, i) => (
+            {['Fitur', 'Lab', 'Testimoni'].map((item) => (
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className={cn(
-                  "rounded-md px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 animate-fade-in",
-                  i === 0 && "animation-delay-100",
-                  i === 1 && "animation-delay-200",
-                  i === 2 && "animation-delay-300"
-                )}
+                className="rounded-lg px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100"
               >
                 {item}
               </a>
@@ -275,11 +346,10 @@ export default function HomePage() {
 
           {/* CTA & Theme Toggle */}
           <div className="flex items-center gap-3">
-            {/* Theme Toggle */}
             {mounted && (
               <button
                 onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all duration-300"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all"
                 aria-label="Toggle theme"
               >
                 {resolvedTheme === 'dark' ? (
@@ -291,18 +361,18 @@ export default function HomePage() {
             )}
             <a
               href="/login"
-              className="hidden rounded-lg border border-zinc-200 dark:border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all sm:inline-flex animate-fade-in"
+              className="hidden rounded-lg border border-zinc-200 dark:border-zinc-800 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all sm:inline-flex"
             >
               Masuk
             </a>
             <a
               href="/register"
-              className="hidden rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/25 transition-all hover:shadow-cyan-500/40 hover:-translate-y-0.5 sm:inline-flex animate-fade-in"
+              className="hidden rounded-lg bg-[#088395] hover:bg-[#09637E] px-4 py-2 text-sm font-semibold text-white transition-all sm:inline-flex"
             >
               Mulai Sekarang
             </a>
             <button
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 md:hidden transition-colors"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 md:hidden transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -312,24 +382,32 @@ export default function HomePage() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-4 md:hidden animate-fade-in">
+          <div className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-4 md:hidden">
             <nav className="flex flex-col gap-2">
-              {['Fitur', 'Lab', 'Dokumentasi'].map((item) => (
+              {['Fitur', 'Lab', 'Testimoni'].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
-                  className="rounded-md px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100"
+                  className="rounded-lg px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {item}
                 </a>
               ))}
-              <a
-                href="/labs"
-                className="mt-2 rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 px-4 py-2 text-center text-sm font-semibold text-white"
-              >
-                Mulai Sekarang
-              </a>
+              <div className="flex gap-2 mt-2">
+                <a
+                  href="/login"
+                  className="flex-1 rounded-lg border border-zinc-200 dark:border-zinc-800 px-4 py-2 text-center text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                >
+                  Masuk
+                </a>
+                <a
+                  href="/register"
+                  className="flex-1 rounded-lg bg-[#088395] px-4 py-2 text-center text-sm font-semibold text-white"
+                >
+                  Daftar
+                </a>
+              </div>
             </nav>
           </div>
         )}
@@ -337,10 +415,10 @@ export default function HomePage() {
 
       <main>
         {/* Hero Section */}
-        <section className="relative overflow-hidden px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+        <section className="relative px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             {/* Badge */}
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 px-4 py-1.5 text-sm animate-fade-in-up">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-4 py-1.5 text-sm">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
@@ -348,37 +426,33 @@ export default function HomePage() {
               <span className="text-zinc-600 dark:text-zinc-400">Platform Pembelajaran Interaktif</span>
             </div>
 
-            {/* Title */}
-            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl animate-fade-in-up animation-delay-100">
+            {/* Title with gradient - soft colors only */}
+            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
               <span className="text-zinc-900 dark:text-white">Kuasai </span>
-              <span className="bg-linear-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent animate-gradient">
-                Keamanan
-              </span>
+              <span className="bg-gradient-to-r from-[#088395] to-[#7AB2B2] bg-clip-text text-transparent">Keamanan Jaringan</span>
               <br />
-              <span className="bg-linear-to-r from-violet-500 to-purple-600 bg-clip-text text-transparent animate-gradient">
-                Jaringan
-              </span>
-              <span className="text-zinc-900 dark:text-white"> Langsung</span>
+              <span className="text-zinc-900 dark:text-white">dengan </span>
+              <span className="bg-gradient-to-r from-sky-500 to-cyan-400 bg-clip-text text-transparent">Praktik Langsung</span>
             </h1>
 
             {/* Description */}
-            <p className="mx-auto mb-10 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400 sm:text-xl animate-fade-in-up animation-delay-200">
+            <p className="mx-auto mb-10 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
               Platform paling canggih untuk belajar VPN, Firewall, dan IDS melalui
-              simulasi berbasis browser secara real-time.
+              simulasi berbasis browser secara real-time. Tanpa instalasi, langsung praktik.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row animate-fade-in-up animation-delay-300">
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <a
                 href="/labs"
-                className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-cyan-500 to-blue-600 px-8 py-4 text-lg font-bold text-white shadow-xl shadow-cyan-500/25 transition-all hover:-translate-y-1 hover:shadow-cyan-500/40 hover-lift"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#088395] hover:bg-[#09637E] px-8 py-4 text-lg font-bold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#088395]/25"
               >
                 <Play className="h-5 w-5" />
                 Mulai Belajar
               </a>
               <a
                 href="#labs"
-                className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-8 py-4 text-lg font-semibold text-zinc-900 dark:text-white transition-all hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover-lift"
+                className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-8 py-4 text-lg font-semibold text-zinc-900 dark:text-white transition-all hover:bg-zinc-50 dark:hover:bg-zinc-800"
               >
                 <BookOpen className="h-5 w-5" />
                 Lihat Modul
@@ -386,35 +460,33 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
-            {stats.map((stat, i) => (
-              <Card key={i} className={cn(
-                "group p-6 text-center transition-all hover:shadow-lg hover-lift card-glow animate-fade-in-up",
-                stat.glowColor,
-                i === 0 && "animation-delay-400",
-                i === 1 && "animation-delay-500",
-                i === 2 && "animation-delay-600",
-                i === 3 && "animation-delay-700"
-              )}>
-                <stat.icon className={cn("mx-auto mb-3 h-8 w-8 transition-transform group-hover:scale-110", stat.color)} />
-                <div className="text-2xl font-bold text-zinc-900 dark:text-white sm:text-3xl">{stat.value}</div>
-                <div className="text-sm text-zinc-600 dark:text-zinc-300">{stat.label}</div>
-              </Card>
-            ))}
+          {/* Stats with varied colors */}
+          <div className="mx-auto mt-16 grid max-w-4xl grid-cols-2 gap-4 md:grid-cols-4">
+            {stats.map((stat, i) => {
+              const colors = getColorClasses(stat.color);
+              return (
+                <Card key={i} className="group p-5 text-center hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
+                  <div className={cn("mx-auto mb-3 w-12 h-12 rounded-xl flex items-center justify-center transition-colors", colors.bg)}>
+                    <stat.icon className={cn("h-6 w-6", colors.text)} />
+                  </div>
+                  <div className="text-2xl font-bold text-zinc-900 dark:text-white">{stat.value}</div>
+                  <div className="text-sm text-zinc-500 dark:text-zinc-400">{stat.label}</div>
+                </Card>
+              );
+            })}
           </div>
         </section>
 
-        {/* Terminal Preview - modern style */}
-        <section className="px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl animate-fade-in-up">
-            <Card className="overflow-hidden shadow-2xl shadow-cyan-500/10 dark:shadow-cyan-500/20">
+        {/* Terminal Preview */}
+        <section className="px-4 py-12 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-900/50">
+          <div className="mx-auto max-w-4xl">
+            <Card className="overflow-hidden shadow-xl">
               {/* Terminal Header */}
-              <div className="flex items-center gap-4 border-b border-zinc-200/40 dark:border-zinc-700/50 bg-zinc-100/90 dark:bg-zinc-800/90 backdrop-blur-sm px-5 py-4">
+              <div className="flex items-center gap-4 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800 px-5 py-3">
                 <div className="flex gap-2">
-                  <div className="h-3 w-3 rounded-full bg-red-400 dark:bg-red-500 shadow-sm" />
-                  <div className="h-3 w-3 rounded-full bg-yellow-400 dark:bg-yellow-500 shadow-sm" />
-                  <div className="h-3 w-3 rounded-full bg-green-400 dark:bg-green-500 shadow-sm" />
+                  <div className="h-3 w-3 rounded-full bg-rose-400" />
+                  <div className="h-3 w-3 rounded-full bg-amber-400" />
+                  <div className="h-3 w-3 rounded-full bg-emerald-400" />
                 </div>
                 <span className="flex items-center gap-2 font-mono text-sm text-zinc-500 dark:text-zinc-400">
                   <Terminal className="h-4 w-4" />
@@ -422,26 +494,26 @@ export default function HomePage() {
                 </span>
               </div>
               {/* Terminal Body */}
-              <div className="bg-zinc-950 p-6 font-mono text-sm leading-relaxed sm:text-base">
+              <div className="bg-zinc-950 p-6 font-mono text-sm leading-relaxed">
                 <div className="space-y-2">
                   <div>
-                    <span className="text-cyan-400">admin@router-01:~$</span>{' '}
-                    <span className="text-zinc-300 typing-cursor">configure terminal</span>
+                    <span className="text-[#7AB2B2]">admin@router-01:~$</span>{' '}
+                    <span className="text-zinc-300">configure terminal</span>
                   </div>
                   <div className="text-zinc-600"># Masuk ke mode konfigurasi...</div>
-                  <div className="animate-fade-in animation-delay-200">
-                    <span className="text-violet-400">router(config)#</span>{' '}
+                  <div>
+                    <span className="text-sky-400">router(config)#</span>{' '}
                     <span className="text-zinc-300">interface gigabitEthernet 0/1</span>
                   </div>
-                  <div className="animate-fade-in animation-delay-400">
-                    <span className="text-violet-400">router(config-if)#</span>{' '}
+                  <div>
+                    <span className="text-sky-400">router(config-if)#</span>{' '}
                     <span className="text-zinc-300">ip address 192.168.1.1 255.255.255.0</span>
                   </div>
-                  <div className="animate-fade-in animation-delay-600">
-                    <span className="text-violet-400">router(config-if)#</span>{' '}
+                  <div>
+                    <span className="text-sky-400">router(config-if)#</span>{' '}
                     <span className="text-zinc-300">no shutdown</span>
                   </div>
-                  <div className="pt-2 text-emerald-400 animate-fade-in animation-delay-800">
+                  <div className="pt-2 text-emerald-400">
                     %LINK-5-CHANGED: Interface GigabitEthernet0/1, changed state to up
                   </div>
                 </div>
@@ -450,12 +522,12 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Features Section */}
-        <section id="features" className="px-4 py-20 sm:px-6 lg:px-8">
+        {/* Features Section with varied colors */}
+        <section id="fitur" className="px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="mb-12 text-center">
               <h2 className="mb-4 text-3xl font-bold text-zinc-900 dark:text-white sm:text-4xl">
-                Fitur <span className="text-cyan-500 dark:text-cyan-400">Platform</span>
+                Fitur <span className="text-[#088395]">Platform</span>
               </h2>
               <p className="mx-auto max-w-2xl text-zinc-600 dark:text-zinc-400">
                 Semua yang Anda butuhkan untuk menguasai keamanan jaringan dalam satu platform.
@@ -463,27 +535,106 @@ export default function HomePage() {
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {features.map((feature, i) => (
-                <Card key={i} hover className={cn("p-6 animate-fade-in-up hover-lift card-glow", `animation-delay-${(i + 1) * 100}`)}>
-                  <div className={cn("mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-linear-to-br ring-1", feature.bgColor, feature.ringColor)}>
-                    <feature.icon className={cn("h-6 w-6", feature.color)} />
-                  </div>
-                  <h3 className="mb-2 text-lg font-semibold text-zinc-900 dark:text-white">{feature.title}</h3>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-300">{feature.description}</p>
-                </Card>
-              ))}
+              {features.map((feature, i) => {
+                const colors = getColorClasses(feature.color);
+                return (
+                  <Card key={i} hover color={feature.color} className="p-6 group">
+                    <div className={cn("mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl transition-colors", colors.bg, colors.bgHover)}>
+                      <feature.icon className={cn("h-6 w-6 transition-colors", colors.text, "group-hover:text-white")} />
+                    </div>
+                    <h3 className="mb-2 text-lg font-semibold text-zinc-900 dark:text-white">{feature.title}</h3>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">{feature.description}</p>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </section>
 
-        {/* Labs Section */}
-        <section id="labs" className="px-4 py-20 sm:px-6 lg:px-8">
+        {/* Why Choose Us */}
+        <section className="px-4 py-20 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-900/50">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+              {/* Left - Text */}
+              <div>
+                <h2 className="mb-4 text-3xl font-bold text-zinc-900 dark:text-white sm:text-4xl">
+                  Mengapa Memilih <span className="text-[#088395]">CyberNexus</span>?
+                </h2>
+                <p className="mb-8 text-lg text-zinc-600 dark:text-zinc-400">
+                  Platform kami dirancang khusus untuk mahasiswa dan profesional yang ingin
+                  menguasai keamanan jaringan dengan cara yang paling efektif.
+                </p>
+                
+                <ul className="space-y-4">
+                  {benefits.map((benefit, i) => {
+                    const iconColors = ['text-[#088395]', 'text-emerald-500', 'text-sky-500', 'text-amber-500'];
+                    return (
+                      <li key={i} className="flex items-start gap-3">
+                        <CheckCircle className={cn("h-5 w-5 mt-0.5 flex-shrink-0", iconColors[i])} />
+                        <span className="text-zinc-700 dark:text-zinc-300">{benefit}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                <div className="mt-8 flex items-center gap-6">
+                  <div className="flex -space-x-2">
+                    {[
+                      'bg-[#088395]',
+                      'bg-sky-500',
+                      'bg-emerald-500',
+                      'bg-amber-500',
+                    ].map((bg, i) => (
+                      <div
+                        key={i}
+                        className={cn(
+                          "h-10 w-10 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center text-white text-sm font-medium",
+                          bg
+                        )}
+                      >
+                        {String.fromCharCode(65 + i)}
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-zinc-900 dark:text-white">500+ Pengguna</p>
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400">Bergabung bulan ini</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right - Stats Cards with varied soft colors */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                {[
+                  { icon: Users, value: '2,500+', label: 'Siswa Terdaftar', color: 'brand' },
+                  { icon: GraduationCap, value: '95%', label: 'Tingkat Kelulusan', color: 'emerald' },
+                  { icon: Award, value: '8,000+', label: 'Lab Diselesaikan', color: 'sky' },
+                  { icon: Zap, value: '4.9/5', label: 'Rating Pengguna', color: 'amber' },
+                ].map((stat, i) => {
+                  const colors = getColorClasses(stat.color);
+                  return (
+                    <Card key={i} className="p-6 text-center">
+                      <div className={cn("mx-auto mb-3 w-14 h-14 rounded-xl flex items-center justify-center", colors.bg)}>
+                        <stat.icon className={cn("h-7 w-7", colors.text)} />
+                      </div>
+                      <div className="text-3xl font-bold text-zinc-900 dark:text-white">{stat.value}</div>
+                      <div className="text-sm text-zinc-500 dark:text-zinc-400">{stat.label}</div>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Labs Section with varied colors */}
+        <section id="lab" className="px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             {/* Section Header */}
             <div className="mb-12 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
               <div>
                 <h2 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-white sm:text-4xl">
-                  <span className="text-cyan-500 dark:text-cyan-400">Laboratorium</span> Tersedia
+                  <span className="text-[#088395]">Laboratorium</span> Tersedia
                 </h2>
                 <p className="text-zinc-600 dark:text-zinc-400">
                   Jalur pembelajaran progresif dari dasar hingga keamanan lanjutan.
@@ -491,7 +642,7 @@ export default function HomePage() {
               </div>
               <a
                 href="/labs"
-                className="group inline-flex items-center gap-2 text-sm font-semibold text-cyan-500 dark:text-cyan-400 hover:text-cyan-400 dark:hover:text-cyan-300"
+                className="group inline-flex items-center gap-2 text-sm font-semibold text-[#088395] hover:text-[#09637E]"
               >
                 Lihat Semua Lab
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -500,75 +651,155 @@ export default function HomePage() {
 
             {/* Labs Grid */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {labs.map((lab, i) => (
-                <a
-                  key={lab.id}
-                  href={`/labs/${lab.id}`}
-                  className={cn("group animate-fade-in-up", `animation-delay-${(i + 1) * 100}`)}
-                >
-                  <Card hover className="flex h-full flex-col p-5 hover-lift card-glow">
-                    {/* Icon */}
-                    <div className={cn("mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg shadow-lg", lab.iconBg, lab.shadowColor)}>
-                      <lab.icon className="h-5 w-5 text-white" />
+              {labs.map((lab) => {
+                const colors = getColorClasses(lab.color);
+                return (
+                  <a
+                    key={lab.id}
+                    href={`/labs/${lab.id}`}
+                    className="group"
+                  >
+                    <Card hover color={lab.color} className="flex h-full flex-col p-5">
+                      {/* Icon */}
+                      <div className={cn("mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg transition-colors", colors.bg, colors.bgHover)}>
+                        <lab.icon className={cn("h-5 w-5 transition-colors", colors.text, "group-hover:text-white")} />
+                      </div>
+
+                      {/* Meta */}
+                      <div className="mb-3 flex items-center gap-2">
+                        <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                          LAB-{String(lab.id).padStart(2, '0')}
+                        </span>
+                        <Badge
+                          variant={
+                            lab.difficulty === 'Pemula'
+                              ? 'beginner'
+                              : lab.difficulty === 'Menengah'
+                                ? 'intermediate'
+                                : 'advanced'
+                          }
+                        >
+                          {lab.difficulty}
+                        </Badge>
+                      </div>
+
+                      {/* Content */}
+                      <h3 className={cn("mb-2 font-semibold text-zinc-900 dark:text-white transition-colors", `group-hover:${colors.text}`)}>
+                        {lab.title}
+                      </h3>
+                      <p className="mb-4 flex-1 text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
+                        {lab.description}
+                      </p>
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-between pt-4 mt-auto border-t border-zinc-100 dark:border-zinc-800">
+                        <span className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                          <Activity className="h-3.5 w-3.5" />
+                          {lab.duration}
+                        </span>
+                        <div className={cn("flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 transition-all", colors.bgHover, "group-hover:text-white")}>
+                          <ChevronRight className="h-4 w-4" />
+                        </div>
+                      </div>
+                    </Card>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section id="testimoni" className="px-4 py-20 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-900/50">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-12 text-center">
+              <h2 className="mb-4 text-3xl font-bold text-zinc-900 dark:text-white sm:text-4xl">
+                Apa Kata <span className="text-[#088395]">Pengguna</span>
+              </h2>
+              <p className="mx-auto max-w-2xl text-zinc-600 dark:text-zinc-400">
+                Dengarkan pengalaman dari mereka yang sudah menggunakan platform kami.
+              </p>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-3">
+              {testimonials.map((testimonial, i) => {
+                const accentColors = ['border-t-[#088395]', 'border-t-sky-500', 'border-t-emerald-500'];
+                const avatarColors = ['bg-[#088395]', 'bg-sky-500', 'bg-emerald-500'];
+                return (
+                  <Card key={i} className={cn("p-6 border-t-4", accentColors[i])}>
+                    <div className="flex items-center gap-1 mb-4">
+                      {[...Array(testimonial.rating)].map((_, j) => (
+                        <Star key={j} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                      ))}
                     </div>
-
-                    {/* Meta */}
-                    <div className="mb-3 flex items-center gap-2">
-                      <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
-                        LAB-{String(lab.id).padStart(2, '0')}
-                      </span>
-                      <Badge
-                        variant={
-                          lab.difficulty === 'Pemula'
-                            ? 'beginner'
-                            : lab.difficulty === 'Menengah'
-                              ? 'intermediate'
-                              : 'advanced'
-                        }
-                      >
-                        {lab.difficulty}
-                      </Badge>
-                    </div>
-
-                    {/* Content */}
-                    <h3 className="mb-2 font-semibold text-zinc-900 dark:text-white transition-colors group-hover:text-cyan-500 dark:group-hover:text-cyan-400">
-                      {lab.title}
-                    </h3>
-                    <p className="mb-4 flex-1 text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
-                      {lab.description}
-                    </p>
-
-                    {/* Footer */}
-                    <div className="flex items-center justify-between pt-4 mt-auto">
-                      <span className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-300">
-                        <Activity className="h-3.5 w-3.5" />
-                        {lab.duration}
-                      </span>
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 transition-all duration-300 group-hover:bg-cyan-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-cyan-500/30">
-                        <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    <Quote className="h-8 w-8 text-zinc-300 dark:text-zinc-600 mb-3" />
+                    <p className="text-zinc-700 dark:text-zinc-300 mb-6">{testimonial.content}</p>
+                    <div className="flex items-center gap-3">
+                      <div className={cn("h-10 w-10 rounded-full flex items-center justify-center text-white font-medium", avatarColors[i])}>
+                        {testimonial.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-zinc-900 dark:text-white">{testimonial.name}</p>
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400">{testimonial.role}</p>
                       </div>
                     </div>
                   </Card>
-                </a>
-              ))}
+                );
+              })}
             </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="px-4 py-20 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl">
+            <Card className="relative overflow-hidden p-8 sm:p-12 text-center">
+              {/* Multi-color gradient overlay - soft colors only */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#088395]/5 via-sky-500/5 to-amber-500/5 pointer-events-none" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(ellipse_at_center,rgba(14,165,233,0.1),transparent_70%)] pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-[radial-gradient(ellipse_at_center,rgba(8,131,149,0.1),transparent_70%)] pointer-events-none" />
+              
+              <div className="relative">
+                <h2 className="mb-4 text-2xl font-bold text-zinc-900 dark:text-white sm:text-3xl">
+                  Siap Memulai Perjalanan Anda?
+                </h2>
+                <p className="mb-8 text-zinc-600 dark:text-zinc-400 max-w-xl mx-auto">
+                  Bergabung dengan ribuan profesional yang telah meningkatkan keahlian keamanan jaringan mereka.
+                </p>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <a
+                    href="/register"
+                    className="inline-flex items-center gap-2 rounded-xl bg-[#088395] hover:bg-[#09637E] px-8 py-3 font-semibold text-white transition-all hover:shadow-lg hover:shadow-[#088395]/25"
+                  >
+                    Daftar Gratis
+                    <ArrowRight className="h-4 w-4" />
+                  </a>
+                  <a
+                    href="/login"
+                    className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 dark:border-zinc-700 px-8 py-3 font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all"
+                  >
+                    Sudah Punya Akun? Masuk
+                  </a>
+                </div>
+              </div>
+            </Card>
           </div>
         </section>
       </main>
 
-      {/* Footer - clean modern style */}
-      <footer className="border-t border-zinc-200/50 dark:border-zinc-700/50 bg-zinc-50/90 dark:bg-zinc-900/90 backdrop-blur-xl">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="grid gap-12 md:grid-cols-4">
+      {/* Footer */}
+      <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="grid gap-8 md:grid-cols-4">
             {/* Brand */}
             <div className="md:col-span-2">
-              <a href="/" className="mb-6 inline-flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/25">
+              <a href="/" className="mb-4 inline-flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#088395]">
                   <Shield className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-zinc-900 dark:text-white">CyberNexus</span>
+                <span className="text-lg font-bold text-zinc-900 dark:text-white">CyberNexus</span>
               </a>
-              <p className="max-w-sm text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+              <p className="max-w-sm text-sm text-zinc-600 dark:text-zinc-400">
                 Memberdayakan generasi profesional keamanan siber berikutnya
                 melalui pengalaman laboratorium virtual yang imersif dan langsung.
               </p>
@@ -576,29 +807,29 @@ export default function HomePage() {
 
             {/* Links */}
             <div>
-              <h4 className="mb-5 text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-300">Platform</h4>
-              <ul className="space-y-3 text-sm">
-                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Modul Lab</a></li>
-                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Dokumentasi</a></li>
-                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Jalur Pembelajaran</a></li>
+              <h4 className="mb-4 text-sm font-semibold text-zinc-900 dark:text-white">Platform</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-[#088395] transition-colors">Modul Lab</a></li>
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-[#088395] transition-colors">Dokumentasi</a></li>
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-[#088395] transition-colors">Jalur Pembelajaran</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="mb-5 text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-300">Komunitas</h4>
-              <ul className="space-y-3 text-sm">
-                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">GitHub</a></li>
-                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Discord</a></li>
-                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Twitter</a></li>
+              <h4 className="mb-4 text-sm font-semibold text-zinc-900 dark:text-white">Komunitas</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-teal-500 transition-colors">GitHub</a></li>
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-cyan-500 transition-colors">Discord</a></li>
+                <li><a href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-sky-500 transition-colors">Twitter</a></li>
               </ul>
             </div>
           </div>
 
-          <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-zinc-200/50 dark:border-zinc-700/50 pt-8 text-sm text-zinc-500 dark:text-zinc-400 sm:flex-row">
-            <p>© 2024 CyberNexus. Edukasi Open Source.</p>
-            <div className="flex gap-8">
-              <a href="#" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Kebijakan Privasi</a>
-              <a href="#" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Syarat Layanan</a>
+          <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-zinc-200 dark:border-zinc-800 pt-8 text-sm text-zinc-500 dark:text-zinc-400 sm:flex-row">
+            <p>© 2026 CyberNexus. Edukasi Open Source.</p>
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-[#088395] transition-colors">Kebijakan Privasi</a>
+              <a href="#" className="hover:text-[#088395] transition-colors">Syarat Layanan</a>
             </div>
           </div>
         </div>
